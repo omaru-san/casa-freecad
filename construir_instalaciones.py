@@ -106,6 +106,9 @@ for o in doc.Objects:
     if App.GuiUp and o.TypeId == "App::FeaturePython" and hasattr(o, "Group") and o.Label.startswith(("Electrico", "Gasfiteria")):
         o.ViewObject.OverrideLineColorChildren = False
 
+# Muebles de interiorismo (interiorismo_datos.py)
+exec(open(CARPETA + "/construir_interior.py").read())
+
 doc.recompute()
 doc.save()
 print("OK instalaciones", len(doc.Objects), "objetos")

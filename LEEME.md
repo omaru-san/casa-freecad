@@ -4,7 +4,7 @@
 | Archivo | Qué es |
 |---|---|
 | `Casa.FCStd` | Modelo FreeCAD: muros 3D, losas, escalera, ventanas + capas eléctricas y de gasfitería |
-| `laminas/PLANOS_COMPLETOS.pdf` | Las 7 láminas en un solo PDF |
+| `laminas/PLANOS_COMPLETOS.pdf` | Las 11 láminas en un solo PDF |
 | `laminas/01_arquitectura.pdf` | Plantas con cotas, superficies y vista 3D |
 | `laminas/02_electrico.pdf` | Luces, enchufes, detectores, 15 circuitos (RIC SEC), cargador EV, cuadro de cargas |
 | `laminas/03_gasfiteria.pdf` | Agua fría/caliente (bomba de calor, sin gas), alcantarillado 3 %, fosa séptica |
@@ -17,6 +17,10 @@
 | `normas/` | Biblioteca normativa 2026 (152 PDF oficiales), con `README.md` e `INDICE.md` por tema |
 | `laminas/08_estructura.pdf` | Muros de corte, entrepiso, cerchas y **cargas a fundación** (fundaciones por terceros) |
 | `laminas/09_topografia.pdf` | Curvas de nivel (DEM), contexto, perfiles y movimiento de tierra |
+| `laminas/10_interiorismo.pdf` | Plantas amobladas japandi: muebles a medida, qué esconde cada uno, materialidad |
+| `laminas/11_iluminacion_domotica.pdf` | Luz indirecta, sensores y actuadores, escenas de Home Assistant, equipos por etapa |
+| `INTERIORISMO.md` | **Diseño interior: concepto, materiales, recinto por recinto, domótica, cambios a coordinar y presupuesto** |
+| `interiorismo_datos.py` | **Muebles, materiales, luces y domótica** (editar aquí) |
 | `calculo/MEMORIAS.pdf` | Memorias: estructural, condensación (Glaser), FV + batería, topografía |
 | `calculo/FEM_Viga.FCStd` | Análisis por elementos finitos (CalculiX) de la viga sobre la terraza |
 | `calculo/*.py` | Cálculos reproducibles: `estructura.py`, `condensacion.py`, `fv_bateria.py`, `generar_memorias.py` |
@@ -34,6 +38,7 @@
 - Panel izquierdo (árbol "Modelo"): seleccionas un elemento y con la **barra espaciadora** lo ocultas o lo muestras.
   - `Piso2` → ocúltalo para ver el primer piso desde arriba.
   - `Electrico_P1`, `Gasfiteria_P1`, etc. → capas de instalaciones.
+  - `Interior_P1`, `Interior_P2` → muebles (ocúltalos para ver sólo la obra).
 
 ## Cambiar medidas
 1. Edita los números en `casa_datos.py` / `instalaciones_datos.py` (en metros).

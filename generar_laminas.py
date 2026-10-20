@@ -234,7 +234,7 @@ def cota(pl, valores, fijo, eje, off):
 
 # ---------------- marco, rótulo y tablas ----------------
 
-TOTAL_LAMINAS = 9
+TOTAL_LAMINAS = 11
 
 
 def marco(L, codigo, titulo, n, escala="1:100 (imprimir en A3)"):
@@ -664,6 +664,7 @@ def main():
     pdfs = []
     import generar_especialidades as GE
     import generar_estructura_topo as GT
+    import generar_interiorismo as GI
     svgs = []
     for nombre, lam in (("01_arquitectura", lamina_arquitectura(iso)),
                         ("02_electrico", lamina_electrica()),
@@ -673,7 +674,9 @@ def main():
                         ("06_ventilacion_calefaccion", GE.lamina_ventilacion()),
                         ("07_elevaciones_corte", GE.lamina_elevaciones()),
                         ("08_estructura", GT.lamina_estructura()),
-                        ("09_topografia", GT.lamina_topografia())):
+                        ("09_topografia", GT.lamina_topografia()),
+                        ("10_interiorismo", GI.lamina_interiorismo()),
+                        ("11_iluminacion_domotica", GI.lamina_domotica())):
         svg = os.path.join(SALIDA, nombre + ".svg")
         pdf = os.path.join(SALIDA, nombre + ".pdf")
         with open(svg, "w", encoding="utf-8") as f:

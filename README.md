@@ -8,12 +8,14 @@ con datos reales del sitio (clima 1995–2025, sol, topografía, normativa chile
 ## Contenido
 
 - **Modelo FreeCAD** [`Casa.FCStd`](Casa.FCStd): 3D (muros, techo 35°, paneles FV, terreno) + capas de instalaciones.
-- **9 láminas A3** en [`laminas/PLANOS_COMPLETOS.pdf`](laminas/PLANOS_COMPLETOS.pdf):
+- **11 láminas A3** en [`laminas/PLANOS_COMPLETOS.pdf`](laminas/PLANOS_COMPLETOS.pdf):
   - arquitectura, eléctrico y gasfitería;
   - emplazamiento y techumbre FV;
-  - ventilación, elevaciones, estructura y topografía.
+  - ventilación, elevaciones, estructura y topografía;
+  - interiorismo japandi (plantas amobladas) e iluminación + domótica.
 - **Memorias de cálculo** en [`calculo/MEMORIAS.pdf`](calculo/MEMORIAS.pdf): estructural (NCh433, con verificación FEM en CalculiX), condensación (Glaser), FV + batería (simulación horaria) y topografía.
 - **Sitio** en [`sitio/INFORME_SITIO.md`](sitio/INFORME_SITIO.md): clima, sol, viento y normativa aplicable.
+- **Interiorismo japandi** en [`INTERIORISMO.md`](INTERIORISMO.md): muebles que esconden, materialidad, iluminación y domótica (Home Assistant).
 - **Manual de construcción por etapas** en [`MANUAL_CONSTRUCCION.md`](MANUAL_CONSTRUCCION.md).
 - **Cumplimiento normativo** en [`CUMPLIMIENTO_NORMATIVO.md`](CUMPLIMIENTO_NORMATIVO.md): 55 verificaciones automáticas (OGUC, DS 15, RIC SEC, RIDAA, DS 236, CONAF).
 
