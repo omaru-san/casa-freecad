@@ -1,0 +1,325 @@
+{
+ "advertencia": "Ejercicio académico de anteproyecto. Suelo y maderas supuestos; requiere mecánica de suelos y calculista.",
+ "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio); fundación corrida H.A. escalonada + sobrecimiento.",
+ "materiales": {
+  "madera": {
+   "nombre": "Pino radiata estructural C24 / MSR (NCh1198, valores admisibles)",
+   "Ff": 9.3,
+   "Fcz": 2.5,
+   "Fv": 1.1,
+   "E": 9000.0,
+   "densidad_kN_m3": 5.0
+  },
+  "osb": {
+   "nombre": "OSB 11,1 mm estructural, clavo 2½\" (8d) @ 10 cm bordes / 20 cm interior",
+   "v_adm_kN_m": 5.5
+  },
+  "hormigon": "H25 fundaciones/sobrecimiento, acero A630-420H"
+ },
+ "suelo": {
+  "tipo": "D (supuesto: suelo fluvial/volcánico medianamente denso)",
+  "S": 1.2,
+  "T0": 0.75,
+  "Tp": 0.85,
+  "n": 1.8,
+  "sigma_adm_kPa": 100.0
+ },
+ "sismo": {
+  "zona": 3,
+  "A0_g": 0.4,
+  "I": 1.0,
+  "categoria": "II (vivienda)",
+  "R": 5.5,
+  "R0": 7.0,
+  "sistema": "Muros y diafragmas de madera (NCh433 Tabla 5.1)"
+ },
+ "cargas_kN_m2": {
+  "cubierta_inclinada": 0.15000000000000002,
+  "estructura_techo": 0.15,
+  "paneles_fv": 0.15,
+  "cielo_p2": 0.2,
+  "entrepiso": 0.4700000000000001,
+  "muro_ext": 0.45,
+  "muro_int": 0.35,
+  "tabiques_movibles": 0.5,
+  "SC_vivienda": 2.0,
+  "SC_techo": 0.3,
+  "nieve": 0.0
+ },
+ "pesos_kN": {
+  "techo": 33.3,
+  "cielo_p2": 12.0,
+  "frontones": 5.7,
+  "muros_p2": 61.5,
+  "muros_p1": 61.9,
+  "entrepiso": 53.4,
+  "techo_bajo": 6.2,
+  "P1_nivel1": 148.9,
+  "P2_nivel2": 81.7,
+  "P_total": 230.6,
+  "peso_por_m2_kPa": 1.85
+ },
+ "coef_sismico": {
+  "T_estimado_s": 0.172,
+  "C_formula": 4.25,
+  "C_max": 0.192,
+  "C_min": 0.08,
+  "C": 0.192,
+  "Q0_kN": 44.3,
+  "F1_kN": 19.8,
+  "F2_kN": 24.5,
+  "Ak": [
+   0.307,
+   0.693
+  ],
+  "torsion": 1.15
+ },
+ "viento": {
+  "V_m_s": 35.0,
+  "q_basica_kPa": 0.751,
+  "q_z_kPa": 0.638,
+  "W_NS_kN": 48.5,
+  "W_EO_kN": 26.5,
+  "succion_techo_kPa": 0.49,
+  "anclaje_par_kN": 0.67
+ },
+ "muros_corte": {
+  "P1_x": {
+   "largo_util_m": 17.3,
+   "capacidad_kN": 87.0,
+   "demanda_sismo_kN": 50.9,
+   "demanda_viento_kN": 26.5,
+   "FU": 0.59,
+   "v_kN_m": 2.94
+  },
+  "P1_y": {
+   "largo_util_m": 21.3,
+   "capacidad_kN": 115.8,
+   "demanda_sismo_kN": 50.9,
+   "demanda_viento_kN": 48.5,
+   "FU": 0.44,
+   "v_kN_m": 2.39
+  },
+  "P2_x": {
+   "largo_util_m": 25.7,
+   "capacidad_kN": 134.3,
+   "demanda_sismo_kN": 28.2,
+   "demanda_viento_kN": 13.2,
+   "FU": 0.21,
+   "v_kN_m": 1.1
+  },
+  "P2_y": {
+   "largo_util_m": 20.1,
+   "capacidad_kN": 105.1,
+   "demanda_sismo_kN": 28.2,
+   "demanda_viento_kN": 24.2,
+   "FU": 0.27,
+   "v_kN_m": 1.4
+  }
+ },
+ "segmentos_m": {
+  "P1": {
+   "x": [
+    1.0,
+    1.0,
+    0.4,
+    2.55,
+    0.65,
+    0.3,
+    0.3,
+    0.6,
+    1.2,
+    1.0,
+    3.1,
+    0.3,
+    0.3,
+    0.8,
+    0.9,
+    1.45,
+    2.2,
+    0.05,
+    0.4,
+    0.8,
+    1.3
+   ],
+   "y": [
+    1.25,
+    1.25,
+    1.9,
+    0.9,
+    2,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3
+   ]
+  },
+  "P2": {
+   "x": [
+    3.7,
+    4.45,
+    0.25,
+    1.0,
+    1.85,
+    1.8,
+    0.85,
+    0.8,
+    1.0,
+    2.45,
+    2.35,
+    0.2,
+    0.85,
+    4.55
+   ],
+   "y": [
+    3.9,
+    0.9,
+    1.1,
+    2.0,
+    0.9,
+    3,
+    3,
+    1.15,
+    1.15,
+    2,
+    0.13,
+    1.02
+   ]
+  }
+ },
+ "holddown_tipico_kN": 5.9,
+ "elementos": [
+  {
+   "elemento": "Viga entrepiso (living, luz mayor)",
+   "seccion_mm": "45×240",
+   "L_m": 4.0,
+   "q_kN_m": 1.19,
+   "M_kNm": 2.38,
+   "fb_MPa": 5.5,
+   "Ff_adm": 9.3,
+   "fv_MPa": 0.33,
+   "Fv_adm": 1.1,
+   "flecha_mm": 8.5,
+   "flecha_adm_mm": 13.3,
+   "FU": 0.64
+  },
+  {
+   "elemento": "Viga entrepiso (franja servicios)",
+   "seccion_mm": "45×240",
+   "L_m": 2.0,
+   "q_kN_m": 1.19,
+   "M_kNm": 0.59,
+   "fb_MPa": 1.38,
+   "Ff_adm": 9.3,
+   "fv_MPa": 0.17,
+   "Fv_adm": 1.1,
+   "flecha_mm": 0.5,
+   "flecha_adm_mm": 6.7,
+   "FU": 0.15
+  },
+  {
+   "elemento": "Cercha W: cuerda superior (tramo entre nudos)",
+   "seccion_mm": "45×140",
+   "L_m": 1.83,
+   "q_kN_m": 0.49,
+   "M_kNm": 0.21,
+   "fb_MPa": 1.39,
+   "Ff_adm": 9.3,
+   "fv_MPa": 0.11,
+   "Fv_adm": 1.1,
+   "flecha_mm": 0.8,
+   "flecha_adm_mm": 6.1,
+   "FU": 0.15
+  },
+  {
+   "elemento": "Cercha W: cuerda inferior + cielo (tramo)",
+   "seccion_mm": "45×90",
+   "L_m": 2.0,
+   "q_kN_m": 0.42,
+   "M_kNm": 0.21,
+   "fb_MPa": 3.46,
+   "Ff_adm": 9.3,
+   "fv_MPa": 0.16,
+   "Fv_adm": 1.1,
+   "flecha_mm": 3.6,
+   "flecha_adm_mm": 6.7,
+   "FU": 0.53
+  },
+  {
+   "elemento": "Viga sobre terraza entrada (y=0, x 10,5→12)",
+   "seccion_mm": "90×240",
+   "L_m": 1.5,
+   "q_kN_m": 6.71,
+   "M_kNm": 1.89,
+   "fb_MPa": 2.19,
+   "Ff_adm": 9.3,
+   "fv_MPa": 0.35,
+   "Fv_adm": 1.1,
+   "flecha_mm": 0.5,
+   "flecha_adm_mm": 5.0,
+   "FU": 0.32
+  },
+  {
+   "elemento": "Viga sobre terraza entrada (x=12, y 0→2)",
+   "seccion_mm": "90×240",
+   "L_m": 2.0,
+   "q_kN_m": 6.71,
+   "M_kNm": 3.36,
+   "fb_MPa": 3.89,
+   "Ff_adm": 9.3,
+   "fv_MPa": 0.47,
+   "Fv_adm": 1.1,
+   "flecha_mm": 1.5,
+   "flecha_adm_mm": 6.7,
+   "FU": 0.42
+  }
+ ],
+ "pilar": {
+  "elemento": "Pilar esquina terraza (madera laminada)",
+  "seccion_mm": "140×140",
+  "N_kN": 11.7,
+  "fc_MPa": 0.6,
+  "esbeltez": 64.0,
+  "Fc_adm_pandeo_MPa": 6.6
+ },
+ "fundaciones": [
+  {
+   "eje": "Eje y=0 (fachada sur)",
+   "q_kN_m": 14.6,
+   "ancho_m": 0.4,
+   "sigma_kPa": 37.0,
+   "sigma_adm_kPa": 100.0,
+   "FU": 0.37
+  },
+  {
+   "eje": "Eje y=6 (fachada norte, con FV)",
+   "q_kN_m": 17.6,
+   "ancho_m": 0.4,
+   "sigma_kPa": 44.0,
+   "sigma_adm_kPa": 100.0,
+   "FU": 0.44
+  },
+  {
+   "eje": "Eje y=2 (interior, bajo entrepiso)",
+   "q_kN_m": 16.0,
+   "ancho_m": 0.4,
+   "sigma_kPa": 40.0,
+   "sigma_adm_kPa": 100.0,
+   "FU": 0.4
+  }
+ ],
+ "fem_verificacion": {
+  "modelo": "calculo/FEM_Viga.FCStd — viga 90×240 mm, L = 2,0 m, empotrada en extremos, q = 6,71 kN/m (presión 74,6 kPa)",
+  "malla": "Gmsh tetraédrica, 3.799 nodos",
+  "solver": "CalculiX (FreeCAD 1.1 FEM)",
+  "von_mises_max_MPa": 2.39,
+  "desplazamiento_max_mm": 0.34,
+  "teoria_empotrada": {
+   "sigma_MPa": 2.59,
+   "flecha_mm": 0.3
+  },
+  "conclusion": "Coincide con la teoría de vigas (<15 %, el FEM incluye deformación por corte). Con apoyo simple (caso de diseño) la tensión es 3,9 MPa < 9,3 MPa admisible."
+ }
+}

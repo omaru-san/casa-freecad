@@ -1,0 +1,10 @@
+# Datos personales (originales sin anonimizar) — sólo locales
+privado/
+
+# PDFs normativos de terceros (656 MB): ver normas/README.md para descargarlos
+normas/**/*.pdf
+
+# Respaldos y caché
+*.FCBak
+__pycache__/
+.DS_Store

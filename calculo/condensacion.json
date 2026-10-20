@@ -1,0 +1,236 @@
+{
+ "metodo": "Glaser (NCh1973 / ISO 13788), régimen estacionario",
+ "condiciones": {
+  "Ti": 20.0,
+  "HRi": 0.75,
+  "Te": 4.4,
+  "HRe": 0.9,
+  "origen_exterior": "Julio: media de mínimas y HR media (sitio/clima_sitio.json, ERA5 1995–2025)",
+  "pv_interior_Pa": 1753,
+  "T_rocio_interior": 15.4,
+  "T_superficial_min_moho": 19.0
+ },
+ "casos": [
+  {
+   "nombre": "Muro perimetral (con barrera de vapor)",
+   "U": 0.257,
+   "Rt": 3.9,
+   "Sd_total_m": 22.0,
+   "Tsi": 19.48,
+   "fRsi": 0.967,
+   "perfil": [
+    {
+     "capa": "interior",
+     "T": 20.0,
+     "psat": 2337,
+     "pv": 1753
+    },
+    {
+     "capa": "Rsi",
+     "T": 19.48,
+     "psat": 2263,
+     "pv": 1753,
+     "Sd_acum_m": 0.0,
+     "R_acum": 0.13
+    },
+    {
+     "capa": "Yeso-cartón RH 12,5",
+     "T": 19.28,
+     "psat": 2235,
+     "pv": 1748,
+     "Sd_acum_m": 0.1,
+     "R_acum": 0.18
+    },
+    {
+     "capa": "Barrera de vapor PE 0,2 mm",
+     "T": 19.28,
+     "psat": 2235,
+     "pv": 838,
+     "Sd_acum_m": 20.1,
+     "R_acum": 0.18
+    },
+    {
+     "capa": "Lana mineral 140",
+     "T": 5.26,
+     "psat": 888,
+     "pv": 830,
+     "Sd_acum_m": 20.27,
+     "R_acum": 3.68
+    },
+    {
+     "capa": "OSB 11,1",
+     "T": 4.92,
+     "psat": 867,
+     "pv": 755,
+     "Sd_acum_m": 21.93,
+     "R_acum": 3.765
+    },
+    {
+     "capa": "Membrana hidrófuga respirable",
+     "T": 4.92,
+     "psat": 867,
+     "pv": 752,
+     "Sd_acum_m": 21.98,
+     "R_acum": 3.765
+    },
+    {
+     "capa": "Rse (cámara ventilada)",
+     "T": 4.4,
+     "psat": 836,
+     "pv": 752,
+     "Sd_acum_m": 21.98,
+     "R_acum": 3.895
+    }
+   ],
+   "condensacion_intersticial": false,
+   "interfaces_con_condensacion": [],
+   "ok_superficial": true
+  },
+  {
+   "nombre": "Muro SIN barrera de vapor (contraejemplo)",
+   "U": 0.257,
+   "Rt": 3.9,
+   "Sd_total_m": 2.0,
+   "Tsi": 19.48,
+   "fRsi": 0.967,
+   "perfil": [
+    {
+     "capa": "interior",
+     "T": 20.0,
+     "psat": 2337,
+     "pv": 1753
+    },
+    {
+     "capa": "Rsi",
+     "T": 19.48,
+     "psat": 2263,
+     "pv": 1753,
+     "Sd_acum_m": 0.0,
+     "R_acum": 0.13
+    },
+    {
+     "capa": "Yeso-cartón RH 12,5",
+     "T": 19.28,
+     "psat": 2235,
+     "pv": 1702,
+     "Sd_acum_m": 0.1,
+     "R_acum": 0.18
+    },
+    {
+     "capa": "Lana mineral 140",
+     "T": 5.26,
+     "psat": 888,
+     "pv": 1618,
+     "Sd_acum_m": 0.27,
+     "R_acum": 3.68
+    },
+    {
+     "capa": "OSB 11,1",
+     "T": 4.92,
+     "psat": 867,
+     "pv": 778,
+     "Sd_acum_m": 1.93,
+     "R_acum": 3.765
+    },
+    {
+     "capa": "Membrana hidrófuga respirable",
+     "T": 4.92,
+     "psat": 867,
+     "pv": 752,
+     "Sd_acum_m": 1.98,
+     "R_acum": 3.765
+    },
+    {
+     "capa": "Rse (cámara ventilada)",
+     "T": 4.4,
+     "psat": 836,
+     "pv": 752,
+     "Sd_acum_m": 1.98,
+     "R_acum": 3.895
+    }
+   ],
+   "condensacion_intersticial": true,
+   "interfaces_con_condensacion": [
+    "Lana mineral 140"
+   ],
+   "ok_superficial": true
+  },
+  {
+   "nombre": "Cielo bajo entretecho ventilado",
+   "U": 0.19,
+   "Rt": 5.25,
+   "Sd_total_m": 20.3,
+   "Tsi": 19.7,
+   "fRsi": 0.981,
+   "perfil": [
+    {
+     "capa": "interior",
+     "T": 20.0,
+     "psat": 2337,
+     "pv": 1753
+    },
+    {
+     "capa": "Rsi (flujo ascendente)",
+     "T": 19.7,
+     "psat": 2294,
+     "pv": 1753,
+     "Sd_acum_m": 0.0,
+     "R_acum": 0.1
+    },
+    {
+     "capa": "Yeso-cartón 12,5",
+     "T": 19.55,
+     "psat": 2273,
+     "pv": 1748,
+     "Sd_acum_m": 0.1,
+     "R_acum": 0.15
+    },
+    {
+     "capa": "Barrera de vapor PE 0,2 mm",
+     "T": 19.55,
+     "psat": 2273,
+     "pv": 764,
+     "Sd_acum_m": 20.1,
+     "R_acum": 0.15
+    },
+    {
+     "capa": "Lana mineral 2×100",
+     "T": 4.7,
+     "psat": 854,
+     "pv": 752,
+     "Sd_acum_m": 20.34,
+     "R_acum": 5.15
+    },
+    {
+     "capa": "Rse (entretecho ventilado)",
+     "T": 4.4,
+     "psat": 836,
+     "pv": 752,
+     "Sd_acum_m": 20.34,
+     "R_acum": 5.25
+    }
+   ],
+   "condensacion_intersticial": false,
+   "interfaces_con_condensacion": [],
+   "ok_superficial": true
+  }
+ ],
+ "puente_termico_pie_derecho": {
+  "U_muro_ponderado": 0.32,
+  "Tsi_sobre_pie_derecho": 18.6,
+  "ok_condensacion": true,
+  "ok_moho": false
+ },
+ "ventana": {
+  "U": 1.6,
+  "Tsi_vidrio": 16.8,
+  "ok_condensacion": true,
+  "ok_moho": false,
+  "nota": "Borde de marco y espaciador: usar espaciador 'warm edge' y ventilación permanente."
+ },
+ "hr_interior_max_pct": {
+  "sin_moho": 65,
+  "sin_condensacion": 82,
+  "superficie_critica": "vidrio DVH"
+ }
+}

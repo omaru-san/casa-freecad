@@ -1,0 +1,365 @@
+{
+ "sistema": {
+  "paneles": 12,
+  "wp": 625,
+  "kwp": 7.5,
+  "inversor_kw": 6.0,
+  "bateria_kwh": 11.0,
+  "bateria_util_kwh": 9.9,
+  "reserva_respaldo_pct": 20,
+  "inclinacion": 35,
+  "azimut": "norte",
+  "anios_simulados": [
+   2016,
+   2017,
+   2018,
+   2019,
+   2020
+  ]
+ },
+ "supuestos_consumo": {
+  "kwh_dia_casa": [
+   8.8,
+   8.8,
+   8.9,
+   9.3,
+   9.8,
+   10.3,
+   10.3,
+   9.9,
+   9.4,
+   9.1,
+   8.9,
+   8.8
+  ],
+  "kwh_dia_bomba_pozo": [
+   1.6,
+   1.6,
+   1.2,
+   0.9,
+   0.8,
+   0.8,
+   0.8,
+   0.8,
+   0.9,
+   1.1,
+   1.4,
+   1.6
+  ],
+  "anual_kwh": 3824.0
+ },
+ "mensual": [
+  {
+   "pv": 1326.1,
+   "carga": 322.4,
+   "directo": 197.2,
+   "bateria": 125.2,
+   "importa": 0.0,
+   "exporta": 992.1,
+   "ciclos": 13.3,
+   "autosuficiencia_pct": 100.0,
+   "dias_sin_red": 30.8
+  },
+  {
+   "pv": 1147.0,
+   "carga": 295.4,
+   "directo": 167.8,
+   "bateria": 127.6,
+   "importa": 0.0,
+   "exporta": 841.0,
+   "ciclos": 13.4,
+   "autosuficiencia_pct": 100.0,
+   "dias_sin_red": 28.4
+  },
+  {
+   "pv": 1146.9,
+   "carga": 313.1,
+   "directo": 155.9,
+   "bateria": 154.9,
+   "importa": 2.3,
+   "exporta": 823.4,
+   "ciclos": 16.3,
+   "autosuficiencia_pct": 99.0,
+   "dias_sin_red": 29.8
+  },
+  {
+   "pv": 830.6,
+   "carga": 306.0,
+   "directo": 129.3,
+   "bateria": 170.3,
+   "importa": 6.4,
+   "exporta": 516.9,
+   "ciclos": 17.9,
+   "autosuficiencia_pct": 98.0,
+   "dias_sin_red": 26.8
+  },
+  {
+   "pv": 624.9,
+   "carga": 328.6,
+   "directo": 119.8,
+   "bateria": 186.9,
+   "importa": 21.9,
+   "exporta": 303.7,
+   "ciclos": 19.5,
+   "autosuficiencia_pct": 93.0,
+   "dias_sin_red": 23.0
+  },
+  {
+   "pv": 498.2,
+   "carga": 333.0,
+   "directo": 102.7,
+   "bateria": 174.3,
+   "importa": 56.0,
+   "exporta": 208.8,
+   "ciclos": 18.1,
+   "autosuficiencia_pct": 83.0,
+   "dias_sin_red": 15.6
+  },
+  {
+   "pv": 547.0,
+   "carga": 344.1,
+   "directo": 109.7,
+   "bateria": 174.7,
+   "importa": 59.7,
+   "exporta": 244.3,
+   "ciclos": 18.7,
+   "autosuficiencia_pct": 83.0,
+   "dias_sin_red": 16.0
+  },
+  {
+   "pv": 693.0,
+   "carga": 331.7,
+   "directo": 126.4,
+   "bateria": 180.8,
+   "importa": 24.5,
+   "exporta": 371.0,
+   "ciclos": 19.0,
+   "autosuficiencia_pct": 93.0,
+   "dias_sin_red": 22.0
+  },
+  {
+   "pv": 938.7,
+   "carga": 309.0,
+   "directo": 143.6,
+   "bateria": 161.8,
+   "importa": 3.6,
+   "exporta": 618.2,
+   "ciclos": 17.2,
+   "autosuficiencia_pct": 99.0,
+   "dias_sin_red": 28.8
+  },
+  {
+   "pv": 1104.4,
+   "carga": 316.2,
+   "directo": 165.7,
+   "bateria": 149.0,
+   "importa": 1.4,
+   "exporta": 778.1,
+   "ciclos": 15.6,
+   "autosuficiencia_pct": 100.0,
+   "dias_sin_red": 30.2
+  },
+  {
+   "pv": 1157.8,
+   "carga": 309.0,
+   "directo": 177.4,
+   "bateria": 131.5,
+   "importa": 0.1,
+   "exporta": 836.2,
+   "ciclos": 14.0,
+   "autosuficiencia_pct": 100.0,
+   "dias_sin_red": 29.8
+  },
+  {
+   "pv": 1274.8,
+   "carga": 322.4,
+   "directo": 196.8,
+   "bateria": 125.6,
+   "importa": 0.0,
+   "exporta": 941.4,
+   "ciclos": 13.2,
+   "autosuficiencia_pct": 100.0,
+   "dias_sin_red": 31.0
+  }
+ ],
+ "anual": {
+  "pv": 11289.0,
+  "carga": 3831.0,
+  "directo": 1792.0,
+  "bateria": 1863.0,
+  "importa": 176.0,
+  "exporta": 7475.0,
+  "ciclos": 196.0,
+  "autosuficiencia_pct": 95.0,
+  "autoconsumo_pct": 32.0,
+  "dias_sin_red": 312.0
+ },
+ "escenario_electrico": {
+  "descripcion": "Calefacción bomba de calor COP 3,2 + termo bomba de calor (sin gas ni pellet)",
+  "extra_kwh_dia": [
+   1.1,
+   1.1,
+   1.1,
+   5.3,
+   8.4,
+   11.1,
+   12.3,
+   11.3,
+   9.6,
+   6.9,
+   4.1,
+   1.1
+  ],
+  "mensual": [
+   {
+    "pv": 1326.1,
+    "carga": 356.5,
+    "directo": 213.6,
+    "bateria": 142.5,
+    "importa": 0.4,
+    "exporta": 956.9,
+    "ciclos": 15.1,
+    "autosuficiencia_pct": 100.0,
+    "dias_sin_red": 30.6
+   },
+   {
+    "pv": 1147.0,
+    "carga": 326.6,
+    "directo": 182.5,
+    "bateria": 144.1,
+    "importa": 0.0,
+    "exporta": 808.4,
+    "ciclos": 15.1,
+    "autosuficiencia_pct": 100.0,
+    "dias_sin_red": 28.4
+   },
+   {
+    "pv": 1146.9,
+    "carga": 347.2,
+    "directo": 171.7,
+    "bateria": 171.6,
+    "importa": 3.9,
+    "exporta": 789.5,
+    "ciclos": 18.0,
+    "autosuficiencia_pct": 99.0,
+    "dias_sin_red": 29.4
+   },
+   {
+    "pv": 830.6,
+    "carga": 464.7,
+    "directo": 191.3,
+    "bateria": 212.5,
+    "importa": 60.9,
+    "exporta": 410.0,
+    "ciclos": 22.2,
+    "autosuficiencia_pct": 87.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 624.9,
+    "carga": 590.0,
+    "directo": 205.1,
+    "bateria": 196.9,
+    "importa": 187.9,
+    "exporta": 208.2,
+    "ciclos": 20.5,
+    "autosuficiencia_pct": 68.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 498.2,
+    "carga": 666.8,
+    "directo": 195.2,
+    "bateria": 158.2,
+    "importa": 313.4,
+    "exporta": 133.0,
+    "ciclos": 16.5,
+    "autosuficiencia_pct": 53.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 547.0,
+    "carga": 726.1,
+    "directo": 216.9,
+    "bateria": 162.3,
+    "importa": 346.9,
+    "exporta": 152.9,
+    "ciclos": 17.2,
+    "autosuficiencia_pct": 52.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 693.0,
+    "carga": 681.2,
+    "directo": 240.1,
+    "bateria": 189.3,
+    "importa": 251.8,
+    "exporta": 246.1,
+    "ciclos": 20.1,
+    "autosuficiencia_pct": 63.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 938.7,
+    "carga": 597.9,
+    "directo": 268.0,
+    "bateria": 213.8,
+    "importa": 116.1,
+    "exporta": 437.4,
+    "ciclos": 22.6,
+    "autosuficiencia_pct": 81.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 1104.4,
+    "carga": 531.2,
+    "directo": 266.4,
+    "bateria": 225.1,
+    "importa": 39.8,
+    "exporta": 595.7,
+    "ciclos": 23.5,
+    "autosuficiencia_pct": 93.0,
+    "dias_sin_red": 0.0
+   },
+   {
+    "pv": 1157.8,
+    "carga": 431.8,
+    "directo": 238.3,
+    "bateria": 187.5,
+    "importa": 6.0,
+    "exporta": 713.0,
+    "ciclos": 20.0,
+    "autosuficiencia_pct": 99.0,
+    "dias_sin_red": 26.6
+   },
+   {
+    "pv": 1274.8,
+    "carga": 356.5,
+    "directo": 213.9,
+    "bateria": 142.2,
+    "importa": 0.3,
+    "exporta": 905.9,
+    "ciclos": 15.0,
+    "autosuficiencia_pct": 100.0,
+    "dias_sin_red": 30.8
+   }
+  ],
+  "anual": {
+   "pv": 11289.0,
+   "carga": 6076.0,
+   "directo": 2603.0,
+   "bateria": 2146.0,
+   "importa": 1327.0,
+   "exporta": 6357.0,
+   "ciclos": 226.0,
+   "autosuficiencia_pct": 78.0,
+   "autoconsumo_pct": 42.0,
+   "dias_sin_red": 146.0
+  }
+ },
+ "respaldo_corte": {
+  "carga_critica_kw": 0.35,
+  "horas_con_reserva_20pct": 5.7,
+  "horas_bateria_llena": 28.3
+ }
+}
