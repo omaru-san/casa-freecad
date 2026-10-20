@@ -198,16 +198,15 @@ pilar = {"elemento": "Pilar esquina terraza (madera laminada)", "seccion_mm": f"
          "fc_MPa": round(N_pilar * 1e3 / A_p, 2), "esbeltez": round(lam, 0),
          "Fc_adm_pandeo_MPa": round(7.5 * min(1, 2800 / lam ** 2 * 1.3), 2)}
 
-# ---------------- fundación corrida ----------------
-def linea_fund(nombre, techo_trib, ent_trib, muros_kN_m, b=0.40):
-    techo = ((CARGAS["cubierta_inclinada"] + CARGAS["estructura_techo"]) * inc + CARGAS["paneles_fv"] + CARGAS["cielo_p2"] + CARGAS["SC_techo"]) * techo_trib
-    ent = (CARGAS["entrepiso"] + CARGAS["tabiques_movibles"] + CARGAS["SC_vivienda"]) * ent_trib
-    radier = (0.10 * 24 + CARGAS["SC_vivienda"]) * 0.0
-    sobrec = 0.20 * 0.60 * 24
-    zap = b * 0.30 * 24
-    q = techo + ent + muros_kN_m + radier + sobrec + zap
-    return {"eje": nombre, "q_kN_m": round(q, 1), "ancho_m": b, "sigma_kPa": round(q / b, 0),
-            "sigma_adm_kPa": SUELO["sigma_adm_kPa"], "FU": round(q / b / SUELO["sigma_adm_kPa"], 2)}
+# ---------------- cargas sobre la fundación (insumo: las fundaciones las diseña un tercero) ----------------
+def linea_fund(nombre, techo_trib, ent_trib, muros_kN_m):
+    """Carga lineal de servicio en la base del muro (sobre sobrecimiento), sin peso propio de la fundación."""
+    techo_d = ((CARGAS["cubierta_inclinada"] + CARGAS["estructura_techo"]) * inc + CARGAS["paneles_fv"] + CARGAS["cielo_p2"]) * techo_trib
+    techo_l = CARGAS["SC_techo"] * techo_trib
+    ent_d = (CARGAS["entrepiso"] + CARGAS["tabiques_movibles"]) * ent_trib
+    ent_l = CARGAS["SC_vivienda"] * ent_trib
+    d, l_ = techo_d + ent_d + muros_kN_m, techo_l + ent_l
+    return {"eje": nombre, "D_kN_m": round(d, 1), "L_kN_m": round(l_, 1), "q_kN_m": round(d + l_, 1)}
 
 
 muro2 = CARGAS["muro_ext"] * D.H2
@@ -221,8 +220,8 @@ fund = [
 res = {
     "advertencia": "Ejercicio académico de anteproyecto. Suelo y maderas supuestos; requiere mecánica de suelos y calculista.",
     "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas "
-               "tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio); fundación corrida H.A. escalonada + sobrecimiento.",
-    "materiales": {"madera": MADERA, "osb": OSB, "hormigon": "H25 fundaciones/sobrecimiento, acero A630-420H"},
+               "tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio). Fundaciones: proyecto aparte (fuera de alcance).",
+    "materiales": {"madera": MADERA, "osb": OSB, "hormigon": "Fundaciones y sobrecimiento: proyecto por terceros"},
     "suelo": SUELO, "sismo": SISMO, "cargas_kN_m2": CARGAS,
     "pesos_kN": {"techo": round(techo_D, 1), "cielo_p2": round(cielo_D, 1), "frontones": round(frontones, 1),
                  "muros_p2": round(mu2, 1), "muros_p1": round(mu1, 1), "entrepiso": round(entrepiso_D, 1),
@@ -237,7 +236,9 @@ res = {
     "muros_corte": muros_corte,
     "segmentos_m": {"P1": s1, "P2": s2},
     "holddown_tipico_kN": round(T_holddown, 1),
-    "elementos": elementos, "pilar": pilar, "fundaciones": fund,
+    "elementos": elementos, "pilar": pilar, "cargas_a_fundacion": fund,
+    "reacciones_puntuales_kN": {"pilar_esquina_terraza": round(N_pilar, 1), "holddown_traccion": round(T_holddown, 1),
+                                "corte_basal_Q0": round(Q0, 1)},
     "fem_verificacion": {
         "modelo": "calculo/FEM_Viga.FCStd — viga 90×240 mm, L = 2,0 m, empotrada en extremos, q = 6,71 kN/m (presión 74,6 kPa)",
         "malla": "Gmsh tetraédrica, 3.799 nodos", "solver": "CalculiX (FreeCAD 1.1 FEM)",

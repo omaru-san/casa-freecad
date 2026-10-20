@@ -78,8 +78,8 @@ def cap_estructura():
     el = [[escape(e["elemento"]), e["seccion_mm"], n(e["L_m"], 2), n(e["q_kN_m"], 2), n(e["M_kNm"], 2),
            f'{n(e["fb_MPa"], 2)} / {n(e["Ff_adm"])}', f'{n(e["fv_MPa"], 2)} / {n(e["Fv_adm"])}',
            f'{n(e["flecha_mm"])} / {n(e["flecha_adm_mm"])}', ok(e["FU"])] for e in EST["elementos"]]
-    fu = [[escape(f["eje"]), n(f["q_kN_m"]), n(f["ancho_m"], 2), n(f["sigma_kPa"], 0), n(f["sigma_adm_kPa"], 0), ok(f["FU"])]
-          for f in EST["fundaciones"]]
+    fu = [[escape(f["eje"]), n(f["D_kN_m"]), n(f["L_kN_m"]), n(f["q_kN_m"])] for f in EST["cargas_a_fundacion"]]
+    rp = EST["reacciones_puntuales_kN"]
     p, fem = EST["pilar"], EST["fem_verificacion"]
     return f"""
 <h1 id="est">1. Memoria de cálculo estructural</h1>
@@ -121,10 +121,13 @@ Se reemplazó por <b>cerchas tipo W @ 60 cm</b> que salvan los 6 m muro a muro.<
 {tabla(["Resultado", "FEM", "Teoría (empotrada)"], [["Tensión máx. (MPa)", n(fem["von_mises_max_MPa"], 2), n(fem["teoria_empotrada"]["sigma_MPa"], 2)],
                                                      ["Desplazamiento máx. (mm)", n(fem["desplazamiento_max_mm"], 2), n(fem["teoria_empotrada"]["flecha_mm"], 2)]])}
 <p>{escape(fem["conclusion"])}</p>
-<h2>1.8 Fundaciones</h2>
-<p>Fundación corrida de H25, 40 cm de ancho × 30 cm, sobrecimiento 20 × 60 cm con aislación exterior. En el lado oeste (relleno de plataforma)
-la fundación se profundiza hasta terreno natural; escalonada si el desnivel supera 0,5 m.</p>
-{tabla(["Eje", "q (kN/m)", "B (m)", "σ (kPa)", "σadm (kPa)", "FU"], fu)}
+<h2>1.8 Cargas a fundación (las fundaciones se proyectan aparte)</h2>
+<p>Por decisión del mandante, <b>las fundaciones quedan fuera de este anteproyecto</b> y las diseña un tercero con su mecánica de suelos.
+Se entregan las cargas de servicio en la base de los muros (sin peso propio de fundación ni sobrecimiento). El sobrecimiento debe
+quedar ≥ 20 cm sobre el terreno, con aislación de borde R100 ≥ 91 (DS 15, zona G) y pernos para los hold-down.</p>
+{tabla(["Eje", "D (kN/m)", "L (kN/m)", "D + L (kN/m)"], fu)}
+<p>Cargas puntuales: pilar esquina terraza N = {n(rp["pilar_esquina_terraza"])} kN · tracción hold-down {n(rp["holddown_traccion"])} kN ·
+corte basal total Q0 = {n(rp["corte_basal_Q0"])} kN (a transmitir por los anclajes de solera Ø12 @ ≤ 0,50 m).</p>
 """
 
 
@@ -155,19 +158,19 @@ Criterio de moho: superficie interior ≥ {n(c["T_superficial_min_moho"])} °C (
 <ol><li><b>La barrera de vapor es obligatoria</b> en muros y cielo: sin ella el vapor condensa en la cara fría de la lana mineral, contra el OSB.</li>
 <li>Con barrera, ninguna interfaz condensa en julio.</li>
 <li>La superficie más fría es el {escape(hr["superficie_critica"])}: para evitar moho la <b>humedad interior debe mantenerse ≤ {hr["sin_moho"]} %</b>
-(condensación visible sobre {hr["sin_condensacion"]} %). Se logra con la ventilación de la lámina VEN-01 (extracción en baños y cocina,
-microventilación, no secar ropa adentro) y es el principal riesgo de una casa hermética en este clima.</li>
+(condensación visible sobre {hr["sin_condensacion"]} %). Se logra con la ventilación de la lámina VEN-01 (VMC con recuperador de calor 35 L/s,
+extracción continua en baños, cocina y lavandería, no secar ropa adentro) y es el principal riesgo de una casa hermética en este clima.</li>
 <li>Alternativa para eliminar el puente térmico de los pies derechos: 30–40 mm de aislación continua por el exterior del OSB.</li></ol>
 """
 
 
 def cap_fv():
-    s, an, ae, rc = FV["sistema"], FV["anual"], FV["escenario_electrico"]["anual"], FV["respaldo_corte"]
+    s, an, ae, rc = FV["sistema"], FV["anual"], FV["escenario_ev"]["anual"], FV["respaldo_corte"]
     filas = [[MESES[i], n(m["pv"], 0), n(m["carga"], 0), n(m["directo"], 0), n(m["bateria"], 0), n(m["importa"], 0),
               n(m["exporta"], 0), f'{int(m["autosuficiencia_pct"])} %', n(m["dias_sin_red"], 1)] for i, m in enumerate(FV["mensual"])]
     filas.append(["<b>Año</b>", f"<b>{n(an['pv'], 0)}</b>", f"<b>{n(an['carga'], 0)}</b>", n(an["directo"], 0), n(an["bateria"], 0),
                   n(an["importa"], 0), n(an["exporta"], 0), f'<b>{int(an["autosuficiencia_pct"])} %</b>', n(an["dias_sin_red"], 0)])
-    filas_e = [[MESES[i], n(m["carga"], 0), n(m["importa"], 0), f'{int(m["autosuficiencia_pct"])} %'] for i, m in enumerate(FV["escenario_electrico"]["mensual"])]
+    filas_e = [[MESES[i], n(m["carga"], 0), n(m["importa"], 0), f'{int(m["autosuficiencia_pct"])} %'] for i, m in enumerate(FV["escenario_ev"]["mensual"])]
     return f"""
 <h1 id="fv">3. Memoria fotovoltaica con batería</h1>
 <p><b>Sistema:</b> {s["paneles"]} paneles × {s["wp"]} Wp = <b>{n(s["kwp"])} kWp</b>, inclinación {s["inclinacion"]}° azimut {s["azimut"]}
@@ -176,8 +179,8 @@ def cap_fv():
 <p><b>Método:</b> balance hora a hora durante {len(s["anios_simulados"])} años ({s["anios_simulados"][0]}–{s["anios_simulados"][-1]})
 con la producción horaria de PVGIS 5.2 para el sitio (incluye sombras del horizonte), eficiencia de batería 92 % ida y vuelta,
 potencia máx. 5 kW, prioridad: consumo → batería → red. La bomba del pozo funciona de 8 a 12 h para aprovechar el sol.</p>
-<p><b>Consumo supuesto:</b> {n(FV["supuestos_consumo"]["anual_kwh"], 0)} kWh/año (casa con cocina y calefont a gas, estufa a pellet,
-más bomba de pozo 0,75 kW). <i>Ajustar con boletas reales.</i></p>
+<p><b>Consumo supuesto:</b> {n(FV["supuestos_consumo"]["anual_kwh"], 0)} kWh/año — {escape(FV["supuestos_consumo"]["descripcion"])},
+más bomba de pozo 0,75 kW. <i>Ajustar con boletas reales.</i></p>
 {tabla(["Mes", "FV kWh", "Consumo", "Directo", "Desde batería", "Compra red", "Inyecta", "Autosuf.", "Días sin red"], filas, "chica")}
 <h2>3.1 Resultados</h2>
 <ul><li>Autosuficiencia anual <b>{int(an["autosuficiencia_pct"])} %</b>: la red sólo aporta {n(an["importa"], 0)} kWh/año, concentrados en junio–julio.</li>
@@ -185,10 +188,10 @@ más bomba de pozo 0,75 kW). <i>Ajustar con boletas reales.</i></p>
 <li>Excedente inyectado {n(an["exporta"], 0)} kWh/año (net billing, Ley 21.118): descuenta cargos de la boleta.</li>
 <li><b>Respaldo ante cortes</b> (frecuentes en temporales del N–NO): {n(rc["horas_bateria_llena"])} h con batería llena y carga crítica
 de {n(rc["carga_critica_kw"], 2)} kW (refrigerador, luces LED, router, bomba). Con sol, el sistema se recarga durante el corte (inversor híbrido con modo isla).</li></ul>
-<h2>3.2 Escenario «todo eléctrico»</h2>
-<p>{escape(FV["escenario_electrico"]["descripcion"])}. Consumo {n(ae["carga"], 0)} kWh/año ⇒ autosuficiencia {int(ae["autosuficiencia_pct"])} %,
-compra {n(ae["importa"], 0)} kWh e inyecta {n(ae["exporta"], 0)} kWh: <b>el balance anual sigue siendo positivo</b>, por lo que
-electrificar calefacción y agua caliente es viable con este sistema y elimina gas y pellet.</p>
+<h2>3.2 Escenario con auto eléctrico</h2>
+<p>{escape(FV["escenario_ev"]["descripcion"])}. Consumo {n(ae["carga"], 0)} kWh/año ⇒ autosuficiencia {int(ae["autosuficiencia_pct"])} %,
+compra {n(ae["importa"], 0)} kWh e inyecta {n(ae["exporta"], 0)} kWh: <b>el balance anual sigue siendo positivo</b>: el cargador
+de 11 kW (RIC 15) programado de 10 a 16 h aprovecha los excedentes de verano.</p>
 {tabla(["Mes", "Consumo", "Compra red", "Autosuf."], filas_e, "chica")}
 """
 

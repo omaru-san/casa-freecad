@@ -74,7 +74,7 @@ PRODUCCION_KWH_KWP_ANUAL = _PV["kwh_anual_por_kwp"]
 # Sala técnica bajo el tramo alto de la escalera (interior, protegida de heladas: LiFePO4 no carga bajo 0 °C)
 INVERSOR = (10.25, 0.22, "INV")   # inversor HÍBRIDO 6 kW
 BATERIA = {"kwh": 11.0, "x": 9.65, "y": 0.22, "tipo": "LiFePO4 11 kWh, 51,2 V"}
-CONSUMO_ESTIMADO_KWH_MES = 320    # supuesto: familia 4-5 personas + bomba de pozo (ver calculo/fv_bateria.py)
+CONSUMO_ESTIMADO_KWH_MES = 640    # casa todo eléctrica + bomba de calor + pozo (ver calculo/fv_bateria.py)
 
 
 def panel_a_planta(x0, x1, s0, s1):
@@ -87,8 +87,8 @@ AREA_CAPTACION = CANALETAS[0]["area_m2"] + CANALETAS[2]["area_m2"]  # faldón no
 ESTANQUE = {"x": 13.6, "y": 6.0, "litros": 5000}
 COEF_ESCORRENTIA = 0.85
 
-# ================= VENTILACIÓN / CALEFACCIÓN =================
-# flechas de ventilación cruzada (piso, [(x,y),...])
+# ================= VENTILACIÓN / CALEFACCIÓN (casa todo eléctrica, sin combustión) =================
+# flechas de ventilación cruzada natural para verano (piso, [(x,y),...])
 VENT_CRUZADA = [
     (1, [(2.0, 5.7), (2.0, 4.0), (1.0, 2.6)]),       # living norte -> puerta terraza sur
     (1, [(5.0, 5.7), (5.0, 3.6), (8.9, 2.5), (11.25, 2.3)]),  # living norte -> acceso
@@ -97,27 +97,54 @@ VENT_CRUZADA = [
     (2, [(7.1, 5.7), (7.1, 3.6), (8.25, 3.1), (9.5, 2.5), (11.0, 2.5), (11.25, 0.4)]),  # dorm 2 -> hall sur
     (2, [(10.4, 5.7), (11.4, 3.3), (11.6, 2.5), (11.6, 0.4)]),   # dorm 3 -> hall sur
 ]
+# Ventilación mecánica controlada de doble flujo con recuperador de calor (VMC). Caudal NCh 3309 (vía ECSV Tomo I):
+# Q = 0,15 L/s·m² × 125 m² + 3,5 L/s × (3 dormitorios + 1) ≈ 33 L/s → diseño 35 L/s (126 m³/h), balanceado.
+VMC = {"piso": 2, "x": 2.70, "y": 0.45, "w": 0.80, "h": 0.60, "caudal_ls": 35,
+       "texto": "VMC doble flujo, recuperación ≥ 80 %, 150–200 m³/h, bypass de verano, filtros F7/M5",
+       "toma": (2.0, 0.25), "expulsion": (2.0, 0.85)}   # por muro oeste del closet (separadas ≥ 0,6 m)
+# rejillas: (piso, tipo 'IM' impulsión | 'EX' extracción, x, y, L/s, recinto)
+REJILLAS = [
+    (1, "IM", 2.00, 3.60, 10, "Living"), (1, "IM", 3.20, 1.40, 4, "Oficina 1"), (1, "IM", 10.75, 4.00, 4, "Oficina 2"),
+    (2, "IM", 3.75, 5.10, 7, "Dorm. principal"), (2, "IM", 7.10, 5.10, 5, "Dormitorio 2"), (2, "IM", 10.40, 5.10, 5, "Dormitorio 3"),
+    (1, "EX", 7.20, 4.20, 10, "Cocina"), (1, "EX", 5.00, 1.65, 10, "Baño P1"), (1, "EX", 6.55, 1.55, 5, "Lavandería"),
+    (2, "EX", 6.60, 1.60, 10, "Baño P2"),
+]
 # elementos: (piso, código, x, y, texto)
 ELEMENTOS_VENT = [
-    (1, "EX", 5.30, 1.75, "Extractor baño 25 L/s, salida a muro sur"),
-    (1, "CA", 5.80, 5.75, "Campana cocina, ducto Ø150 a muro norte"),
-    (1, "DC", 7.55, 0.50, "Ducto calefont Ø100 a techo"),
-    (1, "RS", 6.30, 1.85, "Rejilla superior (sección según DS 66 / potencia)"),
-    (1, "RI", 6.95, 0.25, "Rejilla inferior (sección según DS 66 / potencia)"),
-    (1, "ES", 1.00, 5.50, "Estufa pellet 8 kW, cañón Ø80/125 por techo bajo"),
-    (1, "TA", 0.15, 5.50, "Toma aire exterior estufa Ø80"),
-    (1, "DH", 7.40, 1.60, "Lavandería: tendido interior con deshumidificador o secadora con condensación"),
-    (2, "EX", 6.10, 1.75, "Extractor baño 25 L/s, ducto a techo"),
+    (1, "CA", 5.80, 5.75, "Campana inducción, ducto Ø150 a muro norte con clapeta + aire de compensación"),
+    (1, "BC", 6.95, -0.55, "Bomba de calor aire-agua monobloc ~6 kW (R290), muro sur bajo alero"),
+    (1, "AC", 7.45, 0.40, "Acumulador ACS 300 L + válvula mezcladora termostática 45 °C"),
+    (1, "CO", 8.45, 2.12, "Colector piso radiante P1 (caudalímetros + actuadores)"),
+    (1, "DH", 7.50, 1.70, "Lavandería: secadora con bomba de calor (sin evacuación) o tendido con deshumidificador"),
+    (2, "CO", 8.45, 2.12, "Colector piso radiante P2"),
     (2, "VT", 4.55, 0.50, "Ventilación B.A.S. Ø75 sobre cubierta"),
 ]
-# microventilación permanente en marcos de ventanas de recintos secos (piso, índice ventana)
-MICROVENT = [(1, 0), (1, 1), (1, 3), (1, 6), (2, 0), (2, 1), (2, 2), (2, 7)]
+# Piso radiante: zonas (piso, x0, y0, x1, y1, nombre) — tubo PE-Xa/PE-RT 16 mm con barrera antioxígeno, paso 15 cm
+ZONAS_RADIANTE = [
+    (1, 0.25, 2.25, 7.75, 5.75, "Living-cocina"), (1, 2.25, 0.25, 4.15, 1.75, "Oficina 1"),
+    (1, 4.65, 0.25, 5.95, 1.75, "Baño"), (1, 9.75, 3.25, 11.75, 5.75, "Oficina 2"), (1, 8.25, 2.20, 11.75, 2.80, "Pasillo"),
+    (2, 2.25, 3.25, 5.25, 5.75, "Dorm. principal"), (2, 5.75, 3.25, 8.50, 5.75, "Dormitorio 2"),
+    (2, 9.00, 3.25, 11.75, 5.75, "Dormitorio 3"), (2, 4.65, 0.25, 7.55, 1.75, "Baño"),
+    (2, 4.65, 2.20, 11.75, 2.80, "Pasillo"),
+]
+T_IMPULSION = 35   # °C en diseño (exterior −4,5 °C); curva climática 28–35 °C
+PASO_TUBO = 0.15   # m
+EFICIENCIA_VMC = 0.80
+N50_META = 3.0     # ren/h a 50 Pa (exigido ≤ 5,0 en provincia de Valdivia)
+SCOP_BC = 3.5
 
 # ================= EMPLAZAMIENTO (m, mismo origen) =================
 SITIO = CLIMA["sitio"]
 NORTE_MAGNETICO_DEG = 7  # declinación aproximada (E); verificar en terreno
 ACCESO = [(30.0, -3.5), (16.0, -3.5), (12.6, -1.0), (11.25, -0.2)]  # desde camino vecinal (este)
-ESTACIONAMIENTO = (14.0, -8.0, 19.0, -4.5)
+ESTACIONAMIENTO = (12.5, -10.5, 18.5, -5.0)   # 2 autos: 6,0 × 5,5 m, ripio compactado (permeable)
+WALLBOX = (15.5, -5.2)                        # cargador 11 kW en poste, IP54 (RIC 15), cable recogido ≥ 10 cm del suelo
+DUCTO_EV = [(12.0, 2.30), (12.6, 2.30), (12.6, -4.6), (15.5, -4.6), (15.5, -5.2)]  # ducto enterrado PVC Ø40
+CASETA_AGUA = (13.2, 1.0, 15.4, 3.2)          # estanque AP 3.000 L + presurizadora velocidad variable + filtro + UV
+# Defensa contra incendio forestal (CONAF, Comunidades Preparadas): fajas medidas desde el muro
+ZONAS_CONAF = [(2, "0–2 m: sin vegetación (ripio), sin leña ni combustibles"),
+               (10, "2–10 m: pasto corto, plantas de bajo porte y riego"),
+               (30, "10–30 m: árboles raleados y podados a 2 m (fuera del dibujo)")]
 FOSA = {"x": (-7.0, -4.6), "y": (-2.4, -1.0), "litros": 2400}  # DS 236: 24 h retención + lodos 2 años, 5 personas
 DRENES = [[(-9.0, -3.0 + k * 1.8), (-21.0, -3.0 + k * 1.8)] for k in range(3)]  # zanjas de infiltración
 CAMARA_DISTRIBUCION = (-8.2, -1.2)
@@ -152,7 +179,8 @@ _A_VENT = sum(_porcentaje_ventana(o)[1] for o in ("N", "S", "EO"))
 _A_MURO = sum(_porcentaje_ventana(o)[2] for o in ("N", "S", "EO")) - _A_VENT - 0.9 * 2.05
 ENVOLVENTE = {
     "zona": "ZONA TÉRMICA G (Mariquina) · OGUC 4.1.10 / DS 15 MINVU",
-    "renovaciones_h": 0.6,
+    # ren/h equivalentes: VMC 126 m³/h con recuperación 80 % + infiltración n50/20
+    "renovaciones_h": round(126 * (1 - EFICIENCIA_VMC) / (125 * 2.5) + N50_META / 20, 2),
     "areas": [  # (elemento, área m², U W/m²K) para el balance
         ("Cielo P2 + techo bajo", 60 + 8, 0.19),
         ("Muros perimetrales (netos)", round(_A_MURO, 1), 0.32),
@@ -163,7 +191,7 @@ ENVOLVENTE = {
     ],
     "tabla": [  # (elemento, solución, U propuesta, U máx. zona G)
         ("Techumbre", "Cielo: 2 capas lana mineral 100 mm cruzadas + barrera vapor", 0.19, "0,28"),
-        ("Muros", "Tabique madera 2×6 + lana min. 140 mm + OSB + barrera hum. + siding ventilado", 0.32, "0,40"),
+        ("Muros", "2×6 + lana min. 140 + OSB + barrera hum. + siding ventilado + cámara técnica + yeso RF (F-15)", 0.32, "0,40"),
         ("Piso ventilado", "Losa sobre terraza entrada + EPS 80 mm por cara inferior", 0.35, "0,39"),
         ("Sobrecimiento", "EPS 50 mm por exterior hasta 30 cm bajo terreno (R100 ≈ 130)", 0.0, "R100 ≥ 91"),
         ("Ventanas", f"PVC DVH low-e, clase 3 de permeabilidad (U {num_s(U_VENTANA)})", U_VENTANA, "según %"),
@@ -174,13 +202,13 @@ ENVOLVENTE["notas"] = [
     "Ventanas sobre muro: N {:.0f} % (máx. 76 %) · S {:.0f} % (máx. 26 %) · O-E {:.0f} % (máx. 40 %) con U 1,6.".format(
         _porcentaje_ventana("N")[0], _porcentaje_ventana("S")[0], _porcentaje_ventana("EO")[0]),
     "Hermeticidad: ≤ 5,0 ren/h a 50 Pa (prov. Valdivia). Partida de sellos en EETT.",
-    "Exige memoria de condensación (NCh 1973 / NCh 853) y sistema de ventilación (NCh 3308/3309).",
-    "Zona sísmica 3 (NCh433): cálculo estructural obligatorio (> 100 m²).",
+    "Memoria de condensación (Res. Ex. 1802: ext. 3,5 °C / 98 % HR) y ventilación NCh 3309: VMC 35 L/s con recuperador 80 %.",
+    "Zona sísmica 3: cálculo estructural (> 100 m²). Fuego: F-15 en soportantes (OGUC 4.3.5 n°14, ≤ 140 m² y 2 pisos).",
 ]
 ENVOLVENTE["capas"] = {
     "techumbre": "Zinc-alum 0,4 mm · fieltro · OSB 11 mm · cerchas · paneles FV a 35°",
     "cielo": "Lana mineral 2 × 100 mm · barrera de vapor · yeso-cartón 12,5 mm (U 0,19)",
-    "muro": "Siding · cámara ventilada · barrera hum. · OSB · 2×6 + lana 140 mm · yeso RH (U 0,32)",
+    "muro": "Siding · cámara ventilada · barrera hum. · OSB · 2×6 + lana 140 · b. vapor · cámara técnica 40 · yeso RF 15 (U 0,32, F-15)",
     "entrepiso": "Losa / envigado + aislación acústica 50 mm",
     "piso": "Radier 10 cm · polietileno 0,2 mm · grava 10 cm · EPS 50 mm en sobrecimiento",
 }

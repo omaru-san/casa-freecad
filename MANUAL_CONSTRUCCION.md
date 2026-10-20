@@ -33,7 +33,7 @@
    - abrir el camino a subsidio y crédito.
 
    Una casa de ~130 m² con este estándar cuesta del orden de **$130–200 MM**, o sea **25–38 UF/m²**.
-   Gastar el presupuesto inicial en fundaciones sin tener financiada la obra gruesa es el error más caro posible:
+   Gastar el presupuesto inicial en obra sin tener financiada la obra gruesa es el error más caro posible:
    - la madera y el hormigón a medio hacer se deterioran con 1.700 mm de lluvia al año;
    - los proyectos improvisados después cuestan el doble.
 2. **Financiamiento realista:**
@@ -47,7 +47,7 @@
    - la OGUC exige solo **F-15** en la estructura (sobre 140 m² sube a F-30);
    - baja el costo.
 4. **Primero la envolvente, después las terminaciones.** El orden que nunca se altera:
-   - fundaciones;
+   - fundaciones (las proyecta y ejecuta un tercero, ver Etapa 3);
    - estructura;
    - techo;
    - barreras;
@@ -58,12 +58,13 @@
    - revestimientos.
 
    **Construir de octubre a abril** y cerrar el techo antes de mayo.
-5. **Cambios al anteproyecto actual:** los planos de `laminas/` tienen calefont a gas y estufa a pellet. Con bomba de calor hay que pasar a:
-   - **bomba de calor aire-agua para el piso radiante y el agua caliente**;
-   - **cocina de inducción**;
+5. **Diseño ya ajustado a la norma (20-10-2026).** Los planos de `laminas/` quedaron como **casa todo eléctrica**:
+   - bomba de calor aire-agua para el piso radiante y el agua caliente;
+   - cocina de inducción y ventilación mecánica con recuperador de calor;
    - **sin gas**, y por lo tanto sin riesgo de monóxido de carbono ni trámite TC6.
 
-   Hay que actualizar las láminas 02, 03 y 06.
+   El detalle norma por norma está en [CUMPLIMIENTO_NORMATIVO.md](CUMPLIMIENTO_NORMATIVO.md) (55 verificaciones automáticas).
+   **Las fundaciones quedan fuera de este proyecto:** la lámina 08 entrega las cargas para quien las diseñe.
 
 ---
 
@@ -257,7 +258,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 
 ### Etapa 1 — Estudios del terreno (mes 1–3, idealmente en invierno) · ≈ $1–2 MM
 - [ ] **Topografía** con curvas de nivel y deslindes (~$0,4–0,8 MM).
-- [ ] **Mecánica de suelos** básica: calicata de 1,5–2 m y **test de percolación con la napa alta**, en junio–agosto (~$0,6–1,2 MM). Define el tipo de fundación y el sistema de fosa y drenes.
+- [ ] **Mecánica de suelos** básica: calicata de 1,5–2 m y **test de percolación con la napa alta**, en junio–agosto (~$0,6–1,2 MM). Define el sistema de fosa y drenes; entregarla también a quien proyecte las fundaciones.
 
 ### Etapa 2 — Proyecto completo y permisos (mes 2–6) · ≈ $4–7 MM
 - [ ] **Arquitecto** que:
@@ -265,7 +266,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
   - firme y tramite el permiso en la **DOM en Línea**.
 
   Al tratarse de la vivienda del propietario en zona rural, basta el permiso de la DOM, sin informe del SAG ni de la SEREMI MINVU ([DDU 455](normas/01_permisos_urbanismo_estructura/2021_MINVU_DDU-455_Recapitulativa-art55-LGUC-area-rural.pdf)).
-- [ ] **Cálculo estructural** (ingeniero civil): fundaciones según la mecánica de suelos, estructura para la zona sísmica 3 y carga de los paneles solares en el techo.
+- [ ] **Cálculo estructural** (ingeniero civil): estructura de madera para la zona sísmica 3 y carga de los paneles solares en el techo. Las fundaciones van aparte, con las cargas de la lámina 08.
 - [ ] **Especificaciones técnicas con anexo térmico:** cumplimiento del DS 15, memoria de condensación y partida de hermeticidad y ventilación.
 - [ ] **Proyecto eléctrico** (instalador SEC) con la sección de paneles solares, el cargador y la domótica.
 - [ ] **Proyecto sanitario** (agua potable y fosa) para la **SEREMI de Salud Los Ríos** (SEREMI en Línea).
@@ -280,7 +281,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 > - cotizar llave en mano o por partidas;
 > - evitar errores irreparables.
 
-### Etapa 3 — Faena y fundaciones (temporada seca, oct–dic) · ≈ $12–20 MM
+### Etapa 3 — Faena e interfaz con las fundaciones (temporada seca, oct–dic) · ≈ $3–6 MM sin fundaciones
 - [ ] **Instalación de faena:**
   - cierre perimetral;
   - bodega con llave;
@@ -294,8 +295,14 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
   - ducto del empalme;
   - ductos de agua;
   - **tubo de puesta a tierra en las fundaciones** (electrodo de fundación).
-- [ ] Fundaciones y sobrecimiento con **aislante de borde**. Luego el radier **sobre EPS ≥ 80 mm y polietileno**.
-- [ ] **Inspección del calculista** antes de cada hormigonado (enfierradura). Guardar las probetas o certificados del hormigón.
+- [ ] **Fundaciones y sobrecimiento: las proyecta y ejecuta un tercero.** Entregarle por escrito:
+  - las cargas de la lámina 08 y de las [memorias](calculo/MEMORIAS.pdf), cap. 1.8;
+  - los ejes de muros;
+  - los pernos de solera Ø12 @ ≤ 0,50 m y los hold-down;
+  - las pasadas de alcantarillado y los ductos;
+  - el sobrecimiento ≥ 20 cm sobre el terreno, con **aislante de borde R100 ≥ 91** (DS 15);
+  - el radier **sobre EPS ≥ 80 mm y polietileno**, que es la base del piso radiante.
+- [ ] Recibir el sobrecimiento **a nivel y escuadra** antes de partir la estructura de madera (tolerancia ±5 mm).
 
 ### Etapa 4 — Obra gruesa y casa cerrada al agua (ene–abr) · ≈ $45–65 MM
 - [ ] Entramados de muros (madera preservada), anclajes, entrepiso y escalera estructural.
@@ -375,7 +382,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 4. **Fotografiar todo antes de cerrar.** Es el mapa de las instalaciones para siempre.
 5. **Calendario de lluvias:** trabajos exteriores de oct a abr; interiores de may a sep.
 6. **No ahorrar en lo que no se puede cambiar después:**
-   - fundaciones;
+   - fundaciones (las proyecta y ejecuta un tercero, ver Etapa 3);
    - estructura;
    - aislación;
    - ventanas;

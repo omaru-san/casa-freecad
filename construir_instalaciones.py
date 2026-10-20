@@ -66,13 +66,20 @@ for piso, z in ((1, 0.03), (2, D.Z2 + 0.03)):
             wire([(x, y), luces[j][:2]], z, ce, f"Retorno_{i}_{j}")
     for i, (x, y, c, ip) in enumerate(I.ENCHUFES_1 if piso == 1 else I.ENCHUFES_2):
         circulo(x, y, z, 0.12, ce, f"Enchufe_{c}{'_IP' if ip else ''}_{i}")
+    for p_, x, y, c, sigla in I.CONEXIONES_FIJAS:
+        if p_ == piso:
+            circulo(x, y, z, 0.10, ce, f"Conexion_{sigla}_{c}")
+            texto(x + 0.12, y + 0.12, z, sigla, ce)
+    for i, (p_, x, y, tipo) in enumerate(I.DETECTORES):
+        if p_ == piso:
+            circulo(x, y, z + (D.H1 if piso == 1 else D.H2) - 0.05, 0.08, ce, f"Detector_{tipo}_{i}")
     if piso == 1:
         texto(*I.TABLERO[:2], z, "TDA", ce, 0.18)
         texto(*I.MEDIDOR_ELEC[:2], z, "MED", ce, 0.18)
 
     redes = [("AF", I.AF_1 if piso == 1 else I.AF_2), ("AC", I.AC_1 if piso == 1 else I.AC_2),
-             ("ALC", I.ALC_1 if piso == 1 else I.ALC_2)] + ([("GAS", I.GAS_1)] if piso == 1 else [])
-    colores = {"AF": (0.12, 0.43, 0.82), "AC": (0.84, 0.15, 0.16), "ALC": (0.48, 0.29, 0.16), "GAS": (0.88, 0.63, 0.0)}
+             ("ALC", I.ALC_1 if piso == 1 else I.ALC_2)] + ([("HID", I.HIDRAULICO_1)] if piso == 1 else [])
+    colores = {"AF": (0.12, 0.43, 0.82), "AC": (0.84, 0.15, 0.16), "ALC": (0.48, 0.29, 0.16), "HID": (0.56, 0.27, 0.68)}
     for red, lineas in redes:
         for k, pts in enumerate(lineas):
             w = wire(pts, z, cp, f"{red}_{k}")

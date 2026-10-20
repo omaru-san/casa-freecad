@@ -15,6 +15,7 @@ Cada carpeta tiene un `INDICE.md` con:
 | [02_electrico_solar_domotica](02_electrico_solar_domotica/INDICE.md) | Electricidad, solar y telecomunicaciones. Ver detalle abajo. | RIC-10, RGR-02, RIC-15 |
 | [03_agua_alcantarillado_gas_calefaccion](03_agua_alcantarillado_gas_calefaccion/INDICE.md) | Agua, alcantarillado, gas y calefacción. Ver detalle abajo. | DS 236, RIDAA, guía de bombas de calor |
 | [04_fuego_sustentabilidad_ventilacion_subsidios](04_fuego_sustentabilidad_ventilacion_subsidios/INDICE.md) | Fuego, sustentabilidad, ventilación y subsidios. Ver detalle abajo. | Listado de fuego ED17, ECSV Tomo I, ficha DS1 |
+| [05_NCh_INN](05_NCh_INN/INDICE.md) | Normas NCh del INN: cómo leerlas gratis (visor MINVU), precios y valores públicos que las reemplazan | Visor [normastecnicas.minvu.cl](https://normastecnicas.minvu.cl/) |
 
 **Detalle por carpeta:**
 - **01 Permisos, urbanismo y estructura:**
@@ -41,6 +42,6 @@ Cada carpeta tiene un `INDICE.md` con:
   - Fichas de los subsidios DS1 y DS10.
 
 **Las normas NCh del INN son pagadas.** No se descargaron copias piratas. Cada índice lista las relevantes con su link a la tienda del INN.
-Para la casa, el arquitecto y los proyectistas ya deberían tenerlas.
+Las obligatorias (NCh433, NCh1198, NCh853, NCh3308/3309, etc.) se leen gratis en el [visor oficial del MINVU](https://normastecnicas.minvu.cl/), solo en pantalla. Los proyectistas deberían tener las demás.
 
 El manual de construcción que usa todo esto está en [../MANUAL_CONSTRUCCION.md](../MANUAL_CONSTRUCCION.md).

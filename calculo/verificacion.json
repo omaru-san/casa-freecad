@@ -1,0 +1,442 @@
+[
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Altura piso-cielo ≥ 2,30 m (piso 1)",
+  "valor": "2,50 m",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.1",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Altura piso-cielo ≥ 2,30 m (piso 2)",
+  "valor": "2,50 m",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.1",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Fuego / subsidio",
+  "exigencia": "Superficie edificada ≤ 140 m² y ≤ 2 pisos → F-15 en soportantes; tope DS1",
+  "valor": "125,0 m²",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.3.5 n°14 · DS1 MINVU",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Ventana al exterior en local habitable: Living / Cocina",
+  "valor": "sí",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Ventana al exterior en local habitable: Oficina 1",
+  "valor": "sí",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Ventana al exterior en local habitable: Oficina 2",
+  "valor": "sí",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Ventana al exterior en local habitable: Dormitorio Principal",
+  "valor": "sí",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Ventana al exterior en local habitable: Dormitorio 2",
+  "valor": "sí",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Ventana al exterior en local habitable: Dormitorio 3",
+  "valor": "sí",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Seguridad niños",
+  "exigencia": "Antepecho ventanas P2 ≥ 0,95 m (art. 4.2.7 no rige en vivienda unifamiliar; se aplica igual)",
+  "valor": "1,00 m",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.2.7 (recomendación)",
+  "tipo": "criterio"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Escalera cómoda: 0,60 ≤ 2·ch + h ≤ 0,65 m, ch ≤ 0,18 m",
+  "valor": "ch 0,180 · 2ch+h 0,610",
+  "estado": "CUMPLE",
+  "fuente": "Buena práctica (OGUC 4.2.11 sólo rige en evacuación)",
+  "tipo": "criterio"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "U techumbre ≤ 0,28 W/m²K",
+  "valor": "0,19",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.10 (DS 15)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "U muros ≤ 0,40 W/m²K",
+  "valor": "0,32",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.10 (DS 15)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "U piso ventilado ≤ 0,39 W/m²K",
+  "valor": "0,35",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.10 (DS 15)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "U puerta acceso ≤ 1,70 W/m²K",
+  "valor": "1,70",
+  "estado": "CUMPLE",
+  "fuente": "OGUC 4.1.10 (DS 15)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "Ventanas N ≤ 76 % del muro (U ventana ≤ 1,6)",
+  "valor": "25 %",
+  "estado": "CUMPLE",
+  "fuente": "DS 15, Tabla 3",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "Ventanas S ≤ 26 % del muro (U ventana ≤ 1,6)",
+  "valor": "13 %",
+  "estado": "CUMPLE",
+  "fuente": "DS 15, Tabla 3",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "Ventanas EO ≤ 40 % del muro (U ventana ≤ 1,6)",
+  "valor": "12 %",
+  "estado": "CUMPLE",
+  "fuente": "DS 15, Tabla 3",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Térmica zona G",
+  "exigencia": "Hermeticidad ≤ 5,0 ren/h a 50 Pa (prov. Valdivia)",
+  "valor": "meta 3,0 (blower door)",
+  "estado": "CUMPLE",
+  "fuente": "DS 15 · Actualización RT DITEC",
+  "tipo": "a verificar en obra"
+ },
+ {
+  "tema": "Ventilación",
+  "exigencia": "Caudal NCh 3309 ≥ 0,15·A + 3,5·(dorm+1) = 32,8 L/s",
+  "valor": "impulsión 35 / extracción 35 L/s",
+  "estado": "CUMPLE",
+  "fuente": "DS 15 → NCh 3309 (vía ECSV Tomo I)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Ventilación",
+  "exigencia": "Extracción continua Baño P1 ≥ 10 L/s",
+  "valor": "10 L/s",
+  "estado": "CUMPLE",
+  "fuente": "ECSV Tomo I / OGUC 4.1.3",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Ventilación",
+  "exigencia": "Extracción continua Baño P2 ≥ 10 L/s",
+  "valor": "10 L/s",
+  "estado": "CUMPLE",
+  "fuente": "ECSV Tomo I / OGUC 4.1.3",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Ventilación",
+  "exigencia": "Extracción continua Cocina ≥ 10 L/s",
+  "valor": "10 L/s",
+  "estado": "CUMPLE",
+  "fuente": "ECSV Tomo I / OGUC 4.1.3",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Living / Cocina P1 (32,0 m²) ≥ 2",
+  "valor": "3",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes Living / Cocina P1: 1 por cada 8 m de perímetro → ≥ 3",
+  "valor": "4",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 b)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Oficina 1 P1 (4,8 m²) ≥ 1",
+  "valor": "1",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes Oficina 1 P1: 1 por cada 8 m de perímetro → ≥ 2",
+  "valor": "3",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 b)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Baño P1 (3,6 m²) ≥ 1",
+  "valor": "1",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Oficina 2 P1 (7,5 m²) ≥ 1",
+  "valor": "1",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes Oficina 2 P1: 1 por cada 8 m de perímetro → ≥ 2",
+  "valor": "3",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 b)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Cada centro con interruptor independiente (P1)",
+  "valor": "13 centros, 11 mandos",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Dormitorio Principal P2 (10,5 m²) ≥ 2",
+  "valor": "2",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes Dormitorio Principal P2: 1 por cada 8 m de perímetro → ≥ 2",
+  "valor": "4",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 b)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Dormitorio 2 P2 (9,8 m²) ≥ 1",
+  "valor": "1",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes Dormitorio 2 P2: 1 por cada 8 m de perímetro → ≥ 2",
+  "valor": "5",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 b)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Dormitorio 3 P2 (9,8 m²) ≥ 1",
+  "valor": "1",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes Dormitorio 3 P2: 1 por cada 8 m de perímetro → ≥ 2",
+  "valor": "6",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 b)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Centros de luz Baño P2 (6,8 m²) ≥ 1",
+  "valor": "1",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Cada centro con interruptor independiente (P2)",
+  "valor": "9 centros, 7 mandos",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 a)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Cocina ≥ 3 enchufes dobles + circuito exclusivo 16 A + circuitos de inducción y horno",
+  "valor": "3 en C4 + C9 + C10",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.2 d), e)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Diferencial ≤ 30 mA en todo circuito de alumbrado/enchufes y ≤ 3 circuitos por diferencial",
+  "valor": "5 diferenciales, máx. 3 circuitos",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.1.3.5 y 5.1.3.7",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes del baño P1 fuera de volúmenes 0-1-2 (≥ 0,60 m de la ducha)",
+  "valor": "0,85 m",
+  "estado": "CUMPLE",
+  "fuente": "RIC 11 sección 6",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes del baño P2 fuera de volúmenes 0-1-2 (≥ 0,60 m de la ducha)",
+  "valor": "1,55 m",
+  "estado": "CUMPLE",
+  "fuente": "RIC 11 sección 6",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Tablero fuera de dormitorios, baños, lavaderos y closets",
+  "valor": "PASILLO",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.1.3.2",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Eléctrico",
+  "exigencia": "Enchufes de alvéolos protegidos; cargador EV con circuito exclusivo y diferencial tipo B",
+  "valor": "especificado",
+  "estado": "CUMPLE",
+  "fuente": "RIC 10 5.1.2.8 · RIC 15",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Solar",
+  "exigencia": "Inversor con detección de arco (AFCI); diferencial 100 mA (5–10 kW)",
+  "valor": "inversor 6 kW",
+  "estado": "CUMPLE",
+  "fuente": "Res. SEC 33.038 · RGR 02",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Sanitario",
+  "exigencia": "Pendiente de descargas 3 %–15 % (1 % sólo justificado)",
+  "valor": "3 % (rótulo y notas)",
+  "estado": "CUMPLE",
+  "fuente": "RIDAA art. 88",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Sanitario",
+  "exigencia": "Drenes y fosa a ≥ 20 m del pozo",
+  "valor": "drenes 30,5 m · fosa 26,3 m",
+  "estado": "CUMPLE",
+  "fuente": "DS 236",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Sanitario",
+  "exigencia": "Fosa ≥ 24 h de retención + lodos 2 años (5 pers. ≈ 1,1 m³)",
+  "valor": "2,4 m³",
+  "estado": "CUMPLE",
+  "fuente": "DS 236",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Sanitario",
+  "exigencia": "Presión ≥ 14 m.c.a. tras la llave de paso; bomba aspira de estanque; partida-detención ≤ 12 m.c.a.",
+  "valor": "presurizadora VSD 30–42 m.c.a. desde estanque 3.000 L",
+  "estado": "CUMPLE",
+  "fuente": "RIDAA art. 52 f) y bombeo k)",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Sanitario",
+  "exigencia": "Agua caliente sin gas: acumulación ≥ 60 °C semanal (Legionella) y salida ≤ 48 °C (niños)",
+  "valor": "acumulador 300 L + VMT 45 °C",
+  "estado": "CUMPLE",
+  "fuente": "Guías Legionella (Sanidad ES / Gob. Vasco)",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Calefacción",
+  "exigencia": "Temperatura superficial de piso radiante ≤ 29 °C en zonas de estar",
+  "valor": "25,3 °C (55 W/m²)",
+  "estado": "CUMPLE",
+  "fuente": "UNE-EN 1264 (referencia)",
+  "tipo": "calculado"
+ },
+ {
+  "tema": "Calefacción",
+  "exigencia": "Sin artefactos de combustión ni chimeneas (riesgo CO e incendio)",
+  "valor": "bomba de calor + inducción",
+  "estado": "CUMPLE",
+  "fuente": "Criterio de diseño (DS 66 no aplica: sin gas)",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Fuego",
+  "exigencia": "Faja de defensa 0–2–10–30 m, techo metálico, aleros cerrados con malla",
+  "valor": "dibujada en EMP-01",
+  "estado": "CUMPLE",
+  "fuente": "CONAF Comunidades Preparadas · MINVU Chile se Prepara",
+  "tipo": "especificado"
+ },
+ {
+  "tema": "Fuego",
+  "exigencia": "Detectores de humo interconectados en dormitorios y circulaciones",
+  "valor": "7 DH + 1 DT",
+  "estado": "CUMPLE",
+  "fuente": "Buena práctica (proyecto de ley en trámite)",
+  "tipo": "especificado"
+ }
+]

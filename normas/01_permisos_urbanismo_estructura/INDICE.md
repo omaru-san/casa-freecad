@@ -155,7 +155,7 @@ No existe un "manual de aplicación" oficial del MINVU. El Instituto de la Const
 
 ## Normas pagadas / no descargadas
 
-Las NCh del INN se venden. **No se descargaron copias no oficiales.** Se pueden comprar en la [tienda INN](https://ecommerce.inn.cl/search?q=NCh), y el INN tiene además una modalidad de visualización. El art. 2° de la LGUC obliga a publicar gratis las normas técnicas obligatorias, pero no se encontró un visor oficial operativo (ver "Por confirmar").
+Las NCh del INN se venden. **No se descargaron copias no oficiales.** Se pueden comprar en la [tienda INN](https://ecommerce.inn.cl/search?q=NCh), y el INN tiene además una modalidad de visualización. El art. 2° de la LGUC obliga a publicarlas gratis: el MINVU las muestra en su visor oficial [Listado de Normas Técnicas Obligatorias](https://normastecnicas.minvu.cl/) (solo lectura en pantalla, sin descarga). Ver [05_NCh_INN](../05_NCh_INN/INDICE.md).
 
 | Norma | Tema | Link |
 |---|---|---|

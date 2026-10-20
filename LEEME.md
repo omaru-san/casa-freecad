@@ -6,15 +6,16 @@
 | `Casa.FCStd` | Modelo FreeCAD: muros 3D, losas, escalera, ventanas + capas eléctricas y de gasfitería |
 | `laminas/PLANOS_COMPLETOS.pdf` | Las 7 láminas en un solo PDF |
 | `laminas/01_arquitectura.pdf` | Plantas con cotas, superficies y vista 3D |
-| `laminas/02_electrico.pdf` | Luces, enchufes, interruptores, tablero y cuadro de cargas |
-| `laminas/03_gasfiteria.pdf` | Agua fría/caliente, alcantarillado (fosa séptica), gas |
+| `laminas/02_electrico.pdf` | Luces, enchufes, detectores, 15 circuitos (RIC SEC), cargador EV, cuadro de cargas |
+| `laminas/03_gasfiteria.pdf` | Agua fría/caliente (bomba de calor, sin gas), alcantarillado 3 %, fosa séptica |
 | `laminas/04_emplazamiento.pdf` | Orientación solar, carta solar, rosa de vientos, terreno, clima |
 | `laminas/05_techumbre_fv_lluvias.pdf` | Techo 35°, paneles FV, canaletas, cosecha de lluvia |
-| `laminas/06_ventilacion_calefaccion.pdf` | Ventilación, humedad, estufa, balance térmico |
+| `laminas/06_ventilacion_calefaccion.pdf` | Piso radiante, ventilación con recuperador (VMC), balance térmico |
 | `laminas/07_elevaciones_corte.pdf` | Elevaciones N y S, corte, envolvente térmica zona G |
+| `CUMPLIMIENTO_NORMATIVO.md` | **Verificación norma por norma** (generada por `calculo/verificar_normas.py`) |
 | `MANUAL_CONSTRUCCION.md` | **Manual por etapas: qué hacer primero, costos, financiamiento, decisiones de diseño** |
 | `normas/` | Biblioteca normativa 2026 (152 PDF oficiales), con `README.md` e `INDICE.md` por tema |
-| `laminas/08_estructura.pdf` | Fundaciones, muros de corte, entrepiso, cerchas y resumen de cálculo |
+| `laminas/08_estructura.pdf` | Muros de corte, entrepiso, cerchas y **cargas a fundación** (fundaciones por terceros) |
 | `laminas/09_topografia.pdf` | Curvas de nivel (DEM), contexto, perfiles y movimiento de tierra |
 | `calculo/MEMORIAS.pdf` | Memorias: estructural, condensación (Glaser), FV + batería, topografía |
 | `calculo/FEM_Viga.FCStd` | Análisis por elementos finitos (CalculiX) de la viga sobre la terraza |
@@ -39,6 +40,7 @@
 2. Regenera los PDF:  `python3 generar_laminas.py`
    Si cambias estructura, paneles o consumo: `python3 -I calculo/estructura.py`, `python3 -I calculo/fv_bateria.py`,
    `python3 -I calculo/condensacion.py` y luego `python3 -I calculo/generar_memorias.py`.
+   Siempre al final: `python3 -I calculo/verificar_normas.py` (actualiza CUMPLIMIENTO_NORMATIVO.md).
 3. Regenera el modelo: en FreeCAD, menú Macro → Consola Python, y pega:
    ```python
    exec(open("/Users/jai/personal/casa_freecad/construir_instalaciones.py").read())
@@ -54,4 +56,5 @@
 ## Importante
 - Las medidas son **aproximadas** (1er piso 12 × 6 m, 2do piso 10 × 6 m). Verifica en terreno.
 - Instalaciones = anteproyecto. Para construir se requiere proyecto firmado por instalador
-  eléctrico SEC (TE1), proyecto sanitario aprobado por la sanitaria y gas por instalador SEC (TC6).
+  eléctrico SEC (TE1, TE4 solar, TE6 cargador EV) y proyecto sanitario aprobado por la SEREMI de Salud.
+  Casa sin gas. Fundaciones fuera de alcance (las proyecta un tercero con las cargas de la lámina 08).

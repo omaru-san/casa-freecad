@@ -55,8 +55,8 @@ def tabla_dicts(L, x, y, titulo, filas, anchos, fs=1.5):
 
 def lamina_estructura():
     L = Lamina()
-    marco(L, "EST-01", "ESTRUCTURA — FUNDACIONES, MUROS DE CORTE Y ENTREPISO", 8)
-    L.txt(OX1 + 60, 22, "FUNDACIONES Y MUROS DE CORTE P1", fs=3.6, peso="bold")
+    marco(L, "EST-01", "ESTRUCTURA — MUROS DE CORTE, ENTREPISO Y CARGAS A FUNDACIÓN", 8)
+    L.txt(OX1 + 60, 22, "MUROS DE CORTE P1 (fundación por terceros)", fs=3.6, peso="bold")
     L.txt(OX2 + 70, 22, "ENTREPISO, CERCHAS Y MUROS DE CORTE P2", fs=3.6, peso="bold")
     p1 = Planta(L, OX1)
     p2 = Planta(L, OX2)
@@ -64,14 +64,13 @@ def lamina_estructura():
     for x1, y1, x2, y2, t in D.MUROS_1:
         b = 0.40 if t == D.EXT or (y1 == y2 == 2) else 0.30
         if y1 == y2:
-            p1.caja(min(x1, x2) - b / 2, y1 - b / 2, max(x1, x2) + b / 2, y1 + b / 2, relleno=C_FUND, borde="#888", ancho=0.15)
+            p1.caja(min(x1, x2) - b / 2, y1 - b / 2, max(x1, x2) + b / 2, y1 + b / 2, relleno="none", borde="#bbb", ancho=0.12)
         else:
-            p1.caja(x1 - b / 2, min(y1, y2) - b / 2, x1 + b / 2, max(y1, y2) + b / 2, relleno=C_FUND, borde="#888", ancho=0.15)
+            p1.caja(x1 - b / 2, min(y1, y2) - b / 2, x1 + b / 2, max(y1, y2) + b / 2, relleno="none", borde="#bbb", ancho=0.12)
     for cx, cy, t in D.COLUMNAS_1:
-        p1.caja(cx - 0.3, cy - 0.3, cx + 0.3, cy + 0.3, relleno=C_FUND, borde="#555", ancho=0.25)
         p1.caja(cx - t / 2, cy - t / 2, cx + t / 2, cy + t / 2, relleno="#000")
         X, Y = p1.P(cx, cy)
-        L.txt(X + 4, Y + 5, "Dado 60×60 + pilar 14×14 lam.", fs=1.3, anchor="start")
+        L.txt(X + 4, Y + 5, f"Pilar 14×14 lam. · N = {num(EST['pilar']['N_kN'])} kN a fundación", fs=1.3, anchor="start")
     dibujar_muros_corte(p1, D.MUROS_1, D.PUERTAS_1, D.VENTANAS_1, D.H1)
     for (x, y) in [(0, 2), (0, 6), (12, 6), (12, 2), (2, 0), (10.5, 0)]:
         X, Y = p1.P(x, y)
@@ -79,7 +78,7 @@ def lamina_estructura():
         L.txt(X + (-1.5 if x < 6 else 1.5), Y + (-1.6 if y > 3 else 3.6), f"NTN {num(dz)}", fs=1.3,
               anchor="end" if x < 6 else "start", color="#7a6040")
     X, Y = p1.P(0.0, -0.9)
-    L.txt(X, Y + 2, "Lado O (relleno): fundación profundizada hasta terreno natural", fs=1.3, anchor="start", color="#7a6040")
+    L.txt(X, Y + 2, "Ejes de muro (gris): la fundación la proyecta un tercero con las cargas de la tabla", fs=1.3, anchor="start", color="#7a6040")
     # --- P2: entrepiso ---
     for n, x0, y0, x1, y1 in D.RECINTOS_2:
         p2.caja(x0, y0, x1, y1, relleno="#f7f5ef")
@@ -141,9 +140,9 @@ def lamina_estructura():
         filas.append((el["elemento"][:42], el["seccion_mm"], num(el["L_m"]), f"{num(el['fb_MPa'])}/{num(el['Ff_adm'])[:-1]}",
                       f"{num(el['flecha_mm'])[:-1]}/{num(el['flecha_adm_mm'])[:-1]}", num(el["FU"])))
     tabla_dicts(L, 200, 182, "ELEMENTOS DE MADERA (MPa, mm)", filas, [57, 13, 8, 15, 12, 8])
-    fu = EST["fundaciones"]
-    filas = [("Eje", "q kN/m", "σ kPa", "FU")] + [(f["eje"][:34], num(f["q_kN_m"]), num(f["sigma_kPa"])[:-3], num(f["FU"])) for f in fu]
-    tabla_dicts(L, 15, 225, "FUNDACIÓN CORRIDA 40 cm (σadm 100 kPa supuesto)", filas, [52, 14, 12, 10])
+    fu = EST["cargas_a_fundacion"]
+    filas = [("Eje", "D kN/m", "L kN/m", "D+L")] + [(f["eje"][:34], num(f["D_kN_m"]), num(f["L_kN_m"]), num(f["q_kN_m"])) for f in fu]
+    tabla_dicts(L, 15, 225, "CARGAS A FUNDACIÓN (servicio, insumo para terceros)", filas, [52, 12, 12, 12])
     fem = EST["fem_verificacion"]
     notas(L, 110, 225, "VERIFICACIÓN FEM EN FREECAD (CalculiX)", [
         "Viga 90×240 sobre terraza de entrada, L = 2,0 m, q = 6,71 kN/m:",
@@ -156,7 +155,7 @@ def lamina_estructura():
         (lambda L, x, y: L.rect(x - 3.5, y - 1, 7, 2, relleno=C_CORTE), "Muro de corte OSB"),
         (lambda L, x, y: L.rect(x - 3.5, y - 1, 7, 2, relleno="#999"), "Paño angosto (no cuenta)"),
         (lambda L, x, y: L.add(f'<polygon points="{x},{y - 1.1} {x + 1},{y + 0.7} {x - 1},{y + 0.7}" fill="#000"/>'), "Anclaje hold-down"),
-        (lambda L, x, y: L.rect(x - 3.5, y - 1.5, 7, 3, relleno=C_FUND, borde="#888", ancho=0.15), "Fundación corrida H25"),
+        (lambda L, x, y: L.rect(x - 3.5, y - 1.5, 7, 3, relleno="none", borde="#bbb", ancho=0.12), "Eje de muro (fund. terceros)"),
         (lambda L, x, y: L.linea([(x - 3.5, y), (x + 3.5, y)], color="#c0392b", ancho=1.4), "Viga 2×(45×240)"),
         (lambda L, x, y: L.linea([(x, y - 2), (x, y + 2)], color="#c8b89a", ancho=0.4), "Vigas entrepiso 2×10 @ 40"),
     ])

@@ -134,7 +134,12 @@ for i, (x0, x1, s0, s1, etapa) in enumerate(E.PANELES):
 g_ext = doc.addObject("App::DocumentObjectGroup", "Exteriores")
 for i, (cx, cy, tc) in enumerate(D.COLUMNAS_1):
     agregar(f"Pilar_{i + 1}", caja(cx - tc / 2, cy - tc / 2, 0, cx + tc / 2, cy + tc / 2, D.H1), (0.7, 0.7, 0.7), g_ext)
-agregar("Canon_Estufa", caja(0.88, 5.38, D.H1, 1.12, 5.62, 8.0), (0.35, 0.35, 0.35), g_ext)
+agregar("Bomba_Calor", caja(6.45, -0.75, 0.15, 7.45, -0.35, 0.95), (0.56, 0.27, 0.68), g_ext)  # unidad exterior, muro sur
+agregar("Acumulador_ACS_300L", Part.makeCylinder(0.30 * M, 1.75 * M, V(7.45 * M, 0.40 * M, 0)), (0.85, 0.40, 0.40), g_ext)
+cx0, cy0, cx1, cy1 = E.CASETA_AGUA
+agregar("Caseta_Presurizacion", caja(cx0, cy0, -0.3, cx1, cy1, 2.0), (0.75, 0.82, 0.92), g_ext)
+agregar("Cargador_EV", caja(E.WALLBOX[0] - 0.12, E.WALLBOX[1] - 0.12, -0.3, E.WALLBOX[0] + 0.12, E.WALLBOX[1] + 0.12, 1.3),
+        (0.0, 0.33, 0.67), g_ext)
 est = Part.makeCylinder(1.1 * M, 1.8 * M, V(E.ESTANQUE["x"] * M, E.ESTANQUE["y"] * M, -0.3 * M))
 agregar("Estanque_Lluvias", est, (0.30, 0.55, 0.75), g_ext)
 

@@ -20,10 +20,10 @@ table.chica { font-size: 7.8pt; }
 
 <h1 id="est">1. Memoria de cálculo estructural</h1>
 <p class="aviso">Ejercicio académico de anteproyecto. Suelo y maderas supuestos; requiere mecánica de suelos y calculista.</p>
-<h2>1.1 Descripción del sistema</h2><p>Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio); fundación corrida H.A. escalonada + sobrecimiento.</p>
+<h2>1.1 Descripción del sistema</h2><p>Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio). Fundaciones: proyecto aparte (fuera de alcance).</p>
 <p><b>Materiales:</b> Pino radiata estructural C24 / MSR (NCh1198, valores admisibles) (Ff = 9,3 MPa,
 Fv = 1,1 MPa, E = 9.000 MPa) ·
-OSB 11,1 mm estructural, clavo 2½&quot; (8d) @ 10 cm bordes / 20 cm interior · H25 fundaciones/sobrecimiento, acero A630-420H.</p>
+OSB 11,1 mm estructural, clavo 2½&quot; (8d) @ 10 cm bordes / 20 cm interior · Fundaciones y sobrecimiento: proyecto por terceros.</p>
 <h2>1.2 Bases de cálculo</h2>
 <ul><li><b>Sismo:</b> NCh433 Of.96 Mod.2009 + DS 61, zona 3 (A0 = 0.4 g),
 categoría II (vivienda), I = 1.0, Muros y diafragmas de madera (NCh433 Tabla 5.1): R = 5.5, R0 = 7.0.</li>
@@ -56,10 +56,13 @@ Se reemplazó por <b>cerchas tipo W @ 60 cm</b> que salvan los 6 m muro a muro.<
 <p>calculo/FEM_Viga.FCStd — viga 90×240 mm, L = 2,0 m, empotrada en extremos, q = 6,71 kN/m (presión 74,6 kPa). Gmsh tetraédrica, 3.799 nodos, solver CalculiX (FreeCAD 1.1 FEM).</p>
 <table class=""><thead><tr><th>Resultado</th><th>FEM</th><th>Teoría (empotrada)</th></tr></thead><tbody><tr><td>Tensión máx. (MPa)</td><td>2,39</td><td>2,59</td></tr><tr><td>Desplazamiento máx. (mm)</td><td>0,34</td><td>0,30</td></tr></tbody></table>
 <p>Coincide con la teoría de vigas (&lt;15 %, el FEM incluye deformación por corte). Con apoyo simple (caso de diseño) la tensión es 3,9 MPa &lt; 9,3 MPa admisible.</p>
-<h2>1.8 Fundaciones</h2>
-<p>Fundación corrida de H25, 40 cm de ancho × 30 cm, sobrecimiento 20 × 60 cm con aislación exterior. En el lado oeste (relleno de plataforma)
-la fundación se profundiza hasta terreno natural; escalonada si el desnivel supera 0,5 m.</p>
-<table class=""><thead><tr><th>Eje</th><th>q (kN/m)</th><th>B (m)</th><th>σ (kPa)</th><th>σadm (kPa)</th><th>FU</th></tr></thead><tbody><tr><td>Eje y=0 (fachada sur)</td><td>14,6</td><td>0,40</td><td>37</td><td>100</td><td><span class="ok">0,37 ✔</span></td></tr><tr><td>Eje y=6 (fachada norte, con FV)</td><td>17,6</td><td>0,40</td><td>44</td><td>100</td><td><span class="ok">0,44 ✔</span></td></tr><tr><td>Eje y=2 (interior, bajo entrepiso)</td><td>16,0</td><td>0,40</td><td>40</td><td>100</td><td><span class="ok">0,40 ✔</span></td></tr></tbody></table>
+<h2>1.8 Cargas a fundación (las fundaciones se proyectan aparte)</h2>
+<p>Por decisión del mandante, <b>las fundaciones quedan fuera de este anteproyecto</b> y las diseña un tercero con su mecánica de suelos.
+Se entregan las cargas de servicio en la base de los muros (sin peso propio de fundación ni sobrecimiento). El sobrecimiento debe
+quedar ≥ 20 cm sobre el terreno, con aislación de borde R100 ≥ 91 (DS 15, zona G) y pernos para los hold-down.</p>
+<table class=""><thead><tr><th>Eje</th><th>D (kN/m)</th><th>L (kN/m)</th><th>D + L (kN/m)</th></tr></thead><tbody><tr><td>Eje y=0 (fachada sur)</td><td>5,8</td><td>3,1</td><td>8,9</td></tr><tr><td>Eje y=6 (fachada norte, con FV)</td><td>6,8</td><td>5,1</td><td>11,8</td></tr><tr><td>Eje y=2 (interior, bajo entrepiso)</td><td>4,2</td><td>6,0</td><td>10,2</td></tr></tbody></table>
+<p>Cargas puntuales: pilar esquina terraza N = 11,7 kN · tracción hold-down 5,9 kN ·
+corte basal total Q0 = 44,3 kN (a transmitir por los anclajes de solera Ø12 @ ≤ 0,50 m).</p>
 
 <h1 id="con">2. Memoria de condensación (NCh1973 — método de Glaser)</h1>
 <p><b>Condiciones de cálculo:</b> interior 20,0 °C y 75 % HR (p<sub>v</sub> = 1.753 Pa,
@@ -105,8 +108,8 @@ sin condensación; ✘ riesgo de moho a 75 % HR interior.</li>
 <ol><li><b>La barrera de vapor es obligatoria</b> en muros y cielo: sin ella el vapor condensa en la cara fría de la lana mineral, contra el OSB.</li>
 <li>Con barrera, ninguna interfaz condensa en julio.</li>
 <li>La superficie más fría es el vidrio DVH: para evitar moho la <b>humedad interior debe mantenerse ≤ 65 %</b>
-(condensación visible sobre 82 %). Se logra con la ventilación de la lámina VEN-01 (extracción en baños y cocina,
-microventilación, no secar ropa adentro) y es el principal riesgo de una casa hermética en este clima.</li>
+(condensación visible sobre 82 %). Se logra con la ventilación de la lámina VEN-01 (VMC con recuperador de calor 35 L/s,
+extracción continua en baños, cocina y lavandería, no secar ropa adentro) y es el principal riesgo de una casa hermética en este clima.</li>
 <li>Alternativa para eliminar el puente térmico de los pies derechos: 30–40 mm de aislación continua por el exterior del OSB.</li></ol>
 
 <h1 id="fv">3. Memoria fotovoltaica con batería</h1>
@@ -116,20 +119,20 @@ microventilación, no secar ropa adentro) y es el principal riesgo de una casa h
 <p><b>Método:</b> balance hora a hora durante 5 años (2016–2020)
 con la producción horaria de PVGIS 5.2 para el sitio (incluye sombras del horizonte), eficiencia de batería 92 % ida y vuelta,
 potencia máx. 5 kW, prioridad: consumo → batería → red. La bomba del pozo funciona de 8 a 12 h para aprovechar el sol.</p>
-<p><b>Consumo supuesto:</b> 3.824 kWh/año (casa con cocina y calefont a gas, estufa a pellet,
-más bomba de pozo 0,75 kW). <i>Ajustar con boletas reales.</i></p>
-<table class="chica"><thead><tr><th>Mes</th><th>FV kWh</th><th>Consumo</th><th>Directo</th><th>Desde batería</th><th>Compra red</th><th>Inyecta</th><th>Autosuf.</th><th>Días sin red</th></tr></thead><tbody><tr><td>Ene</td><td>1.326</td><td>322</td><td>197</td><td>125</td><td>0</td><td>992</td><td>100 %</td><td>30,8</td></tr><tr><td>Feb</td><td>1.147</td><td>295</td><td>168</td><td>128</td><td>0</td><td>841</td><td>100 %</td><td>28,4</td></tr><tr><td>Mar</td><td>1.147</td><td>313</td><td>156</td><td>155</td><td>2</td><td>823</td><td>99 %</td><td>29,8</td></tr><tr><td>Abr</td><td>831</td><td>306</td><td>129</td><td>170</td><td>6</td><td>517</td><td>98 %</td><td>26,8</td></tr><tr><td>May</td><td>625</td><td>329</td><td>120</td><td>187</td><td>22</td><td>304</td><td>93 %</td><td>23,0</td></tr><tr><td>Jun</td><td>498</td><td>333</td><td>103</td><td>174</td><td>56</td><td>209</td><td>83 %</td><td>15,6</td></tr><tr><td>Jul</td><td>547</td><td>344</td><td>110</td><td>175</td><td>60</td><td>244</td><td>83 %</td><td>16,0</td></tr><tr><td>Ago</td><td>693</td><td>332</td><td>126</td><td>181</td><td>24</td><td>371</td><td>93 %</td><td>22,0</td></tr><tr><td>Sep</td><td>939</td><td>309</td><td>144</td><td>162</td><td>4</td><td>618</td><td>99 %</td><td>28,8</td></tr><tr><td>Oct</td><td>1.104</td><td>316</td><td>166</td><td>149</td><td>1</td><td>778</td><td>100 %</td><td>30,2</td></tr><tr><td>Nov</td><td>1.158</td><td>309</td><td>177</td><td>132</td><td>0</td><td>836</td><td>100 %</td><td>29,8</td></tr><tr><td>Dic</td><td>1.275</td><td>322</td><td>197</td><td>126</td><td>0</td><td>941</td><td>100 %</td><td>31,0</td></tr><tr><td><b>Año</b></td><td><b>11.289</b></td><td><b>3.831</b></td><td>1.792</td><td>1.863</td><td>176</td><td>7.475</td><td><b>95 %</b></td><td>312</td></tr></tbody></table>
+<p><b>Consumo supuesto:</b> 6.246 kWh/año — Casa todo eléctrica: piso radiante con bomba de calor SCOP 3,5 + ACS con bomba de calor, inducción, VMC; sin gas ni pellet,
+más bomba de pozo 0,75 kW. <i>Ajustar con boletas reales.</i></p>
+<table class="chica"><thead><tr><th>Mes</th><th>FV kWh</th><th>Consumo</th><th>Directo</th><th>Desde batería</th><th>Compra red</th><th>Inyecta</th><th>Autosuf.</th><th>Días sin red</th></tr></thead><tbody><tr><td>Ene</td><td>1.326</td><td>412</td><td>238</td><td>174</td><td>1</td><td>899</td><td>100 %</td><td>30,4</td></tr><tr><td>Feb</td><td>1.147</td><td>378</td><td>204</td><td>173</td><td>1</td><td>756</td><td>100 %</td><td>27,8</td></tr><tr><td>Mar</td><td>1.147</td><td>403</td><td>195</td><td>201</td><td>8</td><td>735</td><td>98 %</td><td>28,2</td></tr><tr><td>Abr</td><td>831</td><td>486</td><td>197</td><td>212</td><td>77</td><td>405</td><td>84 %</td><td>0,0</td></tr><tr><td>May</td><td>625</td><td>588</td><td>202</td><td>197</td><td>188</td><td>211</td><td>68 %</td><td>0,0</td></tr><tr><td>Jun</td><td>498</td><td>644</td><td>187</td><td>160</td><td>297</td><td>139</td><td>54 %</td><td>0,0</td></tr><tr><td>Jul</td><td>547</td><td>693</td><td>206</td><td>164</td><td>322</td><td>161</td><td>53 %</td><td>0,0</td></tr><tr><td>Ago</td><td>693</td><td>656</td><td>230</td><td>191</td><td>235</td><td>254</td><td>64 %</td><td>0,0</td></tr><tr><td>Sep</td><td>939</td><td>586</td><td>261</td><td>215</td><td>111</td><td>444</td><td>81 %</td><td>0,0</td></tr><tr><td>Oct</td><td>1.104</td><td>541</td><td>268</td><td>225</td><td>48</td><td>594</td><td>91 %</td><td>0,0</td></tr><tr><td>Nov</td><td>1.158</td><td>463</td><td>251</td><td>203</td><td>9</td><td>684</td><td>98 %</td><td>25,0</td></tr><tr><td>Dic</td><td>1.275</td><td>412</td><td>239</td><td>172</td><td>1</td><td>848</td><td>100 %</td><td>30,0</td></tr><tr><td><b>Año</b></td><td><b>11.289</b></td><td><b>6.262</b></td><td>2.677</td><td>2.286</td><td>1.298</td><td>6.130</td><td><b>79 %</b></td><td>141</td></tr></tbody></table>
 <h2>3.1 Resultados</h2>
-<ul><li>Autosuficiencia anual <b>95 %</b>: la red sólo aporta 176 kWh/año, concentrados en junio–julio.</li>
-<li><b>312 días al año</b> sin comprar energía. La batería hace ~196 ciclos/año (vida útil LiFePO4 &gt; 6.000 ciclos).</li>
-<li>Excedente inyectado 7.475 kWh/año (net billing, Ley 21.118): descuenta cargos de la boleta.</li>
+<ul><li>Autosuficiencia anual <b>79 %</b>: la red sólo aporta 1.298 kWh/año, concentrados en junio–julio.</li>
+<li><b>141 días al año</b> sin comprar energía. La batería hace ~241 ciclos/año (vida útil LiFePO4 &gt; 6.000 ciclos).</li>
+<li>Excedente inyectado 6.130 kWh/año (net billing, Ley 21.118): descuenta cargos de la boleta.</li>
 <li><b>Respaldo ante cortes</b> (frecuentes en temporales del N–NO): 28,3 h con batería llena y carga crítica
 de 0,35 kW (refrigerador, luces LED, router, bomba). Con sol, el sistema se recarga durante el corte (inversor híbrido con modo isla).</li></ul>
-<h2>3.2 Escenario «todo eléctrico»</h2>
-<p>Calefacción bomba de calor COP 3,2 + termo bomba de calor (sin gas ni pellet). Consumo 6.076 kWh/año ⇒ autosuficiencia 78 %,
-compra 1.327 kWh e inyecta 6.357 kWh: <b>el balance anual sigue siendo positivo</b>, por lo que
-electrificar calefacción y agua caliente es viable con este sistema y elimina gas y pellet.</p>
-<table class="chica"><thead><tr><th>Mes</th><th>Consumo</th><th>Compra red</th><th>Autosuf.</th></tr></thead><tbody><tr><td>Ene</td><td>356</td><td>0</td><td>100 %</td></tr><tr><td>Feb</td><td>327</td><td>0</td><td>100 %</td></tr><tr><td>Mar</td><td>347</td><td>4</td><td>99 %</td></tr><tr><td>Abr</td><td>465</td><td>61</td><td>87 %</td></tr><tr><td>May</td><td>590</td><td>188</td><td>68 %</td></tr><tr><td>Jun</td><td>667</td><td>313</td><td>53 %</td></tr><tr><td>Jul</td><td>726</td><td>347</td><td>52 %</td></tr><tr><td>Ago</td><td>681</td><td>252</td><td>63 %</td></tr><tr><td>Sep</td><td>598</td><td>116</td><td>81 %</td></tr><tr><td>Oct</td><td>531</td><td>40</td><td>93 %</td></tr><tr><td>Nov</td><td>432</td><td>6</td><td>99 %</td></tr><tr><td>Dic</td><td>356</td><td>0</td><td>100 %</td></tr></tbody></table>
+<h2>3.2 Escenario con auto eléctrico</h2>
+<p>Igual + auto eléctrico 12.000 km/año (≈ 2.000 kWh) cargado de 10 a 16 h. Consumo 8.308 kWh/año ⇒ autosuficiencia 79 %,
+compra 1.710 kWh e inyecta 4.511 kWh: <b>el balance anual sigue siendo positivo</b>: el cargador
+de 11 kW (RIC 15) programado de 10 a 16 h aprovecha los excedentes de verano.</p>
+<table class="chica"><thead><tr><th>Mes</th><th>Consumo</th><th>Compra red</th><th>Autosuf.</th></tr></thead><tbody><tr><td>Ene</td><td>586</td><td>2</td><td>100 %</td></tr><tr><td>Feb</td><td>537</td><td>6</td><td>99 %</td></tr><tr><td>Mar</td><td>577</td><td>19</td><td>97 %</td></tr><tr><td>Abr</td><td>654</td><td>110</td><td>83 %</td></tr><tr><td>May</td><td>761</td><td>254</td><td>67 %</td></tr><tr><td>Jun</td><td>812</td><td>382</td><td>53 %</td></tr><tr><td>Jul</td><td>866</td><td>407</td><td>53 %</td></tr><tr><td>Ago</td><td>830</td><td>296</td><td>64 %</td></tr><tr><td>Sep</td><td>754</td><td>142</td><td>81 %</td></tr><tr><td>Oct</td><td>714</td><td>66</td><td>91 %</td></tr><tr><td>Nov</td><td>631</td><td>21</td><td>97 %</td></tr><tr><td>Dic</td><td>586</td><td>5</td><td>99 %</td></tr></tbody></table>
 
 <h1 id="top">4. Topografía aproximada</h1>
 <p class="aviso">AWS Terrain Tiles (Terrarium, z15, ~3,7 m/px; dato base SRTM ~30 m). Anteproyecto, no reemplaza topografía.</p>

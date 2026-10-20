@@ -82,15 +82,17 @@ PUERTAS_2 = [
     (4.4, 1.50, 0.70, 'v', 1),  # baño desde closet
     (10.5, 0.55, 0.85, 'v', 0), # llegada escalera
 ]
+# Piso 2: antepecho 1,00 m (≥ 0,95 m del art. 4.2.7 OGUC, aplicado por seguridad de la bebé y los gatos)
+# + limitador de apertura 10 cm en hojas practicables. Dormitorios con ≥ 1,5 m libres frente a la ventana (OGUC 4.1.2).
 VENTANAS_2 = [
-    (3.75, 6, 1.50, 'h', 0.90, 1.30),
-    (7.10, 6, 1.50, 'h', 0.90, 1.30),
-    (10.40, 6, 1.50, 'h', 0.90, 1.30),
-    (2, 4.50, 1.20, 'v', 0.90, 1.30),
-    (12, 4.50, 1.20, 'v', 0.90, 1.30),
+    (3.75, 6, 1.50, 'h', 1.00, 1.30),
+    (7.10, 6, 1.50, 'h', 1.00, 1.30),
+    (10.40, 6, 1.50, 'h', 1.00, 1.30),
+    (2, 4.50, 1.20, 'v', 1.00, 1.30),
+    (12, 4.50, 1.20, 'v', 1.00, 1.30),
     (2, 1.50, 0.80, 'v', 1.30, 0.80),     # closet
     (6.00, 0, 0.60, 'h', 1.60, 0.50),     # baño
-    (11.25, 0, 1.00, 'h', 0.90, 1.30),    # hall
+    (11.25, 0, 1.00, 'h', 1.00, 1.30),    # hall
 ]
 RECINTOS_2 = [
     ("DORMITORIO PRINCIPAL", 2, 3, 5.5, 6), ("DORMITORIO 2", 5.5, 3, 8.75, 6),

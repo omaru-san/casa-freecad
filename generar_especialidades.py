@@ -9,7 +9,7 @@ FV = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ca
 import casa_datos as D
 import especialidades_datos as E
 import instalaciones_datos as I
-from generar_laminas import (C_AF, C_ALC, C_GAS, C_MURO, C_TERRAZA, FUENTE, OX1, OX2, Lamina, Planta,
+from generar_laminas import (C_AF, C_ALC, C_HID, C_MURO, C_TERRAZA, FUENTE, OX1, OX2, Lamina, Planta,
                              base_plantas, dibujar_arquitectura, leyenda, marco, notas, num, tabla)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
@@ -215,7 +215,19 @@ def lamina_emplazamiento():
     v.poly(E.ACCESO, color="#aaa", ancho=0.2, dash="2 1")
     v.txt(23, -2.6, "ACCESO desde camino vecinal (E)", fs=1.8, peso="bold")
     v.caja(*E.ESTACIONAMIENTO, relleno="#eeeae0", borde="#999", ancho=0.2)
-    v.txt((E.ESTACIONAMIENTO[0] + E.ESTACIONAMIENTO[2]) / 2, -6.5, "Estacionamiento", fs=1.6)
+    ex0, ey0, ex1, ey1 = E.ESTACIONAMIENTO
+    v.poly([((ex0 + ex1) / 2, ey0), ((ex0 + ex1) / 2, ey1)], color="#bbb", ancho=0.2, dash="1 0.6")
+    v.txt((ex0 + ex1) / 2, ey0 + 1.2, "Estacionamiento 2 autos (6,0 × 5,5 m)", fs=1.5)
+    v.poly(E.DUCTO_EV, color="#05a", ancho=0.3, dash="1.5 0.6")
+    wx, wy = v.P(*E.WALLBOX)
+    L.rect(wx - 1.6, wy - 1.6, 3.2, 3.2, relleno="#05a", borde="#05a", ancho=0.3)
+    L.txt(wx + 2.2, wy + 0.6, "EV 11 kW (RIC 15)", fs=1.4, anchor="start", color="#05a", peso="bold")
+    # defensa contra incendio forestal (CONAF)
+    for d_, et in E.ZONAS_CONAF[:2]:
+        v.caja(-d_, -d_, 12 + d_, 6 + d_, borde="#c0392b", ancho=0.25, dash="0.8 1.2")
+    v.txt(-10.6, 16.6, "Fajas CONAF 2 m / 10 m (rojo punteado)", fs=1.4, color="#c0392b", anchor="start", peso="bold")
+    for k_, (d_, et) in enumerate(E.ZONAS_CONAF):
+        v.txt(-10.6, 15.6 - k_ * 0.95, et, fs=1.25, color="#c0392b", anchor="start")
     # drenaje perimetral
     o = E.DRENAJE_PERIMETRAL_OFFSET
     v.poly([(-o, 2 - o), (-o, 6 + o), (12 + o, 6 + o), (12 + o, -o), (2 - o, -o), (2 - o, 2 - o), (-o, 2 - o)],
@@ -259,15 +271,20 @@ def lamina_emplazamiento():
     v.txt(-15, 1.6, "Drenes de infiltración (3 × 12 m)", fs=1.6, peso="bold", color=C_ALC)
     v.txt(-15, 0.7, "zanja 0,6 m, grava, tubo PVC Ø100 perforado", fs=1.3, color=C_ALC)
     # agua potable, gas, electricidad
-    v.poly([E.POZO, (E.POZO[0], -2.2), (13.2, -2.2), (13.2, I.MEDIDOR_AGUA[1]), I.MEDIDOR_AGUA], color=C_AF, ancho=0.35)
-    v.txt(17.5, -1.6, "Impulsión pozo → hidropack (PE Ø32)", fs=1.4, color=C_AF)
+    cx0, cy0, cx1, cy1 = E.CASETA_AGUA
+    v.poly([E.POZO, (E.POZO[0], 2.1), (cx1, 2.1)], color=C_AF, ancho=0.35)
+    v.poly([(cx0, 2.1), (12.7, 2.1), (12.7, I.MEDIDOR_AGUA[1]), I.MEDIDOR_AGUA], color=C_AF, ancho=0.35)
+    v.caja(cx0, cy0, cx1, cy1, relleno="#e3efff", borde=C_AF, ancho=0.35)
+    v.txt((cx0 + cx1) / 2, cy0 + 1.3, "CASETA", fs=1.3, peso="bold", color=C_AF)
+    v.txt(cx1 + 0.4, cy1 - 0.3, "Estanque 3.000 L + presurizadora VSD + filtro + UV", fs=1.3, color=C_AF, anchor="start")
+    v.txt(21.4, -0.8, "Impulsión pozo → caseta (PE Ø32)", fs=1.3, color=C_AF, anchor="start")
     px, py = v.P(*E.POZO)
     L.circ(px, py, 3, relleno="#e3efff", borde=C_AF, ancho=0.4)
     v.txt(E.POZO[0], E.POZO[1] - 1.8, "Pozo profundo + bomba sumergible", fs=1.4, color=C_AF)
     v.poly([(28.5, 3.4), (I.MEDIDOR_ELEC[0], I.MEDIDOR_ELEC[1])], color="#000", ancho=0.3, dash="3 1")
     v.txt(24, 4.0, "Empalme eléctrico aéreo (distribuidora)", fs=1.4)
-    px, py = v.P(*I.MEDIDOR_GAS)
-    L.rect(px - 1.5, py - 1.5, 3, 3, relleno="#fff6d6", borde=C_GAS, ancho=0.3)
+    bx_, by_ = v.P(6.95, -0.55)
+    L.rect(bx_ - 2, by_ - 0.8, 4, 1.6, relleno="#efe3f6", borde=C_HID, ancho=0.3)
     # distancias
     d_fosa = E.FOSA["x"][1] - 0.0
     d_dren = abs(E.DRENES[0][0][0])
@@ -308,6 +325,9 @@ def lamina_emplazamiento():
         "  a > 20 m de pozos (DS 236).",
         "• Piso a +0,30 y drenaje perimetral",
         "  (humedad 88 % en invierno).",
+        "• Fajas CONAF; techo metálico y",
+        "  aleros cerrados (pavesas).",
+        "• Fundaciones: proyecto aparte.",
     ], fs=1.6)
     filas = [["", *[m["mes"] for m in E.CLIMA["mensual"]]]]
     claves = [("T máx °C", "t_max"), ("T mín °C", "t_min"), ("Lluvia mm", "lluvia_mm"), ("Días lluvia", "dias_lluvia"),
@@ -343,7 +363,7 @@ def grafico_produccion(L, x0, y0, w, h):
     pv = [m["pv"] for m in FV["mensual"]]
     carga = [m["carga"] for m in FV["mensual"]]
     meses = [m["mes"] for m in E.CLIMA["mensual"]]
-    vmax = 1400
+    vmax = int(math.ceil(max(max(pv), max(carga)) / 200.0) * 200)
     s = FV["sistema"]
     L.txt(x0, y0 - 6, f"Producción vs consumo mensual — {s['paneles']} × {s['wp']} Wp ({num(s['kwp'])} kWp)",
           fs=2.2, anchor="start", peso="bold")
@@ -374,10 +394,10 @@ def unilineal_fv(L, x0, y0):
     L.txt(x0, y0 - 4, "DIAGRAMA UNILINEAL FV HÍBRIDO (net billing + respaldo)", fs=2.4, anchor="start", peso="bold")
     cajas = [("Paneles", f"{s['paneles']} × {s['wp']} Wp", f"{num(s['kwp'])} kWp · 35° N"),
              ("Caja DC", "Fusibles + DPS", "Seccionador DC"),
-             ("Inversor", f"Híbrido {num(s['inversor_kw'])[:-3]} kW", "monofásico"),
-             ("TDA", "Autom. 2×32 A", "+ subtablero resp."),
+             ("Inversor", f"Híbrido {num(s['inversor_kw'])[:-3]} kW", "trifásico · AFCI"),
+             ("TDA", "General 4P 25 A", "+ subtablero resp."),
              ("Medidor", "Bidireccional", "distribuidora"),
-             ("Red", "Distribuidora", "BT 220 V")]
+             ("Red", "SAESA (BT1)", "BT 380/220 V")]
     w, h, gap = 18.5, 14, 4.8
     for i, (t, a, b) in enumerate(cajas):
         x = x0 + i * (w + gap)
@@ -393,7 +413,7 @@ def unilineal_fv(L, x0, y0):
     L.txt(xi + w / 2, y0 + h + 16.6, f"LiFePO4 {num(s['bateria_kwh'])[:-3]} kWh", fs=1.4, color="#fff")
     flecha(L, xi + w / 2 - 2, y0 + h, xi + w / 2 - 2, y0 + h + 7.4, ancho=0.35, cabeza=1.2)
     flecha(L, xi + w / 2 + 2, y0 + h + 8, xi + w / 2 + 2, y0 + h + 0.6, ancho=0.35, cabeza=1.2)
-    L.txt(x0, y0 + h + 26, "Respaldo ante cortes: C1, C2, C4 y C8 (bomba pozo). Puesta a tierra ≤ 20 Ω. Trámite: TE4 (SEC) + distribuidora.",
+    L.txt(x0, y0 + h + 26, "Respaldo: C1, C2, C4, C8 y C13. Dif. inversor 100 mA (5–10 kW, RGR 02). Tierra ≤ 20 Ω. TE4 SEC + net billing SAESA.",
           fs=1.45, anchor="start", color=TINTA2)
 
 
@@ -441,8 +461,7 @@ def lamina_techumbre():
         L.circ(px, py, 1.3, relleno="#fff", borde=C_LLUVIA, ancho=0.45)
         L.txt(px, py + (3.6 if y < 3 else -2.2), "BLL Ø90", fs=1.3, color=C_LLUVIA, peso="bold")
     # pasadas de cubierta
-    for x, y, cod in ((1.0, 5.5, "Cañón estufa Ø125"), (7.5, 0.15, "Ducto calefont Ø100"), (4.55, 0.5, "Vent. B.A.S. Ø75"),
-                      (6.1, 1.75, "Extractor baño P2")):
+    for x, y, cod in ((4.55, 0.5, "Vent. B.A.S. Ø75 (única pasada; sin chimeneas)"),):
         px, py = pl.P(x, y)
         L.rect(px - 1, py - 1, 2, 2, relleno="#555", borde="none")
         L.txt(px + 1.8, py + 4.2 if y < 3 else py - 1.8, cod, fs=1.3, anchor="start", color=TINTA2)
@@ -467,18 +486,18 @@ def lamina_techumbre():
         "y cubre parte del verano seco. Filtro de primeras aguas + rebalse a infiltración.",
         "Agua de techo con paneles es apta para riego/WC, NO para beber sin tratamiento.",
     ], fs=1.6)
-    an, ae = FV["anual"], FV["escenario_electrico"]["anual"]
+    an, ae = FV["anual"], FV["escenario_ev"]["anual"]
     rc = FV["respaldo_corte"]
     notas(L, 140, 182, "SIMULACIÓN HORARIA FV + BATERÍA (5 años)", [
-        f"Producción {miles(an['pv'])} kWh/año · consumo supuesto {miles(an['carga'])} kWh/año (casa + bomba pozo).",
+        f"Producción {miles(an['pv'])} kWh/año · consumo {miles(an['carga'])} kWh/año (todo eléctrico: BC + ACS + pozo).",
         f"Autosuficiencia {int(an['autosuficiencia_pct'])} % · {int(an['dias_sin_red'])} días/año sin comprar a la red.",
         f"Batería entrega {miles(an['bateria'])} kWh/año (~{int(an['ciclos'])} ciclos) · inyección a red {miles(an['exporta'])} kWh.",
-        f"Junio–julio: autosuficiencia 83 %; la red cubre ~{int(FV['mensual'][5]['importa'])} kWh/mes.",
+        f"Junio: autosuficiencia {int(FV['mensual'][5]['autosuficiencia_pct'])} %; la red cubre ~{int(FV['mensual'][5]['importa'])} kWh/mes.",
         f"Corte de luz: {num(rc['horas_bateria_llena'])[:-1]} h con batería llena a {num(rc['carga_critica_kw'])} kW (reserva 20 % siempre).",
-        f"Escenario todo eléctrico (bomba de calor + termo BC, sin gas/pellet):",
+        f"Con auto eléctrico (12.000 km/año, carga solar de día):",
         f"  consumo {miles(ae['carga'])} kWh · autosuficiencia {int(ae['autosuficiencia_pct'])} % · igual exporta "
         f"{miles(ae['exporta'])} > importa {miles(ae['importa'])}.",
-        "Rieles de aluminio anclados a cerchas; paneles apaisados 3 × 4.",
+        "Rieles de aluminio anclados a cerchas; paneles apaisados 3 × 4. Inversor con AFCI.",
     ], fs=1.55)
     leyenda(L, 345, 40, [
         (lambda L, x, y: L.rect(x - 3, y - 1.5, 6, 3, relleno=C_FV), "Panel FV 625 Wp"),
@@ -502,80 +521,115 @@ def sim_vent(L, x, y, cod):
     L.txt(x, y + 0.6, cod, fs=1.5, peso="bold", color=C_VENT)
 
 
-def lamina_ventilacion():
-    L = Lamina()
-    p1, p2 = base_plantas(L, tenue=True, areas=False)
-    marco(L, "VEN-01", "VENTILACIÓN, CALEFACCIÓN Y HUMEDAD", 6)
-    for piso, pl in ((1, p1), (2, p2)):
-        for pi, pts in E.VENT_CRUZADA:
-            if pi != piso:
-                continue
-            P = [pl.P(*p) for p in pts]
-            L.linea(P[:-1] + [P[-1]], color=C_VENT, ancho=0.45, dash="2 0.8")
-            flecha(L, *P[-2], *P[-1], color=C_VENT, ancho=0.45, cabeza=1.6)
-        ventanas = D.VENTANAS_1 if piso == 1 else D.VENTANAS_2
-        for pi, idx in E.MICROVENT:
-            if pi != piso:
-                continue
-            x, y, w, o = ventanas[idx][:4]
-            px, py = pl.P(x, y)
-            L.rect(px - 1.6, py - 1.6, 3.2, 3.2, relleno="#fff", borde=C_VENT, ancho=0.3)
-            L.txt(px, py + 0.55, "MV", fs=1.1, peso="bold", color=C_VENT)
-        for pi, cod, x, y, _ in E.ELEMENTOS_VENT:
-            if pi == piso:
-                sim_vent(L, *pl.P(x, y), cod)
-    # cañón estufa y toma de aire
-    leyenda(L, 345, 40, [
-        (lambda L, x, y: flecha(L, x - 3.5, y, x + 3.5, y, color=C_VENT, ancho=0.45, cabeza=1.4), "Ventilación cruzada N→S"),
-        (lambda L, x, y: (L.rect(x - 1.6, y - 1.6, 3.2, 3.2, relleno="#fff", borde=C_VENT, ancho=0.3),
-                          L.txt(x, y + 0.55, "MV", fs=1.1, peso="bold", color=C_VENT)), "Microventilación en ventana"),
-        (lambda L, x, y: sim_vent(L, x, y, "EX"), "Extractor 25 L/s c/ timer"),
-        (lambda L, x, y: sim_vent(L, x, y, "CA"), "Campana cocina al exterior"),
-        (lambda L, x, y: sim_vent(L, x, y, "DC"), "Ducto evacuación calefont"),
-        (lambda L, x, y: sim_vent(L, x, y, "RS"), "Rejilla ventilación superior"),
-        (lambda L, x, y: sim_vent(L, x, y, "RI"), "Rejilla ventilación inferior"),
-        (lambda L, x, y: sim_vent(L, x, y, "ES"), "Estufa pellet certificada"),
-        (lambda L, x, y: sim_vent(L, x, y, "TA"), "Toma aire exterior estufa"),
-        (lambda L, x, y: sim_vent(L, x, y, "DH"), "Control humedad lavandería"),
-        (lambda L, x, y: sim_vent(L, x, y, "VT"), "Ventilación alcantarillado"),
-    ])
-    # balance térmico simple
+def serpentin(pl, x0, y0, x1, y1, paso=0.30):
+    """Piso radiante esquemático (dibujado a 30 cm; el paso real es E.PASO_TUBO)."""
+    pts, k, y = [], 0, y0
+    while y <= y1 + 1e-6:
+        a, b = (x0, x1) if k % 2 == 0 else (x1, x0)
+        pts += [(a, y), (b, y)]
+        y += paso
+        k += 1
+    pl.poly(pts, color=C_HID, ancho=0.12)
+
+
+def balance_termico():
+    """Pérdidas por transmisión + ventilación (VMC con recuperador) → potencia de diseño y demanda anual."""
     env = E.ENVOLVENTE
-    filas = [("Elemento", "Área m²", "U W/m²K", "U·A W/K")]
-    tot = 0.0
+    filas, tot = [("Elemento", "Área m²", "U W/m²K", "U·A W/K")], 0.0
     for nombre, area, u in env["areas"]:
         filas.append((nombre, num(area), num(u), num(area * u)))
         tot += area * u
     vol = 125 * 2.5
     hv = 0.34 * env["renovaciones_h"] * vol
-    filas.append((f"Ventilación ({num(env['renovaciones_h'])} ren/h)", num(vol) + " m³", "—", num(hv)))
+    filas.append((f"Ventilación VMC 80 % + infiltr. ({num(env['renovaciones_h'])} ren/h)", num(vol) + " m³", "—", num(hv)))
     tot += hv
-    tabla(L, 15, 180, [52, 18, 18, 18], filas, fs=1.6, alto=4.6)
-    gd = E.CLIMA["anual"]["grados_dia_calefaccion_base15"]
-    demanda = tot * gd * 24 / 1000
-    pot = tot * (20 - E.CLIMA["anual"]["t_min_absoluta"]) / 1000
-    L.txt(15, 177, "BALANCE TÉRMICO ESTIMADO (envolvente propuesta)", fs=2.2, anchor="start", peso="bold")
-    y_fin = 180 + 4.6 * len(filas) + 4
-    L.txt(15, y_fin, f"Pérdida total ≈ {num(tot)} W/K → potencia de diseño ≈ {num(pot)} kW (20 °C int. / "
-          f"{num(E.CLIMA['anual']['t_min_absoluta'])} °C ext.)", fs=1.7, anchor="start", peso="bold")
-    L.txt(15, y_fin + 3.8, f"Demanda anual ≈ {miles(round(demanda, -2))} kWh ({int(gd)} grados-día base 15 °C) ≈ "
-          f"{int(round(demanda / 125))} kWh/m²·año", fs=1.7, anchor="start")
-    L.txt(15, y_fin + 7.6, f"≈ {int(round(demanda / 4800 * 1.15 * 1000 / 15, -1))} sacos de pellet de 15 kg/año "
-          "(4,8 kWh/kg, rend. 87 %)", fs=1.7, anchor="start", color=TINTA2)
-    notas(L, 140, 180, "CRITERIOS (humedad media invernal 88 %)", [
-        "1. Ventilación cruzada norte-sur en todos los recintos habitables.",
-        "2. Ventilación permanente con microventilación en marcos (MV)",
-        "   + extracción mecánica en baños: evita condensación y hongos.",
-        "3. Puertas interiores con 1 cm bajo la hoja (paso de aire).",
-        "4. Calefont (DS 66 SEC): preferir tipo C estanco/tiro forzado;",
-        "   rejillas y ducto según potencia, calculados por instalador SEC.",
-        "5. Estufa a pellet certificada SEC, con toma de aire exterior;",
-        "   cañón ≥ 0,6 m sobre la cumbrera dentro de 3 m (≈ +8,0 m).",
-        "6. Barrera de vapor al lado cálido; barrera de humedad hidrófuga",
-        "   respirable al exterior; sello de vanos con cinta.",
-        "7. Alternativa superior: ventilación mecánica con recuperador",
-        "   de calor (VMC) — recomendable con hermeticidad alta.",
-        "8. No secar ropa al interior sin extracción/deshumidificador.",
+    an = E.CLIMA["anual"]
+    pot = tot * (20 - an["t_min_absoluta"]) / 1000
+    demanda = tot * an["grados_dia_calefaccion_base15"] * 24 / 1000
+    area_rad = sum((x1 - x0) * (y1 - y0) for _, x0, y0, x1, y1, _ in E.ZONAS_RADIANTE)
+    return filas, tot, pot, demanda, area_rad
+
+
+def lamina_ventilacion():
+    L = Lamina()
+    p1, p2 = base_plantas(L, tenue=True, areas=False)
+    marco(L, "VEN-01", "CALEFACCIÓN POR PISO RADIANTE Y VENTILACIÓN CON RECUPERADOR", 6)
+    for piso, pl in ((1, p1), (2, p2)):
+        for pi, x0, y0, x1, y1, _ in E.ZONAS_RADIANTE:
+            if pi == piso:
+                serpentin(pl, x0, y0, x1, y1)
+        for pi, pts in E.VENT_CRUZADA:
+            if pi != piso:
+                continue
+            P = [pl.P(*p) for p in pts]
+            L.linea(P, color="#9cc9c2", ancho=0.3, dash="2 0.8")
+            flecha(L, *P[-2], *P[-1], color="#9cc9c2", ancho=0.3, cabeza=1.2)
+        # ductos y rejillas VMC (los de P1 suben por el entrepiso hasta el equipo en el closet P2)
+        vx, vy = E.VMC["x"], E.VMC["y"]
+        for pi, tipo, x, y, q, _ in E.REJILLAS:
+            if pi != piso:
+                continue
+            col = C_VENT if tipo == "IM" else "#a0522d"
+            pl.poly([(x, y), (x, vy + (0.15 if tipo == "IM" else -0.15) + 0.3), (vx + (0.2 if tipo == "IM" else -0.2), vy + 0.3)],
+                    color=col, ancho=0.35, dash=None if piso == 2 else "1.2 0.6")
+            px, py = pl.P(x, y)
+            L.circ(px, py, 1.7, relleno="#fff", borde=col, ancho=0.4)
+            L.txt(px, py + 0.5, tipo, fs=1.1, peso="bold", color=col)
+            L.txt(px + 2.2, py - 1.5, f"{q} L/s", fs=1.2, anchor="start", color=col)
+        if piso == E.VMC["piso"]:
+            pl.caja(vx - E.VMC["w"] / 2, vy - E.VMC["h"] / 2, vx + E.VMC["w"] / 2, vy + E.VMC["h"] / 2,
+                    relleno="#e6f4f1", borde=C_VENT, ancho=0.45)
+            L.txt(*pl.P(vx, vy - 0.08), "VMC", fs=1.6, peso="bold", color=C_VENT)
+            for (tx, ty), et in ((E.VMC["toma"], "aire nuevo"), (E.VMC["expulsion"], "expulsión")):
+                a, b = pl.P(tx - 0.9, ty), pl.P(tx, ty)
+                flecha(L, *(a if et == "aire nuevo" else b), *(b if et == "aire nuevo" else a), color=C_VENT, ancho=0.35, cabeza=1.2)
+                L.txt(a[0] - 0.5, a[1] + 0.6, et, fs=1.1, anchor="end", color=C_VENT)
+        for pi, cod, x, y, _ in E.ELEMENTOS_VENT:
+            if pi == piso:
+                sim_vent(L, *pl.P(x, y), cod)
+    leyenda(L, 345, 40, [
+        (lambda L, x, y: L.linea([(x - 3.5, y - 1), (x + 3.5, y - 1), (x + 3.5, y + 1), (x - 3.5, y + 1)], color=C_HID, ancho=0.2),
+         "Piso radiante (esquemático)"),
+        (lambda L, x, y: (L.circ(x, y, 1.7, relleno="#fff", borde=C_VENT, ancho=0.4), L.txt(x, y + 0.5, "IM", fs=1.1, color=C_VENT)),
+         "Impulsión VMC (recintos secos)"),
+        (lambda L, x, y: (L.circ(x, y, 1.7, relleno="#fff", borde="#a0522d", ancho=0.4), L.txt(x, y + 0.5, "EX", fs=1.1, color="#a0522d")),
+         "Extracción VMC (recintos húmedos)"),
+        (lambda L, x, y: L.linea([(x - 3.5, y), (x + 3.5, y)], color=C_VENT, ancho=0.35, dash="1.2 0.6"), "Ducto P1 (en entrepiso)"),
+        (lambda L, x, y: flecha(L, x - 3.5, y, x + 3.5, y, color="#9cc9c2", ancho=0.3, cabeza=1.2), "Ventilación cruzada (verano)"),
+        (lambda L, x, y: sim_vent(L, x, y, "BC"), "Bomba de calor aire-agua"),
+        (lambda L, x, y: sim_vent(L, x, y, "AC"), "Acumulador ACS 300 L"),
+        (lambda L, x, y: sim_vent(L, x, y, "CO"), "Colector piso radiante"),
+        (lambda L, x, y: sim_vent(L, x, y, "CA"), "Campana cocina al exterior"),
+        (lambda L, x, y: sim_vent(L, x, y, "DH"), "Control humedad lavandería"),
+        (lambda L, x, y: sim_vent(L, x, y, "VT"), "Ventilación alcantarillado"),
+    ])
+    filas, tot, pot, demanda, area_rad = balance_termico()
+    tabla(L, 15, 180, [62, 16, 16, 16], filas, fs=1.55, alto=4.4)
+    L.txt(15, 177, "BALANCE TÉRMICO (envolvente zona G propuesta)", fs=2.2, anchor="start", peso="bold")
+    y_fin = 180 + 4.4 * len(filas) + 4
+    q_m2 = pot * 1000 / area_rad
+    dt_sup = (q_m2 / 8.92) ** (1 / 1.1)
+    L.txt(15, y_fin, f"Pérdida {num(tot)} W/K → potencia de diseño {num(pot)} kW (20 °C int. / "
+          f"{num(E.CLIMA['anual']['t_min_absoluta'])} °C ext.) → bomba de calor ≈ {round(pot * 1.2 + 1.5)} kW a −5 °C (con ACS)", fs=1.65, anchor="start", peso="bold")
+    L.txt(15, y_fin + 3.6, f"Demanda {miles(round(demanda, -2))} kWh/año ≈ {int(round(demanda / 125))} kWh/m²·año → electricidad "
+          f"≈ {miles(round(demanda / E.SCOP_BC, -1))} kWh/año (SCOP {num(E.SCOP_BC)})", fs=1.65, anchor="start")
+    L.txt(15, y_fin + 7.2, f"Piso radiante {num(area_rad)} m²: {num(q_m2)} W/m² → superficie {num(20 + dt_sup)} °C "
+          f"(≤ 29 °C, UNE-EN 1264) con impulsión {E.T_IMPULSION} °C", fs=1.65, anchor="start", color=TINTA2)
+    notas(L, 140, 180, "CRITERIOS (humedad invernal 88 % · casa hermética)", [
+        "1. Sin combustión en la casa: sin gas, leña ni pellet (sin CO,",
+        "   sin chimeneas; menor riesgo de incendio).",
+        "2. VMC doble flujo 35 L/s (NCh 3309 vía ECSV): impulsión en",
+        "   dormitorios, living y oficinas; extracción en baños 10 L/s,",
+        "   cocina 10 L/s y lavandería 5 L/s. Recupera ≥ 80 % del calor.",
+        "3. Puertas interiores con 1,5 cm bajo la hoja (paso de aire).",
+        "4. Hermeticidad: meta 3 ren/h a 50 Pa (exige ≤ 5,0); prueba",
+        "   blower door antes de forrar.",
+        "5. Piso radiante PE-Xa 16 mm c/ barrera O₂, circuitos ≤ 100 m,",
+        "   prueba 6 bar 24 h, mortero 5 cm, termostato por recinto.",
+        "6. BC monobloc R290 en muro sur (protegida del N–NO), lejos",
+        "   de dormitorios; prioridad ACS con válvula de 3 vías.",
+        "7. Pisos: porcelanato (conduce bien el calor, resiste mascotas).",
+        "8. No secar ropa al interior sin secadora o deshumidificador.",
     ], fs=1.55)
     return L
 
@@ -596,10 +650,6 @@ def puertas_fachada(v, puertas, y_fachada, exteriores):
     for x, y, w, o, *_ in puertas:
         if o == 'h' and abs(y - y_fachada) < 1e-6 and any(a <= x <= b for a, b in exteriores):
             v.caja(x - w / 2, 0, x + w / 2, 2.05, relleno="#c9b79c", borde="#333", ancho=0.3)
-
-
-def chimenea(v):
-    v.caja(0.88, E.TECHO_BAJO["z_alto"] - 0.2, 1.12, 8.0, relleno="#777", borde="#333", ancho=0.2)
 
 
 def elevacion(L, ox, oy, lado):
@@ -654,10 +704,12 @@ def elevacion(L, ox, oy, lado):
         for b in E.BAJADAS:
             if b[1] > 6:
                 v.poly([(b[0], E.Z_BORDE_ALERO), (b[0], -0.3)], color=C_LLUVIA, ancho=0.6)
-    chimenea(v)
+    if lado == "sur":
+        v.caja(6.45, 0.15, 7.45, 0.95, relleno="#efe3f6", borde=C_HID, ancho=0.3)
+        v.txt(6.95, 1.15, "BC", fs=1.3, peso="bold", color=C_HID)
     # niveles
     for z, et in ((0, f"NPT ±0,00 = {num(E.NPT_MSNM)} msnm"), (-0.3, "plataforma −0,30"), (D.Z2, f"NPT +{num(D.Z2)}"), (E.Z_CUMBRERA, f"+{num(E.Z_CUMBRERA)}"),
-                  (8.0, "+8,00 cañón")):
+                  ):
         x, y = v.P(13.0 if not espejo else -1.0, z)
         L.linea([(x, y), (x + 4, y)], ancho=0.2)
         L.add(f'<polygon points="{x+4},{y} {x+5.2},{y-1.2} {x+2.8},{y-1.2}" fill="#000"/>')
@@ -674,8 +726,8 @@ def corte(L, ox, oy, x_corte=3.2):
     v.caja(-1.6, -1.0, 7.6, -0.3, relleno=C_TIERRA)
     v.poly([(-1.6, -0.3), (7.6, -0.3)], color="#000", ancho=0.4)
     # fundaciones y radier
-    for y_m, t in ((0, D.EXT), (2, D.INT), (6, D.EXT)):
-        v.caja(y_m - 0.2, -0.9, y_m + 0.2, -0.3, relleno="#9a9a9a", borde="#000", ancho=0.2)
+    for y_m, t in ((0, D.EXT), (2, D.INT), (6, D.EXT)):   # fundación: sólo contorno (proyecto por terceros)
+        v.caja(y_m - 0.2, -0.9, y_m + 0.2, -0.3, relleno="none", borde="#888", ancho=0.2, dash="1 0.6")
         v.caja(y_m - t / 2, -0.3, y_m + t / 2, 0, relleno="#9a9a9a", borde="#000", ancho=0.2)
     v.caja(0.1, -0.15, 5.9, -0.1, relleno="#f2d24b", borde="none")   # aislación bajo radier
     v.caja(0.1, -0.1, 5.9, 0, relleno="#bdbdbd", borde="#000", ancho=0.2)
@@ -720,7 +772,7 @@ def corte(L, ox, oy, x_corte=3.2):
            ((5.0, D.H1 + 0.1), (8.6, 2.9), env["entrepiso"]),
            ((3.0, -0.12), (8.6, 0.9), env["piso"]),
            ((6.75, -0.85), (8.6, -0.6), "Drenaje perimetral Ø100 + grava + geotextil"),
-           ((6.0, -0.6), (8.6, -1.3), "Fundación corrida H.A. + sobrecimiento +0,30")]
+           ((6.0, -0.6), (8.6, -1.3), "Fundación: proyecto por terceros (fuera de alcance)")]
     for (ya, za), (yt, zt), t in rot:
         x, y = v.P(ya, za)
         tx, ty = v.P(yt, zt)

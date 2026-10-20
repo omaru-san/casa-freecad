@@ -15,6 +15,7 @@ con datos reales del sitio (clima 1995–2025, sol, topografía, normativa chile
 - **Memorias de cálculo** en [`calculo/MEMORIAS.pdf`](calculo/MEMORIAS.pdf): estructural (NCh433, con verificación FEM en CalculiX), condensación (Glaser), FV + batería (simulación horaria) y topografía.
 - **Sitio** en [`sitio/INFORME_SITIO.md`](sitio/INFORME_SITIO.md): clima, sol, viento y normativa aplicable.
 - **Manual de construcción por etapas** en [`MANUAL_CONSTRUCCION.md`](MANUAL_CONSTRUCCION.md).
+- **Cumplimiento normativo** en [`CUMPLIMIENTO_NORMATIVO.md`](CUMPLIMIENTO_NORMATIVO.md): 55 verificaciones automáticas (OGUC, DS 15, RIC SEC, RIDAA, DS 236, CONAF).
 
 Guía de uso y de FreeCAD: [`LEEME.md`](LEEME.md).
 
@@ -24,6 +25,7 @@ Guía de uso y de FreeCAD: [`LEEME.md`](LEEME.md).
 python3 generar_laminas.py                 # láminas SVG/PDF
 python3 -I calculo/estructura.py           # y condensacion.py, fv_bateria.py
 python3 -I calculo/generar_memorias.py     # memorias PDF (usa Chrome headless)
+python3 -I calculo/verificar_normas.py     # verificación normativa → CUMPLIMIENTO_NORMATIVO.md
 ```
 
 Modelo 3D: en la consola Python de FreeCAD, `exec(open("construir_instalaciones.py").read())`. Requiere `rsvg-convert`.

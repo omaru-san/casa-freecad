@@ -23,7 +23,7 @@ OX1, OX2 = 26, 190
 C_MURO = "#2b2b2b"
 C_PISO = "#f7f5ef"
 C_TERRAZA = "#d9bf8c"
-C_AF, C_AC, C_ALC, C_GAS = "#1f6fd1", "#d62728", "#7b4b2a", "#e0a000"
+C_AF, C_AC, C_ALC, C_HID = "#1f6fd1", "#d62728", "#7b4b2a", "#8e44ad"
 C_CABLE = "#c0392b"
 FUENTE = "Helvetica, Arial, sans-serif"
 
@@ -322,6 +322,17 @@ def sim_medidor(L, x, y, txt):
     L.txt(x, y + 0.6, txt, fs=1.2, peso="bold")
 
 
+def sim_detector(L, x, y, tipo):
+    L.circ(x, y, 1.5, relleno="#fff" if tipo == "humo" else "#fde2d2", borde="#c0392b", ancho=0.3)
+    L.txt(x, y + 0.55, "DH" if tipo == "humo" else "DT", fs=1.1, peso="bold", color="#c0392b")
+
+
+def sim_conexion(L, x, y, sigla):
+    L.rect(x - 1.5, y - 1.5, 3, 3, relleno="#fff", borde="#05a", ancho=0.3)
+    L.linea([(x - 1.5, y - 1.5), (x + 1.5, y + 1.5)], color="#05a", ancho=0.2)
+    L.txt(x + 2, y - 1.8, sigla, fs=1.2, anchor="start", color="#05a", peso="bold")
+
+
 def dibujar_electrico(pl, piso):
     L = pl.L
     luces = I.LUCES_1 if piso == 1 else I.LUCES_2
@@ -347,6 +358,12 @@ def dibujar_electrico(pl, piso):
         px, py = pl.P(x, y)
         sim_enchufe(L, px, py, ip)
         L.txt(px, py + 3.2, c, fs=1.2, color="#05a")
+    for p_, x, y, c, sigla in I.CONEXIONES_FIJAS:
+        if p_ == piso:
+            sim_conexion(L, *pl.P(x, y), f"{sigla} {c}")
+    for p_, x, y, tipo in I.DETECTORES:
+        if p_ == piso:
+            sim_detector(L, *pl.P(x, y), tipo)
     if piso == 1:
         tx, ty = pl.P(*I.TABLERO[:2])
         mx, my = pl.P(*I.MEDIDOR_ELEC[:2])
@@ -365,7 +382,10 @@ def dibujar_electrico(pl, piso):
         L.txt(bx - 3.4, by + 4.3, "Sala técnica bajo escalera", fs=1.2, anchor="start", color="#1f4e9c")
         tx2, ty2 = pl.P(*I.TABLERO[:2])
         flecha_e = (tx2 + 2.5, ty2 - 3.5)
-        L.txt(flecha_e[0] + 1, flecha_e[1], "C8 → bomba pozo", fs=1.3, anchor="start", color="#05a")
+        L.txt(flecha_e[0] + 1, flecha_e[1], "C8 → caseta presurizadora / pozo", fs=1.3, anchor="start", color="#05a")
+        ex, ey = pl.P(*I.SALIDA_EV)
+        L.linea([(ex, ey), (ex + 9, ey)], color="#05a", ancho=0.35, dash="1.5 0.6")
+        L.txt(ex + 9.5, ey + 0.5, "EV → cargador 11 kW (estac.)", fs=1.2, anchor="start", color="#05a")
 
 
 # ---------------- símbolos de gasfitería ----------------
@@ -397,20 +417,20 @@ def dibujar_artefacto(pl, cod, x, y, w, h):
     elif cod == "LAV":
         L.rect(x0, y0, ww, hh, relleno="#fff", **k)
         L.circ(cx, cy, ww * 0.33, ancho=0.2)
-    elif cod == "CAL":
-        L.rect(x0, y0, ww, hh, relleno="#ffe9b0", **k)
-    elif cod == "COC":
-        L.rect(x0, y0, ww, hh, relleno="#fff", **k)
+    elif cod == "ACS":
+        L.circ(cx, cy, ww / 2, relleno="#fde2e2", borde="#333", ancho=0.25)
+    elif cod == "IND":
+        L.rect(x0, y0, ww, hh, relleno="#2b2b2b", **k)
         for dx in (-0.25, 0.25):
             for dy in (-0.25, 0.25):
-                L.circ(cx + dx * ww, cy + dy * hh, ww * 0.15, ancho=0.2)
-    L.txt(cx, y0 - 0.8 if cod in ("CAL",) else cy + 0.6, cod, fs=1.3, peso="bold", color="#333")
+                L.circ(cx + dx * ww, cy + dy * hh, ww * 0.15, relleno="none", borde="#ddd", ancho=0.2)
+    L.txt(cx, cy + 0.6, cod, fs=1.3, peso="bold", color="#fff" if cod == "IND" else "#333")
 
 
 def dibujar_gasfiteria(pl, piso):
     L = pl.L
     if piso == 1:
-        redes = [(I.ALC_1, C_ALC, 0.7, None), (I.GAS_1, C_GAS, 0.45, "3 1 0.6 1"),
+        redes = [(I.ALC_1, C_ALC, 0.7, None), (I.HIDRAULICO_1, C_HID, 0.55, "3 1 0.6 1"),
                  (I.AF_1, C_AF, 0.45, None), (I.AC_1, C_AC, 0.45, "1.6 0.8")]
         arts = I.ARTEFACTOS_1
     else:
@@ -442,16 +462,21 @@ def dibujar_gasfiteria(pl, piso):
         mx, my = pl.P(*I.MEDIDOR_AGUA)
         sim_medidor(L, mx, my, I.SIGLA_AGUA)
         L.txt(mx, my + 4, I.TEXTO_AGUA, fs=1.2, color=C_AF)
-        gx, gy = pl.P(*I.MEDIDOR_GAS)
-        L.rect(gx - 2, gy - 2, 4, 4, relleno="#fff6d6", borde=C_GAS, ancho=0.4)
-        L.txt(gx, gy + 0.6, "MG", fs=1.2, peso="bold")
-        L.txt(gx + 2.6, gy + 4.5, "Medidor gas", fs=1.2, color="#8a6a00", anchor="start")
+        vx, vy = pl.P(*I.VALVULA_TERMOSTATICA)
+        L.add(f'<polygon points="{vx-1.4},{vy-1} {vx+1.4},{vy+1} {vx+1.4},{vy-1} {vx-1.4},{vy+1}" fill="{C_AC}" stroke="#000" stroke-width="0.15"/>')
+        L.txt(vx + 2, vy + 0.5, "VMT 45 °C", fs=1.2, anchor="start", color=C_AC, peso="bold")
+        bx, by = pl.P(6.95, -0.55)
+        L.rect(bx - 5, by - 2, 10, 4, relleno="#efe3f6", borde=C_HID, ancho=0.4)
+        L.txt(bx, by + 0.6, "BC", fs=1.4, peso="bold", color=C_HID)
+        for p_ in (1,):
+            cx_, cy_ = pl.P(8.45, 2.12)
+            L.rect(cx_ - 2, cy_ - 1, 4, 2, relleno="#efe3f6", borde=C_HID, ancho=0.35)
+        lx, ly = pl.P(*I.ROTULO_HIDRAULICO)
+        L.txt(lx, ly, "Calefacción PE-RT Ø25 → colector", fs=1.2, color=C_HID)
         lx, ly = pl.P(*I.ROTULO_COLECTOR)
-        L.txt(lx + 2.2, ly, "PVC Ø110 · pend. ≥ 1%", fs=1.4, color=C_ALC, rot=-90)
+        L.txt(lx + 2.2, ly, "PVC Ø110 · pend. ≥ 3 %", fs=1.4, color=C_ALC, rot=-90)
         lx, ly = pl.P(*I.ROTULO_COCINA)
         L.txt(lx, ly - 1.2, "PVC Ø50 → Ø110", fs=1.4, color=C_ALC)
-        lx, ly = pl.P(*I.ROTULO_GAS)
-        L.txt(lx, ly - 1.0, "Gas: Cu tipo L Ø1/2\" (exterior)", fs=1.3, color="#8a6a00")
 
 
 def leyenda(L, x, y, items, titulo="SIMBOLOGÍA"):
@@ -500,16 +525,20 @@ def lamina_arquitectura(img_iso=None):
     ])
     notas(L, 18, 200, "NOTAS", [
         "1. Medidas en metros, a eje de muro. Escala 1:100 en A3.",
-        "2. Muros exteriores 20 cm, tabiques 10 cm. Altura piso-cielo 2,50 m.",
+        "2. Muros exteriores 20 cm, tabiques 10 cm. Piso-cielo 2,50 m (≥ 2,30, OGUC 4.1.1).",
         "3. Entrepiso: losa 20 cm. Nivel piso 2 = +2,70 m.",
         "4. Escalera en U: 15 contrahuellas de 18 cm, huellas 25 cm,",
         "   tramos de 0,90 m. Cabe justo en la franja de 2 m de fondo.",
         "   Llega al piso 2 por el hall sobre la terraza de entrada.",
-        "5. Medidas inferidas del boceto: ajustar en casa_datos.py",
-        "   y regenerar con  python3 generar_laminas.py",
+        "   Baranda 0,95 m (0,85 en tramo), sin huecos > 12,5 cm, y puertas",
+        "   de seguridad arriba y abajo (bebé, gatos).",
+        "6. Ventanas P2 con antepecho 1,00 m y limitador de apertura 10 cm.",
+        "7. Superficie ≤ 140 m² y 2 pisos → F-15 (OGUC 4.3.5 n°14), DS1 ok.",
+        "8. Mesones 0,85 m y muebles altos a 1,40 m (estatura 1,64 m).",
+        "9. Medidas en casa_datos.py; regenerar: python3 generar_laminas.py",
     ])
     if img_iso and os.path.exists(img_iso):
-        L.txt(200, 160, "VISTA 3D desde el NE (modelo FreeCAD)", fs=2.6, anchor="start", peso="bold")
+        L.txt(200, 160, "VISTA 3D (modelo FreeCAD)", fs=2.6, anchor="start", peso="bold")
         L.add(f'<image x="120" y="163" width="165" height="120" preserveAspectRatio="xMidYMid meet" '
               f'xlink:href="file://{img_iso}"/>')
     leyenda(L, 345, 40, [
@@ -530,34 +559,42 @@ def lamina_electrica():
     dibujar_electrico(p1, 1)
     dibujar_electrico(p2, 2)
     marco(L, "ELE-01", "INSTALACIÓN ELÉCTRICA", 2)
-    filas = [("Circ.", "Destino", "Protección", "Conductor")] + [tuple(c) for c in I.CIRCUITOS]
-    tabla(L, 18, 160, [12, 62, 34, 30], filas, fs=1.9)
+    filas = [("Circ.", "Destino", "Protección", "Conductor", "Fase · dif.")] + [tuple(c) for c in I.CIRCUITOS]
+    tabla(L, 14, 160, [10, 56, 24, 17, 26], filas, fs=1.6, alto=4.3)
     L.txt(18, 157, "CUADRO DE CARGAS — TDA (Tablero de distribución)", fs=2.4, anchor="start", peso="bold")
-    L.txt(18, 160 + 5.2 * len(filas) + 4.5, I.GENERAL, fs=1.9, anchor="start")
-    notas(L, 165, 160, "NOTAS", [
-        "1. Propuesta preliminar según criterios RIC (SEC Chile).",
-        "   Debe ser calculada, ejecutada y declarada (TE1) por",
-        "   un instalador eléctrico autorizado SEC.",
-        "2. Todos los circuitos de enchufes con protección",
-        "   diferencial 30 mA. Enchufes con tierra (3 polos).",
-        "3. Zonas húmedas: enchufes IP44 fuera del volumen",
-        "   de la ducha (≥ 0,60 m).",
-        "4. Alturas: enchufes 0,30 m · cocina/lavandería 1,10 m",
-        "   · interruptores 1,10 m.",
-        "5. Canalización en PVC conduit Ø20 mm embutido.",
-        "6. Luz de escalera conmutada entre piso 1 y piso 2.",
-        "7. Inversor híbrido + batería 11 kWh: ante corte de red respalda",
-        "   C1, C2, C4 (refrigerador) y C8 (bomba pozo) ~28 h a 0,35 kW.",
-    ], fs=1.9)
+    partes = I.GENERAL.split(" · ")
+    for k_, linea in enumerate((" · ".join(partes[:3]), " · ".join(partes[3:]))):
+        L.txt(14, 160 + 4.3 * len(filas) + 3.5 + 3 * k_, linea, fs=1.5, anchor="start")
+    notas(L, 152, 160, "NOTAS (DS 8/2019 · pliegos RIC SEC)", [
+        "1. Anteproyecto. Lo calcula, ejecuta y declara (TE1) un instalador",
+        "   SEC; FV con TE4 (RGR 01/02) y cargador EV con TE6 (RIC 15).",
+        "2. Diferencial ≤ 30 mA en todo circuito de alumbrado y enchufes, máx.",
+        "   3 circuitos por diferencial (RIC 10 5.1.3.5 y 5.1.3.7). Tipo A en",
+        "   cargas electrónicas; tipo B en el EV.",
+        "3. Enchufes de alvéolos protegidos (RIC 10 5.1.2.8), con tierra.",
+        "4. Baños: sin enchufes en volúmenes 0-1-2 (≥ 0,60 m de la ducha).",
+        "   Exterior IP44 bajo alero / IP54 a la intemperie (RIC 10 5.2).",
+        "5. Recintos > 10 m²: 2 centros, cada uno con su interruptor.",
+        "6. Alturas (estatura 1,64 m): interruptores 1,05 m · enchufes 0,30 m",
+        "   · cocina y lavandería 1,05 m (mesón 0,85 m) · TDA eje 1,50 m.",
+        "7. Canalización PVC conduit Ø20 embutida en cámara técnica (no",
+        "   perfora la barrera de vapor). Nada a la vista (mascotas).",
+        "8. Detectores de humo interconectados 220 V + batería (DH) y",
+        "   térmico en cocina (DT). Sin gas: no se requiere detector de CO.",
+        "9. Inversor híbrido con AFCI (Res. SEC 33.038, desde 01-01-2026);",
+        "   respaldo de C1, C2, C4, C8 y C13 con la batería de 11 kWh.",
+    ], fs=1.6)
     leyenda(L, 345, 40, [
         (lambda L, x, y: sim_luz(L, x, y, "cielo"), "Luminaria de cielo"),
         (lambda L, x, y: sim_luz(L, x, y, "muro"), "Aplique de muro"),
         (lambda L, x, y: sim_interruptor(L, x - 1, y + 1, "simple"), "Interruptor 9/12"),
         (lambda L, x, y: sim_interruptor(L, x - 1, y + 1, "doble"), "Interruptor doble 9/32"),
         (lambda L, x, y: sim_interruptor(L, x, y, "conmutador"), "Conmutador 9/24"),
-        (lambda L, x, y: sim_enchufe(L, x, y, False), "Enchufe 10/16 A c/tierra"),
+        (lambda L, x, y: sim_enchufe(L, x, y, False), "Enchufe 10/16 A alvéolos prot."),
         (lambda L, x, y: sim_enchufe(L, x - 1, y, True), "Enchufe IP44 (húmedo)"),
         (lambda L, x, y: sim_tablero(L, x, y + 1, ""), "Tablero distribución TDA"),
+        (lambda L, x, y: sim_conexion(L, x, y, ""), "Conexión fija de equipo"),
+        (lambda L, x, y: sim_detector(L, x, y, "humo"), "Detector humo / térmico"),
         (lambda L, x, y: sim_medidor(L, x, y, "kWh"), "Medidor bidireccional"),
         (lambda L, x, y: (L.rect(x - 2.6, y - 1.6, 5.2, 3.2, relleno="#eef3fb", borde="#1f4e9c", ancho=0.35),
                           L.txt(x, y + 0.6, "INV", fs=1.3, peso="bold", color="#1f4e9c")), "Inversor híbrido 6 kW"),
@@ -575,49 +612,49 @@ def lamina_gasfiteria():
     p1, p2 = base_plantas(L, tenue=True, areas=False)
     dibujar_gasfiteria(p1, 1)
     dibujar_gasfiteria(p2, 2)
-    marco(L, "SAN-01", "AGUA POTABLE, ALCANTARILLADO Y GAS", 3)
+    marco(L, "SAN-01", "AGUA POTABLE, AGUA CALIENTE Y ALCANTARILLADO", 3)
     tabla(L, 18, 160, [34, 46, 40], [
         ("Red", "Material", "Diámetro"),
-        ("Agua fría matriz", "PPR / Cu tipo L", "Ø25 mm (3/4\")"),
-        ("Agua fría/caliente", "PPR / Cu tipo L", "Ø20 mm (1/2\")"),
+        ("Agua fría matriz", "PPR PN20 / PEX", "Ø32 mm (1\")"),
+        ("Agua fría/caliente", "PPR PN20 / PEX", "Ø20–25 mm"),
         ("Descarga WC, B.A.S.", "PVC sanitario", "Ø110 mm"),
         ("Ducha, lavadero, lavaplatos", "PVC sanitario", "Ø50 mm"),
         ("Lavamanos", "PVC sanitario", "Ø40 mm"),
         ("Ventilación", "PVC sanitario", "Ø75 mm a techo"),
-        ("Gas licuado/natural", "Cu tipo L", "Ø1/2\" – 3/4\""),
+        ("Calefacción (BC ↔ colectores)", "PE-RT/PEX aislado", "Ø25 mm"),
+        ("Piso radiante", "PE-Xa c/ barrera O₂", "Ø16 mm, paso 15 cm"),
     ], fs=1.9)
-    notas(L, 150, 160, "NOTAS", [
-        "1. Propuesta preliminar. Proyecto sanitario debe ser firmado por",
-        "   profesional y aprobado por la sanitaria (RIDAA). Gas: instalador",
-        "   autorizado SEC (TC6).",
-        "2. Calefont en lavandería: exige ventilación superior e inferior",
-        "   y ducto de evacuación de gases al exterior. Alternativa:",
-        "   termo eléctrico o calefont tiro forzado.",
-        "3. Cámaras de inspección (C.I.) en cada cambio de dirección",
-        "   y cada 30 m máx. Pendiente mínima 1% (Ø110) / 3% (Ø50).",
-        "4. Montantes AF/AC y bajada B.A.S. alineados: baño P2 sobre baño P1.",
-        "5. Sector rural sin alcantarillado: fosa séptica 2.400 L + drenes (DS 236),",
-        "   aprobación SEREMI de Salud. Agua: pozo propio (art. 56 Código de Aguas)",
-        "   + análisis físico-químico y bacteriológico; desinfección UV.",
-        "6. Llaves de paso en cada recinto húmedo.",
-    ], fs=1.9)
+    notas(L, 150, 160, "NOTAS (RIDAA DS 50/2002 · DS 236/1926 · DS 735)", [
+        "1. Anteproyecto. Proyecto sanitario firmado por profesional y aprobado",
+        "   por la SEREMI de Salud Los Ríos (agua y alcantarillado particular).",
+        "2. CASA SIN GAS: agua caliente con bomba de calor (BC) + acumulador",
+        "   300 L a 55-60 °C, ciclo antilegionella semanal ≥ 60 °C y válvula",
+        "   mezcladora termostática (VMT) a 45 °C por seguridad de los niños.",
+        "3. Presión: ≥ 14 m.c.a. en el artefacto más desfavorable. Presurizadora",
+        "   de velocidad variable, partida 30 / detención ≤ 42 m.c.a. (dif. ≤ 12).",
+        "4. Pendiente de descargas 3 % (art. 88; 1 % sólo justificado). C.I. en",
+        "   cada cambio de dirección y cada 30 m máx. Sifón con sello ≥ 50 mm.",
+        "5. Llave de paso AF y AC en cada baño, cocina y lavandería (art. 52 e).",
+        "6. Montantes AF/AC y bajada B.A.S. alineados: baño P2 sobre baño P1.",
+        "7. Fosa séptica 2.400 L + drenes (DS 236), a ≥ 20 m del pozo.",
+        "   Agua de pozo (art. 56 Código de Aguas): análisis NCh 409 + UV.",
+    ], fs=1.6)
     leyenda(L, 345, 40, [
         (leyenda_linea(C_AF, 0.45), "Agua fría (AF)"),
         (leyenda_linea(C_AC, 0.45, "1.6 0.8"), "Agua caliente (AC)"),
         (leyenda_linea(C_ALC, 0.7), "Alcantarillado"),
-        (leyenda_linea(C_GAS, 0.45, "3 1 0.6 1"), "Gas"),
+        (leyenda_linea(C_HID, 0.55, "3 1 0.6 1"), "Calefacción (BC)"),
         (lambda L, x, y: L.circ(x, y, 0.8, relleno=C_AF, borde="#000", ancho=0.15), "Montante AF"),
         (lambda L, x, y: L.circ(x, y, 0.8, relleno=C_AC, borde="#000", ancho=0.15), "Montante AC"),
         (lambda L, x, y: L.circ(x, y, 1.1, relleno=C_ALC, borde="#000", ancho=0.15), "Bajada aguas servidas"),
         (lambda L, x, y: L.rect(x - 1.6, y - 1.6, 3.2, 3.2, relleno="#fff", borde=C_ALC, ancho=0.4), "Cámara de inspección"),
-        (lambda L, x, y: sim_medidor(L, x, y, "HP"), "Hidropack desde pozo"),
-        (lambda L, x, y: (L.rect(x - 2, y - 2, 4, 4, relleno="#fff6d6", borde=C_GAS, ancho=0.4),
-                          L.txt(x, y + 0.6, "MG", fs=1.2)), "Medidor de gas"),
-        (lambda L, x, y: L.rect(x - 2, y - 1.5, 4, 3, relleno="#ffe9b0", borde="#333", ancho=0.25), "Calefont (CAL)"),
+        (lambda L, x, y: sim_medidor(L, x, y, "LLP"), "Llave de paso general"),
+        (lambda L, x, y: L.circ(x, y, 2, relleno="#fde2e2", borde="#333", ancho=0.25), "Acumulador ACS 300 L"),
+        (lambda L, x, y: L.rect(x - 3, y - 1.5, 6, 3, relleno="#efe3f6", borde=C_HID, ancho=0.4), "Bomba de calor / colector"),
     ])
     L.txt(345, 120, "WC inodoro · LV lavamanos · DU ducha", fs=1.7, anchor="start", color="#444")
     L.txt(345, 124, "LP lavaplatos · LD lavadero · LAV lavadora", fs=1.7, anchor="start", color="#444")
-    L.txt(345, 128, "COC cocina a gas · CAL calefont", fs=1.7, anchor="start", color="#444")
+    L.txt(345, 128, "IND inducción · ACS acumulador", fs=1.7, anchor="start", color="#444")
     return L
 
 

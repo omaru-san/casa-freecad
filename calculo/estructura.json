@@ -1,6 +1,6 @@
 {
  "advertencia": "Ejercicio académico de anteproyecto. Suelo y maderas supuestos; requiere mecánica de suelos y calculista.",
- "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio); fundación corrida H.A. escalonada + sobrecimiento.",
+ "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio). Fundaciones: proyecto aparte (fuera de alcance).",
  "materiales": {
   "madera": {
    "nombre": "Pino radiata estructural C24 / MSR (NCh1198, valores admisibles)",
@@ -14,7 +14,7 @@
    "nombre": "OSB 11,1 mm estructural, clavo 2½\" (8d) @ 10 cm bordes / 20 cm interior",
    "v_adm_kN_m": 5.5
   },
-  "hormigon": "H25 fundaciones/sobrecimiento, acero A630-420H"
+  "hormigon": "Fundaciones y sobrecimiento: proyecto por terceros"
  },
  "suelo": {
   "tipo": "D (supuesto: suelo fluvial/volcánico medianamente denso)",
@@ -284,32 +284,31 @@
   "esbeltez": 64.0,
   "Fc_adm_pandeo_MPa": 6.6
  },
- "fundaciones": [
+ "cargas_a_fundacion": [
   {
    "eje": "Eje y=0 (fachada sur)",
-   "q_kN_m": 14.6,
-   "ancho_m": 0.4,
-   "sigma_kPa": 37.0,
-   "sigma_adm_kPa": 100.0,
-   "FU": 0.37
+   "D_kN_m": 5.8,
+   "L_kN_m": 3.1,
+   "q_kN_m": 8.9
   },
   {
    "eje": "Eje y=6 (fachada norte, con FV)",
-   "q_kN_m": 17.6,
-   "ancho_m": 0.4,
-   "sigma_kPa": 44.0,
-   "sigma_adm_kPa": 100.0,
-   "FU": 0.44
+   "D_kN_m": 6.8,
+   "L_kN_m": 5.1,
+   "q_kN_m": 11.8
   },
   {
    "eje": "Eje y=2 (interior, bajo entrepiso)",
-   "q_kN_m": 16.0,
-   "ancho_m": 0.4,
-   "sigma_kPa": 40.0,
-   "sigma_adm_kPa": 100.0,
-   "FU": 0.4
+   "D_kN_m": 4.2,
+   "L_kN_m": 6.0,
+   "q_kN_m": 10.2
   }
  ],
+ "reacciones_puntuales_kN": {
+  "pilar_esquina_terraza": 11.7,
+  "holddown_traccion": 5.9,
+  "corte_basal_Q0": 44.3
+ },
  "fem_verificacion": {
   "modelo": "calculo/FEM_Viga.FCStd — viga 90×240 mm, L = 2,0 m, empotrada en extremos, q = 6,71 kN/m (presión 74,6 kPa)",
   "malla": "Gmsh tetraédrica, 3.799 nodos",
