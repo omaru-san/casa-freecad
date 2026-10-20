@@ -116,22 +116,37 @@ ELEMENTOS_VENT = [
     (1, "AC", 7.45, 0.40, "Acumulador ACS 300 L + válvula mezcladora termostática 45 °C"),
     (1, "CO", 8.45, 2.12, "Colector piso radiante P1 (caudalímetros + actuadores)"),
     (1, "DH", 7.50, 1.70, "Lavandería: secadora con bomba de calor (sin evacuación) o tendido con deshumidificador"),
-    (2, "CO", 8.45, 2.12, "Colector piso radiante P2"),
+    (2, "CF", 8.45, 2.12, "Distribuidor de los ventiloconvectores P2 (ida/retorno PE-RT Ø20 por el entrepiso)"),
     (2, "VT", 4.55, 0.50, "Ventilación B.A.S. Ø75 sobre cubierta"),
 ]
-# Piso radiante: zonas (piso, x0, y0, x1, y1, nombre) — tubo PE-Xa/PE-RT 16 mm con barrera antioxígeno, paso 15 cm
+# Piso radiante SÓLO EN EL 1er PISO: zonas (piso, x0, y0, x1, y1, nombre) — PE-Xa/PE-RT 16 mm c/ barrera O₂, paso 15 cm
 ZONAS_RADIANTE = [
     (1, 0.25, 2.25, 7.75, 5.75, "Living-cocina"), (1, 2.25, 0.25, 4.15, 1.75, "Oficina 1"),
     (1, 4.65, 0.25, 5.95, 1.75, "Baño"), (1, 9.75, 3.25, 11.75, 5.75, "Oficina 2"), (1, 8.25, 2.20, 11.75, 2.80, "Pasillo"),
-    (2, 2.25, 3.25, 5.25, 5.75, "Dorm. principal"), (2, 5.75, 3.25, 8.50, 5.75, "Dormitorio 2"),
-    (2, 9.00, 3.25, 11.75, 5.75, "Dormitorio 3"), (2, 4.65, 0.25, 7.55, 1.75, "Baño"),
-    (2, 4.65, 2.20, 11.75, 2.80, "Pasillo"),
 ]
+# 2° piso SIN piso radiante (entrepiso seco y acústico, ver casa_datos.ENTREPISO): ventiloconvectores (fancoils) de
+# consola baja conectados a la MISMA bomba de calor, a la misma temperatura de impulsión (35 °C) → no baja el SCOP.
+# Silenciosos (≤ 25 dB(A) en velocidad mínima), termostato por dormitorio. En verano pueden refrescar (bandeja de condensado).
+# (piso, x, y, orientación del muro 'h'|'v', recinto) — ubicados donde no chocan con los muebles de interiorismo_datos.py
+FANCOILS = [
+    (2, 2.15, 4.50, "v", "Dorm. principal"),   # bajo la ventana oeste (antepecho 1,00 m)
+    (2, 7.00, 3.12, "h", "Dormitorio 2"),      # muro sur, entre el clóset y la puerta
+    (2, 10.40, 5.88, "h", "Dormitorio 3"),     # bajo la ventana norte (la cuna queda lejos)
+]
+FANCOIL_TXT = "Ventiloconvector consola baja 0,8–1,2 kW a 35 °C, ≤ 25 dB(A), termostato por recinto"
+TOALLERO_P2 = (2, 4.85, 1.90, "Toallero eléctrico 300 W con temporizador (baño P2)")
 T_IMPULSION = 35   # °C en diseño (exterior −4,5 °C); curva climática 28–35 °C
 PASO_TUBO = 0.15   # m
 EFICIENCIA_VMC = 0.80
 N50_META = 3.0     # ren/h a 50 Pa (exigido ≤ 5,0 en provincia de Valdivia)
 SCOP_BC = 3.5
+
+# ================= PLATAFORMA (decisión del usuario 20-10-2026) =================
+# La casa se emplaza en un sector PLANO del terreno: no hay corte ni relleno compensado. El DEM de ~30 m
+# (sitio/topografia.json) no tiene resolución para ver ese sector; la topografía real lo confirmará.
+PLATAFORMA_NIVELADA = True
+ESCARPE = 0.25          # m de capa vegetal que se retira bajo la plataforma (suelo orgánico)
+BASE_GRANULAR = 0.15    # m de grava compactada bajo el radier (además de la grava de 10 cm del piso)
 
 # ================= EMPLAZAMIENTO (m, mismo origen) =================
 SITIO = CLIMA["sitio"]
@@ -140,7 +155,7 @@ ACCESO = [(30.0, -3.5), (16.0, -3.5), (12.6, -1.0), (11.25, -0.2)]  # desde cami
 ESTACIONAMIENTO = (12.5, -10.5, 18.5, -5.0)   # 2 autos: 6,0 × 5,5 m, ripio compactado (permeable)
 WALLBOX = (15.5, -5.2)                        # cargador 11 kW en poste, IP54 (RIC 15), cable recogido ≥ 10 cm del suelo
 DUCTO_EV = [(12.0, 2.30), (12.6, 2.30), (12.6, -4.6), (15.5, -4.6), (15.5, -5.2)]  # ducto enterrado PVC Ø40
-CASETA_AGUA = (13.2, 1.0, 15.4, 3.2)          # estanque AP 3.000 L + presurizadora velocidad variable + filtro + UV
+CASETA_AGUA = (13.2, 1.0, 15.4, 3.2)          # estanque AP 3.000 L + presurizadora VSD + filtros + UV (ver TRATAMIENTO_AGUA)
 # Defensa contra incendio forestal (CONAF, Comunidades Preparadas): fajas medidas desde el muro
 ZONAS_CONAF = [(2, "0–2 m: sin vegetación (ripio), sin leña ni combustibles"),
                (10, "2–10 m: pasto corto, plantas de bajo porte y riego"),
@@ -153,6 +168,56 @@ DRENAJE_PERIMETRAL_OFFSET = 1.0
 INFILTRACION_LLUVIAS = (-4.0, -7.5, -1.0, -5.5)  # pozo/zanja de infiltración de aguas lluvias (faldón sur)
 CORTAVIENTO = [(-20.0, 4.0), (-17.0, 14.0), (-8.0, 21.0)]  # arco al NO/O, lejos del faldón FV
 
+# Tratamiento del agua del pozo (en la caseta). En Los Ríos los pozos suelen traer hierro y manganeso:
+# el análisis NCh 409 debe pedirlos explícitamente; el filtro catalítico sólo se instala si salen altos.
+TRATAMIENTO_AGUA = ["Análisis NCh 409: coliformes, turbiedad, pH, Fe, Mn, As, nitratos",
+                    "Filtro de sedimentos 20 µm + 5 µm (cartuchos)",
+                    "Filtro catalítico Fe/Mn con retrolavado (si Fe > 0,3 o Mn > 0,1 mg/L)",
+                    "Lámpara UV 12 GPM con alarma (desinfección, sin químicos)"]
+
+# ================= OBRAS EXTERIORES (lámina EXT-01) =================
+# Deslinde referencial (igual que EMP-01). Cerco del predio: 4 hebras + malla de campo; portón en el acceso.
+DESLINDE = (-21.5, -11.5, 28.5, 21.5)
+PORTON = {"x": 28.5, "y": -3.5, "ancho": 4.0, "peatonal": 1.0,
+          "texto": "Portón vehicular 4,0 m (batiente, motor 24 V con batería) + puerta peatonal 1,0 m"}
+PILAR_ACCESO = (28.5, -0.9, "Pilar de acceso: número del predio iluminado, buzón, citófono IP y caseta de basura cerrada")
+# Patio cercado para el perro: malla de acero galvanizado 1,5 m, enterrada 0,30 m (anti-excavación), postes
+# impregnados c/ 2,5 m. Usa la casa como parte del cierre; deja fuera el acceso, la caseta, la fosa y el estacionamiento
+# (el camión limpiafosas entra sin abrir el patio).
+CERCO_PATIO = [(9.0, 0.0), (9.0, -3.2), (-4.2, -3.2), (-4.2, 16.0), (19.5, 16.0), (19.5, 4.0), (12.0, 4.0)]
+PUERTAS_CERCO = [((9.0, -1.6), "v", 1.0, "Puerta peatonal 1,0 m con cierre automático"),
+                 ((19.5, 10.0), "v", 3.0, "Portón 3,0 m para maquinaria de jardín")]
+# Senderos peatonales pavimentados (adoquín o baldosa sobre base compactada, drenante): (polilínea, ancho m, nombre)
+SENDEROS = [
+    ([(14.2, -5.0), (14.2, -2.4), (12.3, -0.8), (11.25, -0.3)], 1.2, "Estacionamiento → entrada"),
+    ([(12.3, -0.8), (12.6, 0.4), (12.6, 2.1), (13.2, 2.1)], 1.0, "Entrada → caseta de agua"),
+    ([(1.0, -0.1), (1.0, -1.6), (9.0, -1.6)], 1.0, "Terraza → puerta del patio"),
+]
+BODEGA = {"rect": (22.5, -1.6, 25.5, 1.0),
+          "texto": "Bodega exterior 3,0 × 2,6 m metálica (no combustible), radier, luz y enchufe; ≥ 10 m de la casa (CONAF)"}
+# Luminarias exteriores (circuito C15): LED 2700 K apantalladas hacia abajo (fauna y cielo oscuro), con sensor de
+# movimiento + crepuscular, y escena en Home Assistant. (x, y, tipo 'baliza' | 'foco' | 'aplique', descripción)
+LUCES_EXT = [
+    (13.5, -4.0, "baliza", "Baliza 60 cm"), (13.5, -2.0, "baliza", "Baliza 60 cm"), (12.0, -0.4, "baliza", "Baliza 60 cm"),
+    (15.5, -5.0, "foco", "Foco con sensor en el poste del cargador (estacionamiento)"),
+    (15.4, 2.2, "aplique", "Aplique de la caseta"),
+    (24.0, -1.6, "aplique", "Aplique con sensor de la bodega"),
+    (28.5, -1.4, "aplique", "Número iluminado y luz del portón"),
+    (19.3, 10.0, "aplique", "Aplique del portón de jardín"),
+]
+RESIDUOS = [((27.4, -0.9), "Caseta de basura cerrada junto al camino (perros y zorros)"),
+            ((16.5, 14.5), "Compostera cerrada de 2 cámaras (restos de cocina y pasto)")]
+# Antena de internet rural (4G/5G o satelital) en el frontón oriente: sin sombra sobre los paneles; ducto al rack.
+ANTENA = (12.3, 3.0, "Antena 4G/5G o satelital en el frontón oriente + ducto Ø25 al rack (Cat6 + PoE)")
+# Red exterior enterrada (energía y datos en ductos separados ≥ 0,20 m, zanja a 0,60 m, cinta de advertencia,
+# cámara de paso 40×40 en cada cambio de dirección). (nombre, polilínea, contenido)
+DUCTOS_EXT = [
+    ("C8", [(12.0, 2.30), (12.6, 2.30), (13.2, 2.30)], "C8 TDA → tablero de la caseta (presurizadora)"),
+    ("Pozo", [(15.4, 2.1), (21.0, 2.1), (21.0, -8.5)], "Caseta → bomba sumergible del pozo (cable plano 3×2,5)"),
+    ("EV", [(12.0, 2.30), (12.6, 2.30), (12.6, -4.6), (15.5, -4.6), (15.5, -5.2)], "EV TDA → cargador 11 kW"),
+    ("C15", [(12.0, 2.10), (13.0, 1.0), (13.0, -1.9), (26.5, -1.9), (28.5, -1.4)],
+     "C15 alumbrado exterior, bodega y portón + ducto de datos (cámara y citófono)"),
+]
 # ================= ENVOLVENTE TÉRMICA (OGUC 4.1.10 mod. DS 15/2024 — Zona G, vigente 28-11-2025) =================
 def _area_vanos(ventanas, puertas_vidriadas=()):
     return sum(w * h for _, _, w, _, _, h in ventanas) + sum(puertas_vidriadas)
@@ -209,7 +274,8 @@ ENVOLVENTE["capas"] = {
     "techumbre": "Zinc-alum 0,4 mm · fieltro · OSB 11 mm · cerchas · paneles FV a 35°",
     "cielo": "Lana mineral 2 × 100 mm · barrera de vapor · yeso-cartón 12,5 mm (U 0,19)",
     "muro": "Siding · cámara ventilada · barrera hum. · OSB · 2×6 + lana 140 · b. vapor · cámara técnica 40 · yeso RF 15 (U 0,32, F-15)",
-    "entrepiso": "Losa / envigado + aislación acústica 50 mm",
+    "entrepiso": f"Entrepiso acústico {int(round(D.LOSA * 100))} cm: porcelanato · piso flotante yeso-fibra · lámina antiimpacto · OSB 18 · "
+                 "vigas 2×10 + lana 100 · canal resiliente · 2 yeso-cartón",
     "piso": "Radier 10 cm · polietileno 0,2 mm · grava 10 cm · EPS 50 mm en sobrecimiento",
 }
 

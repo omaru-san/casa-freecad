@@ -10,7 +10,8 @@
 >
 > **Objetivo:** una casa de calidad y duradera, con:
 > - seguridad contra incendio;
-> - eficiencia energética (bomba de calor, piso radiante, termoaislación zona G y paneles solares);
+> - eficiencia energética (bomba de calor, piso radiante en el 1er piso, termoaislación zona G y paneles solares);
+> - un 2° piso silencioso (entrepiso acústico: no se escuchan los pasos abajo);
 > - ventilación sana, domótica y buena presión de agua.
 >
 > **Supuestos (corregir si no calzan):**
@@ -59,11 +60,11 @@
 
    **Construir de octubre a abril** y cerrar el techo antes de mayo.
 5. **Diseño ya ajustado a la norma (20-10-2026).** Los planos de `laminas/` quedaron como **casa todo eléctrica**:
-   - bomba de calor aire-agua para el piso radiante y el agua caliente;
+   - bomba de calor aire-agua para el agua caliente, el piso radiante del 1er piso y los ventiloconvectores del 2°;
    - cocina de inducción y ventilación mecánica con recuperador de calor;
    - **sin gas**, y por lo tanto sin riesgo de monóxido de carbono ni trámite TC6.
 
-   El detalle norma por norma está en [CUMPLIMIENTO_NORMATIVO.md](CUMPLIMIENTO_NORMATIVO.md) (55 verificaciones automáticas).
+   El detalle norma por norma está en [CUMPLIMIENTO_NORMATIVO.md](CUMPLIMIENTO_NORMATIVO.md) (65 verificaciones automáticas).
    **Las fundaciones quedan fuera de este proyecto:** la lámina 08 entrega las cargas para quien las diseñe.
 
 ---
@@ -76,6 +77,7 @@
 | Lluvia de 1.713 mm/año y temporales del N–NO | Aleros ≥ 60 cm, **fachada ventilada**, barrera hídrica, canaletas dimensionadas para 66 mm/h, sobrecimiento ≥ 20 cm sobre el terreno y drenaje perimetral. |
 | Humedad de 86–89 % en invierno | Riesgo de **condensación y hongos**: memoria de condensación (exterior 3,5 °C / 98 % HR, Res. Ex. 1802), barrera de vapor en la cara caliente y **ventilación mecánica**. |
 | Zona sísmica 3 | Estructura calculada. Madera preservada según NCh 819 y anclajes (OGUC 5.6). **NCh433:2026 rige desde ~feb-2027**: ingresar el permiso antes, o diseñar ya con la nueva norma. |
+| Casa en un sector plano del terreno (el DEM de 30 m no lo distingue) | Sin corte ni relleno: sólo escarpe de la capa vegetal (0,25 m) y base granular compactada. Confirmarlo con la topografía. |
 | Napa posiblemente alta y estero a 159 m | **Calicata y test de percolación en invierno** antes de diseñar la fosa y las fundaciones. Revisar si hay suelo orgánico (ver el manual de suelos orgánicos del sur). |
 | Rural, sin alcantarillado | Fosa séptica y drenes (DS 236), con proyecto aprobado por la **SEREMI de Salud**. Agua de APR o pozo. |
 | Entorno rural con praderas y plantaciones | **Interfaz urbano-forestal:** techo no combustible, aleros cerrados y faja libre de combustible de 30 m (CONAF). |
@@ -163,11 +165,21 @@ Detalle en [normas/02/INDICE](normas/02_electrico_solar_domotica/INDICE.md).
 - Ideal: **trifásico** contratado a 3×16 A (se mantiene la tarifa BT1), con el alimentador y el tablero dimensionados para 3×32 A.
 - El monofásico (máximo 40 A) se queda corto para bomba de calor, inducción y auto al mismo tiempo.
 
+**Tableros** (unilineal, frente y cuadro de cargas en la lámina 12, TAB-01):
+- **TDA**, el tablero general, en el pasillo de acceso a 1,50 m.
+- **TDA-R**, un subtablero de respaldo al lado, alimentado por la salida *backup* del inversor híbrido. Con corte de luz siguen funcionando:
+  - luces y detectores (C1, C2);
+  - refrigerador y enchufes de cocina (C4);
+  - bombas de agua (C8);
+  - ventilación, red y domótica (C13).
+- 17 circuitos con las fases equilibradas (~5,2 kW de demanda por fase). La inducción se configura a 4,6 kW y el cargador del auto usa sólo lo que sobra.
+- La canalización de cada circuito está dibujada en la lámina 02. Al 2° piso sube por una montante en el tabique del pasillo.
+
 **Protecciones (obligatorias):**
 - **Diferencial de 30 mA** en todos los circuitos, con máximo 3 circuitos por diferencial.
 - **Enchufes con alvéolos protegidos.**
-- Protector de sobretensión tipo 2.
-- Tierra ≤ 20 Ω.
+- **Protector de sobretensión (DPS) tipo 1+2**: casa aislada con línea aérea, techo metálico y paneles. Agregar un DPS DC en la caja de los paneles.
+- Tierra ≤ 20 Ω: electrodo de fundación más barra copperweld. Unir a tierra las cañerías metálicas, la estructura de los paneles, la cubierta y la bomba del pozo.
 
 **Cargador de auto (RIC 15):**
 - Circuito exclusivo y diferencial tipo B.
@@ -190,12 +202,33 @@ Detalle en [normas/02/INDICE](normas/02_electrico_solar_domotica/INDICE.md).
   - alarma de humo al celular.
 - Rack de red en la **sala técnica con llave**, junto al tablero, el inversor y el acumulador de agua caliente.
 
+**Internet rural:**
+- Antena 4G/5G o satelital en el frontón oriente, para que no dé sombra a los paneles.
+- Ducto de Ø25 hasta el rack: Cat6 con PoE.
+
 ### 2.7 Agua, presión, agua caliente y alcantarillado
 Detalle en [normas/03/INDICE](normas/03_agua_alcantarillado_gas_calefaccion/INDICE.md).
 
 **Fuente de agua:**
 - Pedir **factibilidad al APR o SSR**.
 - Si no hay cupo, pozo propio: el art. 56 permite ≤ 0,5 L/s y 20 m³/mes sin derecho de aguas, con análisis de calidad.
+- **Análisis NCh 409 del pozo pidiendo hierro, manganeso y arsénico.** En Los Ríos el hierro y el manganeso son comunes: manchan los artefactos y tapan los filtros. Tratamiento en la caseta:
+  - filtros de sedimentos de 20 y 5 µm;
+  - **filtro catalítico Fe/Mn** con retrolavado, sólo si el análisis sale alto;
+  - lámpara UV.
+
+**Por dónde van las cañerías (no por el radier):**
+- **Agua fría y caliente nunca embutidas en el radier.** Ahí va el piso radiante: una fuga obligaría a romper el piso y los tubos de calefacción.
+  - Suben por la **cámara técnica de los muros**.
+  - Cruzan los pasillos por el **entrepiso**, sobre el cielo del 1er piso, en PEX sin uniones ocultas, con abrazaderas con goma (no transmiten ruido) y un registro en el cielo.
+  - En el 1er piso hay un solo cruce, de la lavandería a la cocina (banda gris en la lámina 03).
+  - Si algún día hay que cruzar un piso, se usa PEX en vaina corrugada ("tubo en tubo"), que se reemplaza sin romper.
+- **Las descargas sí van bajo el radier**, porque funcionan por gravedad. Son tramos cortos que salen directo a cámaras exteriores.
+- **Pasadas del sobrecimiento con camisa**: un tubo un diámetro mayor dejado antes de hormigonar. Se le entregan las posiciones a quien haga las fundaciones; picar después debilita el sobrecimiento y deja filtraciones.
+
+**Baños impermeabilizados:**
+- Membrana líquida bajo la cerámica, con banda en los encuentros. Sube 15 cm en los muros y 2 m en la ducha.
+- **El baño del 2° piso está sobre madera:** placa cementicia, membrana y desagüe lineal con pendiente. La bajada de aguas servidas va insonorizada.
 
 **Buena presión:**
 - Estanque de **2.000–3.000 L**.
@@ -208,6 +241,8 @@ Detalle en [normas/03/INDICE](normas/03_agua_alcantarillado_gas_calefaccion/INDI
 - **Ciclo antilegionella semanal a ≥ 60 °C.**
 - **Válvula mezcladora termostática a 45–48 °C** a la salida: obligatoria en la práctica con niños.
 - Griferías termostáticas en la ducha y la tina.
+
+**Cámara desgrasadora** en la salida de la cocina, antes de la fosa: retiene la grasa que, si no, tapa los drenes en pocos años. Se limpia cada 2–3 meses.
 
 **Fosa séptica:**
 - Prefabricada certificada de ~2.000–2.400 L, más drenes según el test de percolación.
@@ -224,12 +259,20 @@ Detalle en [normas/03/INDICE](normas/03_agua_alcantarillado_gas_calefaccion/INDI
 - Cámaras de inspección a ≤ 30 m y en cada cambio de dirección.
 
 ### 2.8 Calefacción y ventilación
-**Piso radiante con la bomba de calor:**
+**Piso radiante con la bomba de calor (sólo en el 1er piso):**
 - Impulsión a **30–40 °C**, que es donde la bomba de calor es más eficiente.
 - Tubo PEX-a o PE-RT de 16 mm **con barrera antioxígeno**, a 10–20 cm entre tubos.
 - Circuitos ≤ 100–120 m, colector con caudalímetros y **termostato por zona**.
 - Prueba de presión antes del mortero.
-- **Poner piso radiante en ambos pisos.** En el 2° piso va sobre la losa o placa con aislante acústico, o con radiadores de baja temperatura si sale caro.
+- **El 2° piso no lleva piso radiante.** El mortero pesaría ~1,1 kN/m² más sobre la madera y cambiaría el entrepiso acústico.
+
+**Ventiloconvectores (fancoils) en el 2° piso:**
+- Uno de consola baja por dormitorio: bajo la ventana oeste del principal, en el muro sur del dormitorio 2 y bajo la ventana norte del dormitorio 3.
+- Se conectan a la **misma bomba de calor y a la misma temperatura (35 °C)**, así que no bajan su eficiencia.
+- Cada dormitorio necesita ~300 W; el equipo más chico (0,8–1,2 kW) sobra.
+- Deben ser silenciosos: ≤ 25 dB(A) en velocidad mínima, con termostato por pieza. En verano pueden refrescar.
+- Las cañerías van por el entrepiso, desde un distribuidor sobre la sala técnica.
+- En el baño del 2° piso va un toallero eléctrico de 300 W con temporizador.
 
 **Bomba de calor:**
 - Potencia del orden de **6–8 kW térmicos** (la calcula el proyectista según la pérdida de calor).
@@ -241,6 +284,56 @@ Detalle en [normas/03/INDICE](normas/03_agua_alcantarillado_gas_calefaccion/INDI
 - **Opción recomendada:** ventilación mecánica **de doble flujo con recuperador de calor (HRV)**. Recupera ~80 % del calor y saca la humedad. Instalada cuesta ~$2,5–4,5 MM.
 - **Opción por etapas:** dejar los **ductos instalados** en la obra gruesa y partir con extractores higrorregulables continuos en baños y cocina, más celosías de admisión en los dormitorios. El HRV se agrega después.
 - **Campana de cocina con salida al exterior** y extractor del baño a ≥ 10 L/s.
+
+### 2.9 Acústica: que no se escuche correr en el 2° piso
+Un entrepiso de madera común deja pasar casi todo el ruido de pasos (L'nT,w ≈ 75 dB). La meta es **≤ 55 dB**. El ruido de pasos se corta separando el piso que se pisa de la estructura, y la estructura del cielo de abajo.
+
+El entrepiso tiene 34 cm. Detalle en la lámina 07; las capas, de arriba hacia abajo:
+1. Porcelanato símil madera con adhesivo flexible.
+2. **Piso flotante**: 2 placas de yeso-fibra de 12,5 mm encoladas entre sí. Dan masa sin mortero.
+3. **Lámina antiimpacto de 10 mm**, con mejora de al menos 20 dB, y banda perimetral de 5 mm. El piso flotante no toca los muros: el zócalo queda separado y el encuentro se sella con sello flexible.
+4. OSB de 18 mm machihembrado: es el diafragma estructural.
+5. Vigas 2×10 @ 40 con **lana mineral de 100 mm** en la cavidad.
+6. **Canal resiliente**: el cielo del 1er piso no se atornilla a las vigas.
+7. **2 planchas de yeso-cartón** (la primera RF).
+
+**Consecuencias:**
+- El cielo del 1er piso baja de 2,50 a **2,36 m**; sigue sobre el mínimo de 2,30. El 2° piso queda en +2,70, así que la escalera no cambia.
+- El entrepiso pesa 1,06 kN/m², ya incluido en el cálculo. La viga más cargada queda al 76 % y con flecha de 10 mm (máximo 11 mm para porcelanato).
+
+**Detalles que hacen la diferencia en obra:**
+- Escalera apoyada en bandas elastoméricas, sin contacto rígido con los muros de los dormitorios.
+- Las cañerías del entrepiso van colgadas con abrazaderas con goma.
+- Enchufes y focos del cielo en cajas selladas, sin perforar la segunda plancha.
+- Alfombras en las piezas de los niños: ayudan con los golpes sordos de baja frecuencia (saltos, carreras), que ningún entrepiso liviano elimina del todo.
+- Para el golpe sordo, lo que más ayuda es rigidizar el entrepiso. Si el presupuesto lo permite, vigas @ 30 cm en vez de @ 40.
+- Se puede medir al final con un acústico (ensayo de impacto). La verificación queda "a verificar en obra".
+
+### 2.10 Obras exteriores
+Todo está en la lámina 13 (EXT-01), con un cuadro de cantidades.
+
+- **Patio cercado para el perro**, de ~79 m:
+  - malla galvanizada de 1,5 m enterrada 30 cm, para que no excave;
+  - usa la casa como parte del cierre;
+  - deja afuera la entrada, la caseta de agua, la fosa (el camión entra sin abrir el patio) y el estacionamiento;
+  - una puerta peatonal con cierre automático y un portón de 3 m para el jardín.
+- **Cerco del deslinde** de 4 hebras con malla de campo.
+- **Acceso:** portón de 4 m con motor de 24 V y batería, más puerta peatonal. En el pilar de acceso van:
+  - el número iluminado del predio;
+  - el buzón;
+  - el citófono;
+  - la caseta de basura cerrada (perros y zorros).
+- **Senderos pavimentados** (~20 m²) del estacionamiento a la entrada, a la caseta y al patio. Son drenantes, para que el barro quede afuera.
+- **Bodega exterior metálica** de 3,0 × 2,6 m a 10,5 m de la casa (CONAF): herramientas, bicicletas y jardín.
+- **Luces exteriores** en el circuito C15: LED de 2700 K apantalladas hacia abajo, con sensor de movimiento y crepuscular.
+- **Ductos enterrados** a 0,60 m, con energía y datos en ductos separados y cámaras de paso:
+  - el C15;
+  - el cargador del auto;
+  - la caseta;
+  - el cable de la bomba del pozo.
+
+  Se dejan **antes** de pavimentar senderos y estacionamiento.
+- **Compostera cerrada** de 2 cámaras dentro del patio.
 
 ---
 
@@ -289,7 +382,9 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
   - **empalme eléctrico provisorio** (o definitivo de inmediato si SAESA lo permite);
   - agua de obra.
 - [ ] **Camino de acceso de ripio** y **zona de estacionamiento para 2 autos** (≥ 5,5 × 5,5 m), con ducto del cargador ya enterrado.
-- [ ] Despeje, trazado (con el norte geográfico verificado), excavación y **drenaje perimetral** con geotextil y grava.
+- [ ] **Cerco del deslinde y portón de acceso** (protege la faena; el motor del portón puede esperar).
+- [ ] **Zanjas y ductos exteriores** (C15, EV, caseta, pozo y datos) antes de pavimentar nada.
+- [ ] Despeje, **escarpe de la capa vegetal (0,25 m)** y base granular compactada: la casa va en un sector plano, sin corte ni relleno. Trazado con el norte geográfico verificado, excavación y **drenaje perimetral** con geotextil y grava.
 - [ ] **Instalaciones bajo el radier:**
   - alcantarillado con pendiente;
   - ducto del empalme;
@@ -299,13 +394,14 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
   - las cargas de la lámina 08 y de las [memorias](calculo/MEMORIAS.pdf), cap. 1.8;
   - los ejes de muros;
   - los pernos de solera Ø12 @ ≤ 0,50 m y los hold-down;
-  - las pasadas de alcantarillado y los ductos;
+  - las pasadas de alcantarillado, agua y ductos, **con camisa** dejada antes de hormigonar (posiciones en la lámina 03);
   - el sobrecimiento ≥ 20 cm sobre el terreno, con **aislante de borde R100 ≥ 91** (DS 15);
   - el radier **sobre EPS ≥ 80 mm y polietileno**, que es la base del piso radiante.
 - [ ] Recibir el sobrecimiento **a nivel y escuadra** antes de partir la estructura de madera (tolerancia ±5 mm).
 
 ### Etapa 4 — Obra gruesa y casa cerrada al agua (ene–abr) · ≈ $45–65 MM
-- [ ] Entramados de muros (madera preservada), anclajes, entrepiso y escalera estructural.
+- [ ] Entramados de muros (madera preservada), anclajes y escalera estructural apoyada en bandas elastoméricas.
+- [ ] **Entrepiso:** vigas 2×10 y OSB de 18 mm. Las capas acústicas van después (etapas 6 y 8).
 - [ ] **Techumbre completa:**
   - estructura calculada para los paneles solares;
   - **cubierta metálica**;
@@ -317,28 +413,33 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 
 ### Etapa 5 — Instalaciones embutidas (may–jul, se trabaja adentro con la casa ya cerrada) · ≈ $15–25 MM
 - [ ] **Eléctrica:**
-  - canalizaciones;
+  - canalizaciones por circuito (lámina 02) y montante al 2° piso;
   - cajas;
-  - Cat6;
+  - Cat6 y ducto de la antena;
   - ducto a los paneles solares;
-  - **tablero con 25 % de reserva**.
-- [ ] **Agua fría y caliente** (PEX o PPR), con **prueba de presión** antes de cerrar.
+  - **TDA y TDA-R** con 25 % de reserva y DPS tipo 1+2 (lámina 12).
+- [ ] **Agua fría y caliente** (PEX o PPR) **por muros y entrepiso, nunca embutidas en el radier**, con **prueba de presión** antes de cerrar.
+- [ ] Cañerías de los **ventiloconvectores** por el entrepiso, con abrazaderas con goma.
+- [ ] **Impermeabilización de los baños**; en el 2° piso, placa cementicia más membrana.
 - [ ] **Ductos de ventilación** (aunque el HRV se compre después).
 - [ ] **Fosa séptica, drenes y estanques**, con inspección de la SEREMI de Salud.
 
 ### Etapa 6 — Aislación y hermeticidad · ≈ $8–12 MM
-- [ ] Lana mineral en muros y techo.
+- [ ] Lana mineral en muros, techo y **entrepiso** (100 mm en la cavidad).
+- [ ] **Cielo del 1er piso con canal resiliente y 2 planchas de yeso-cartón.**
 - [ ] **Barrera de vapor** sellada con cinta.
 - [ ] Cámara técnica.
 - [ ] **Prueba blower door.** Si no da ≤ 5 ren/h (meta 3), sellar y repetir **antes** de forrar.
 
-### Etapa 7 — Piso radiante y bomba de calor · ≈ $8–14 MM
-- [ ] Banda perimetral, tubos PEX y colectores, **prueba de presión a 6 bar por 24 h**.
+### Etapa 7 — Piso radiante (1er piso), ventiloconvectores y bomba de calor · ≈ $8–14 MM
+- [ ] Banda perimetral, tubos PEX y colectores del 1er piso, **prueba de presión a 6 bar por 24 h**.
+- [ ] Ventiloconvectores de los 3 dormitorios y toallero eléctrico del baño del 2° piso.
 - [ ] Mortero de 5 cm.
 - [ ] Instalación de la bomba de calor y el acumulador de agua caliente, con la válvula mezcladora termostática.
 - [ ] **Primer encendido gradual** para secar el mortero: subir 1–2 °C por día, nunca de golpe.
 
 ### Etapa 8 — Terminaciones (por prioridad, mientras ya viven ahí) · ≈ $25–45 MM
+- [ ] **2° piso:** lámina antiimpacto con banda perimetral, piso flotante de yeso-fibra y después el porcelanato con adhesivo flexible. Zócalos separados del piso.
 - [ ] Revestimientos interiores: yeso-cartón RF, pintura lavable antihongos y porcelanato.
 - [ ] Revestimiento exterior con fachada ventilada.
 - [ ] **Núcleo habitable primero:**
@@ -356,6 +457,12 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 - [ ] Ventilación HRV. Domótica con Home Assistant.
 - [ ] Cargador del auto con TE6.
 - [ ] Más adelante, la **etapa 2 de paneles** (7,2 kWp) o una batería.
+
+### Etapa 9b — Obras exteriores (por partes, según prioridad) · ≈ $6–10 MM
+- [ ] **Patio cercado para el perro** antes de mudarse, con malla enterrada.
+- [ ] Senderos pavimentados, luces exteriores (C15) y pilar de acceso con número y buzón.
+- [ ] Bodega metálica a ≥ 10 m de la casa, caseta de basura y compostera.
+- [ ] Motor del portón y citófono, cuando haya capital.
 
 ### Etapa 10 — Recepciones y regularización
 - [ ] **TE1** (electricidad, SEC) → medidor definitivo.
@@ -400,7 +507,8 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
    - limpiar canaletas en otoño;
    - revisar los sellos de las ventanas;
    - limpiar los filtros del HRV cada 3–6 meses;
-   - limpiar la fosa cada 2 años;
+   - limpiar la fosa cada 2 años y la **cámara desgrasadora cada 2–3 meses**;
+   - cambiar los cartuchos de agua y la lámpara UV según el fabricante (la UV, una vez al año);
    - limpiar los paneles solares en primavera;
    - mantener la faja de defensa contra incendio antes del verano.
 
@@ -411,6 +519,8 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 - Si SAESA es la distribuidora del predio y si hay red trifásica cerca.
 - El cupo del APR de Puringue Pobre.
 - La napa y la percolación (invierno). Si es alta, se pasa a biofiltro o planta domiciliaria.
+- Que el sector elegido para la casa sea efectivamente plano (topografía real).
+- Hierro, manganeso y arsénico del pozo (análisis NCh 409): definen si va el filtro catalítico.
 - Las exigencias específicas del Plan Regulador o de la DOM de Mariquina (las dice el CIP).
 - Si se mantiene el diseño de 2 pisos (más económico por m²) o se pasa a 1 piso (más cómodo con niños pequeños y mascotas, pero más techo y fundación).
 

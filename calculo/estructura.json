@@ -1,6 +1,6 @@
 {
  "advertencia": "Ejercicio académico de anteproyecto. Suelo y maderas supuestos; requiere mecánica de suelos y calculista.",
- "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio). Fundaciones: proyecto aparte (fuera de alcance).",
+ "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso acústico de vigas 2×10 @ 40 (piso flotante seco + cielo con canal resiliente); techumbre de cerchas tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio). Fundaciones: proyecto aparte (fuera de alcance).",
  "materiales": {
   "madera": {
    "nombre": "Pino radiata estructural C24 / MSR (NCh1198, valores admisibles)",
@@ -38,7 +38,7 @@
   "estructura_techo": 0.15,
   "paneles_fv": 0.15,
   "cielo_p2": 0.2,
-  "entrepiso": 0.4700000000000001,
+  "entrepiso": 1.06,
   "muro_ext": 0.45,
   "muro_int": 0.35,
   "tabiques_movibles": 0.5,
@@ -51,13 +51,13 @@
   "cielo_p2": 12.0,
   "frontones": 5.7,
   "muros_p2": 61.5,
-  "muros_p1": 61.9,
-  "entrepiso": 53.4,
+  "muros_p1": 58.5,
+  "entrepiso": 85.9,
   "techo_bajo": 6.2,
-  "P1_nivel1": 148.9,
+  "P1_nivel1": 179.6,
   "P2_nivel2": 81.7,
-  "P_total": 230.6,
-  "peso_por_m2_kPa": 1.85
+  "P_total": 261.4,
+  "peso_por_m2_kPa": 2.09
  },
  "coef_sismico": {
   "T_estimado_s": 0.172,
@@ -65,9 +65,9 @@
   "C_max": 0.192,
   "C_min": 0.08,
   "C": 0.192,
-  "Q0_kN": 44.3,
-  "F1_kN": 19.8,
-  "F2_kN": 24.5,
+  "Q0_kN": 50.2,
+  "F1_kN": 24.7,
+  "F2_kN": 25.5,
   "Ak": [
    0.307,
    0.693
@@ -86,35 +86,35 @@
  "muros_corte": {
   "P1_x": {
    "largo_util_m": 17.3,
-   "capacidad_kN": 87.0,
-   "demanda_sismo_kN": 50.9,
+   "capacidad_kN": 88.6,
+   "demanda_sismo_kN": 57.7,
    "demanda_viento_kN": 26.5,
-   "FU": 0.59,
-   "v_kN_m": 2.94
+   "FU": 0.65,
+   "v_kN_m": 3.34
   },
   "P1_y": {
    "largo_util_m": 21.3,
-   "capacidad_kN": 115.8,
-   "demanda_sismo_kN": 50.9,
+   "capacidad_kN": 116.0,
+   "demanda_sismo_kN": 57.7,
    "demanda_viento_kN": 48.5,
-   "FU": 0.44,
-   "v_kN_m": 2.39
+   "FU": 0.5,
+   "v_kN_m": 2.71
   },
   "P2_x": {
    "largo_util_m": 25.7,
    "capacidad_kN": 134.3,
-   "demanda_sismo_kN": 28.2,
+   "demanda_sismo_kN": 29.3,
    "demanda_viento_kN": 13.2,
-   "FU": 0.21,
-   "v_kN_m": 1.1
+   "FU": 0.22,
+   "v_kN_m": 1.14
   },
   "P2_y": {
    "largo_util_m": 20.1,
    "capacidad_kN": 105.1,
-   "demanda_sismo_kN": 28.2,
+   "demanda_sismo_kN": 29.3,
    "demanda_viento_kN": 24.2,
-   "FU": 0.27,
-   "v_kN_m": 1.4
+   "FU": 0.28,
+   "v_kN_m": 1.45
   }
  },
  "segmentos_m": {
@@ -189,35 +189,35 @@
    ]
   }
  },
- "holddown_tipico_kN": 5.9,
+ "holddown_tipico_kN": 6.4,
  "elementos": [
   {
    "elemento": "Viga entrepiso (living, luz mayor)",
    "seccion_mm": "45×240",
    "L_m": 4.0,
-   "q_kN_m": 1.19,
-   "M_kNm": 2.38,
-   "fb_MPa": 5.5,
+   "q_kN_m": 1.42,
+   "M_kNm": 2.85,
+   "fb_MPa": 6.59,
    "Ff_adm": 9.3,
-   "fv_MPa": 0.33,
+   "fv_MPa": 0.4,
    "Fv_adm": 1.1,
-   "flecha_mm": 8.5,
+   "flecha_mm": 10.2,
    "flecha_adm_mm": 13.3,
-   "FU": 0.64
+   "FU": 0.76
   },
   {
    "elemento": "Viga entrepiso (franja servicios)",
    "seccion_mm": "45×240",
    "L_m": 2.0,
-   "q_kN_m": 1.19,
-   "M_kNm": 0.59,
-   "fb_MPa": 1.38,
+   "q_kN_m": 1.42,
+   "M_kNm": 0.71,
+   "fb_MPa": 1.65,
    "Ff_adm": 9.3,
-   "fv_MPa": 0.17,
+   "fv_MPa": 0.2,
    "Fv_adm": 1.1,
-   "flecha_mm": 0.5,
+   "flecha_mm": 0.6,
    "flecha_adm_mm": 6.7,
-   "FU": 0.15
+   "FU": 0.18
   },
   {
    "elemento": "Cercha W: cuerda superior (tramo entre nudos)",
@@ -251,63 +251,63 @@
    "elemento": "Viga sobre terraza entrada (y=0, x 10,5→12)",
    "seccion_mm": "90×240",
    "L_m": 1.5,
-   "q_kN_m": 6.71,
-   "M_kNm": 1.89,
-   "fb_MPa": 2.19,
+   "q_kN_m": 7.3,
+   "M_kNm": 2.05,
+   "fb_MPa": 2.38,
    "Ff_adm": 9.3,
-   "fv_MPa": 0.35,
+   "fv_MPa": 0.38,
    "Fv_adm": 1.1,
    "flecha_mm": 0.5,
    "flecha_adm_mm": 5.0,
-   "FU": 0.32
+   "FU": 0.35
   },
   {
    "elemento": "Viga sobre terraza entrada (x=12, y 0→2)",
    "seccion_mm": "90×240",
    "L_m": 2.0,
-   "q_kN_m": 6.71,
-   "M_kNm": 3.36,
-   "fb_MPa": 3.89,
+   "q_kN_m": 7.3,
+   "M_kNm": 3.65,
+   "fb_MPa": 4.23,
    "Ff_adm": 9.3,
-   "fv_MPa": 0.47,
+   "fv_MPa": 0.51,
    "Fv_adm": 1.1,
-   "flecha_mm": 1.5,
+   "flecha_mm": 1.6,
    "flecha_adm_mm": 6.7,
-   "FU": 0.42
+   "FU": 0.46
   }
  ],
  "pilar": {
   "elemento": "Pilar esquina terraza (madera laminada)",
   "seccion_mm": "140×140",
-  "N_kN": 11.7,
-  "fc_MPa": 0.6,
+  "N_kN": 12.8,
+  "fc_MPa": 0.65,
   "esbeltez": 64.0,
   "Fc_adm_pandeo_MPa": 6.6
  },
  "cargas_a_fundacion": [
   {
    "eje": "Eje y=0 (fachada sur)",
-   "D_kN_m": 5.8,
+   "D_kN_m": 6.3,
    "L_kN_m": 3.1,
-   "q_kN_m": 8.9
+   "q_kN_m": 9.4
   },
   {
    "eje": "Eje y=6 (fachada norte, con FV)",
-   "D_kN_m": 6.8,
+   "D_kN_m": 7.9,
    "L_kN_m": 5.1,
-   "q_kN_m": 11.8
+   "q_kN_m": 13.0
   },
   {
    "eje": "Eje y=2 (interior, bajo entrepiso)",
-   "D_kN_m": 4.2,
+   "D_kN_m": 5.9,
    "L_kN_m": 6.0,
-   "q_kN_m": 10.2
+   "q_kN_m": 11.9
   }
  ],
  "reacciones_puntuales_kN": {
-  "pilar_esquina_terraza": 11.7,
-  "holddown_traccion": 5.9,
-  "corte_basal_Q0": 44.3
+  "pilar_esquina_terraza": 12.8,
+  "holddown_traccion": 6.4,
+  "corte_basal_Q0": 50.2
  },
  "fem_verificacion": {
   "modelo": "calculo/FEM_Viga.FCStd — viga 90×240 mm, L = 2,0 m, empotrada en extremos, q = 6,71 kN/m (presión 74,6 kPa)",

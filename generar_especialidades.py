@@ -276,7 +276,7 @@ def lamina_emplazamiento():
     v.poly([(cx0, 2.1), (12.7, 2.1), (12.7, I.MEDIDOR_AGUA[1]), I.MEDIDOR_AGUA], color=C_AF, ancho=0.35)
     v.caja(cx0, cy0, cx1, cy1, relleno="#e3efff", borde=C_AF, ancho=0.35)
     v.txt((cx0 + cx1) / 2, cy0 + 1.3, "CASETA", fs=1.3, peso="bold", color=C_AF)
-    v.txt(cx1 + 0.4, cy1 - 0.3, "Estanque 3.000 L + presurizadora VSD + filtro + UV", fs=1.3, color=C_AF, anchor="start")
+    v.txt(cx1 + 0.4, cy1 - 0.3, "Estanque 3.000 L + presurizadora VSD + filtros (Fe/Mn) + UV", fs=1.3, color=C_AF, anchor="start")
     v.txt(21.4, -0.8, "Impulsión pozo → caseta (PE Ø32)", fs=1.3, color=C_AF, anchor="start")
     px, py = v.P(*E.POZO)
     L.circ(px, py, 3, relleno="#e3efff", borde=C_AF, ancho=0.4)
@@ -323,8 +323,12 @@ def lamina_emplazamiento():
         "• Cortaviento al NO a ≥ 15 m.",
         "• Fosa y drenes aguas abajo (O–NO),",
         "  a > 20 m de pozos (DS 236).",
+        "• Casa en sector PLANO del terreno:",
+        "  sólo escarpe y base granular.",
         "• Piso a +0,30 y drenaje perimetral",
         "  (humedad 88 % en invierno).",
+        "• Cerco, portones, senderos, bodega,",
+        "  luces y ductos: lámina EXT-01.",
         "• Fajas CONAF; techo metálico y",
         "  aleros cerrados (pavesas).",
         "• Fundaciones: proyecto aparte.",
@@ -550,10 +554,29 @@ def balance_termico():
     return filas, tot, pot, demanda, area_rad
 
 
+def reparto_pisos(pot):
+    """Potencia de diseño por piso, proporcional a la superficie interior (kW): (P1 piso radiante, P2 ventiloconvectores)."""
+    s1 = sum((x1 - x0) * (y1 - y0) for n, x0, y0, x1, y1 in D.RECINTOS_1 if n not in D.EXTERIORES)
+    s2 = sum((x1 - x0) * (y1 - y0) for n, x0, y0, x1, y1 in D.RECINTOS_2)
+    return pot * s1 / (s1 + s2), pot * s2 / (s1 + s2)
+
+
+def carga_fancoils(pot):
+    """[(recinto, W de diseño)] para cada ventiloconvector: P2 repartido por área de su recinto."""
+    _, p2 = reparto_pisos(pot)
+    s2 = sum((x1 - x0) * (y1 - y0) for n, x0, y0, x1, y1 in D.RECINTOS_2)
+    nombres = {"Dorm. principal": "DORMITORIO PRINCIPAL", "Dormitorio 2": "DORMITORIO 2", "Dormitorio 3": "DORMITORIO 3"}
+    res = []
+    for _, x, y, _, rec in E.FANCOILS:
+        r = next(r for r in D.RECINTOS_2 if r[0] == nombres[rec])
+        res.append((rec, 1000 * p2 * (r[3] - r[1]) * (r[4] - r[2]) / s2))
+    return res
+
+
 def lamina_ventilacion():
     L = Lamina()
     p1, p2 = base_plantas(L, tenue=True, areas=False)
-    marco(L, "VEN-01", "CALEFACCIÓN POR PISO RADIANTE Y VENTILACIÓN CON RECUPERADOR", 6)
+    marco(L, "VEN-01", "CALEFACCIÓN (RADIANTE P1 + FANCOILS P2) Y VENTILACIÓN", 6)
     for piso, pl in ((1, p1), (2, p2)):
         for pi, x0, y0, x1, y1, _ in E.ZONAS_RADIANTE:
             if pi == piso:
@@ -584,6 +607,17 @@ def lamina_ventilacion():
                 a, b = pl.P(tx - 0.9, ty), pl.P(tx, ty)
                 flecha(L, *(a if et == "aire nuevo" else b), *(b if et == "aire nuevo" else a), color=C_VENT, ancho=0.35, cabeza=1.2)
                 L.txt(a[0] - 0.5, a[1] + 0.6, et, fs=1.1, anchor="end", color=C_VENT)
+        if piso == 2:  # ventiloconvectores alimentados por el entrepiso desde el distribuidor CF
+            cf = next((x, y) for pi, cod, x, y, _ in E.ELEMENTOS_VENT if cod == "CF")
+            for _, x, y, o, _ in E.FANCOILS:
+                pl.poly([cf, (x, cf[1]), (x, y)], color=C_HID, ancho=0.4, dash="3 1 0.6 1")
+                w, h = (0.9, 0.22) if o == "h" else (0.22, 0.9)
+                pl.caja(x - w / 2, y - h / 2, x + w / 2, y + h / 2, relleno="#efe3f6", borde=C_HID, ancho=0.4)
+                fx, fy = pl.P(x, y)
+                L.txt(fx, fy + (3.4 if y < 4 else -2.0) if o == "h" else fy, "FC", fs=1.3, peso="bold", color=C_HID,
+                      anchor="middle" if o == "h" else "start")
+            tp, tx_, ty_, _ = E.TOALLERO_P2
+            pl.caja(tx_ - 0.3, ty_ - 0.06, tx_ + 0.3, ty_ + 0.06, relleno="#fde2d2", borde="#c0392b", ancho=0.3)
         for pi, cod, x, y, _ in E.ELEMENTOS_VENT:
             if pi == piso:
                 sim_vent(L, *pl.P(x, y), cod)
@@ -598,7 +632,9 @@ def lamina_ventilacion():
         (lambda L, x, y: flecha(L, x - 3.5, y, x + 3.5, y, color="#9cc9c2", ancho=0.3, cabeza=1.2), "Ventilación cruzada (verano)"),
         (lambda L, x, y: sim_vent(L, x, y, "BC"), "Bomba de calor aire-agua"),
         (lambda L, x, y: sim_vent(L, x, y, "AC"), "Acumulador ACS 300 L"),
-        (lambda L, x, y: sim_vent(L, x, y, "CO"), "Colector piso radiante"),
+        (lambda L, x, y: sim_vent(L, x, y, "CO"), "Colector piso radiante (P1)"),
+        (lambda L, x, y: L.rect(x - 3, y - 0.8, 6, 1.6, relleno="#efe3f6", borde=C_HID, ancho=0.4), "Ventiloconvector P2 (FC)"),
+        (lambda L, x, y: sim_vent(L, x, y, "CF"), "Distribuidor fancoils P2"),
         (lambda L, x, y: sim_vent(L, x, y, "CA"), "Campana cocina al exterior"),
         (lambda L, x, y: sim_vent(L, x, y, "DH"), "Control humedad lavandería"),
         (lambda L, x, y: sim_vent(L, x, y, "VT"), "Ventilación alcantarillado"),
@@ -607,14 +643,17 @@ def lamina_ventilacion():
     tabla(L, 15, 180, [62, 16, 16, 16], filas, fs=1.55, alto=4.4)
     L.txt(15, 177, "BALANCE TÉRMICO (envolvente zona G propuesta)", fs=2.2, anchor="start", peso="bold")
     y_fin = 180 + 4.4 * len(filas) + 4
-    q_m2 = pot * 1000 / area_rad
+    p1, p2 = reparto_pisos(pot)
+    q_m2 = p1 * 1000 / area_rad
     dt_sup = (q_m2 / 8.92) ** (1 / 1.1)
     L.txt(15, y_fin, f"Pérdida {num(tot)} W/K → potencia de diseño {num(pot)} kW (20 °C int. / "
           f"{num(E.CLIMA['anual']['t_min_absoluta'])} °C ext.) → bomba de calor ≈ {round(pot * 1.2 + 1.5)} kW a −5 °C (con ACS)", fs=1.65, anchor="start", peso="bold")
     L.txt(15, y_fin + 3.6, f"Demanda {miles(round(demanda, -2))} kWh/año ≈ {int(round(demanda / 125))} kWh/m²·año → electricidad "
           f"≈ {miles(round(demanda / E.SCOP_BC, -1))} kWh/año (SCOP {num(E.SCOP_BC)})", fs=1.65, anchor="start")
-    L.txt(15, y_fin + 7.2, f"Piso radiante {num(area_rad)} m²: {num(q_m2)} W/m² → superficie {num(20 + dt_sup)} °C "
+    L.txt(15, y_fin + 7.2, f"Piso radiante P1 {num(area_rad)} m² ({num(p1)} kW): {num(q_m2)} W/m² → superficie {num(20 + dt_sup)} °C "
           f"(≤ 29 °C, UNE-EN 1264) con impulsión {E.T_IMPULSION} °C", fs=1.65, anchor="start", color=TINTA2)
+    L.txt(15, y_fin + 10.8, f"Ventiloconvectores P2 ({num(p2)} kW): " + " · ".join(f"{r} {int(round(w, -1))} W" for r, w in carga_fancoils(pot))
+          + " → equipo de 0,8–1,2 kW a 35 °C cada uno", fs=1.65, anchor="start", color=TINTA2)
     notas(L, 140, 180, "CRITERIOS (humedad invernal 88 % · casa hermética)", [
         "1. Sin combustión en la casa: sin gas, leña ni pellet (sin CO,",
         "   sin chimeneas; menor riesgo de incendio).",
@@ -624,8 +663,10 @@ def lamina_ventilacion():
         "3. Puertas interiores con 1,5 cm bajo la hoja (paso de aire).",
         "4. Hermeticidad: meta 3 ren/h a 50 Pa (exige ≤ 5,0); prueba",
         "   blower door antes de forrar.",
-        "5. Piso radiante PE-Xa 16 mm c/ barrera O₂, circuitos ≤ 100 m,",
-        "   prueba 6 bar 24 h, mortero 5 cm, termostato por recinto.",
+        "5. Piso radiante SÓLO en P1: PE-Xa 16 mm c/ barrera O₂, circuitos",
+        "   ≤ 100 m, prueba 6 bar 24 h, mortero 5 cm, termostato por recinto.",
+        "   P2: ventiloconvectores a la misma T° (35 °C) → no baja el SCOP;",
+        "   entrepiso seco y acústico (sin mortero). Baño P2: toallero 300 W.",
         "6. BC monobloc R290 en muro sur (protegida del N–NO), lejos",
         "   de dormitorios; prioridad ACS con válvula de 3 vías.",
         "7. Pisos: porcelanato (conduce bien el calor, resiste mascotas).",
@@ -664,11 +705,12 @@ def elevacion(L, ox, oy, lado):
     yf = 6 if lado == "norte" else 0
     v.caja(-1.0, -0.6, 13.0, -0.3, relleno=C_TIERRA)
     v.poly([(-1.0, -0.3), (13.0, -0.3)], color="#000", ancho=0.4)
-    y_t = 6.0 if lado == "norte" else 0.0
-    nat = [(x / 2, E.cota_terreno(x / 2, y_t + (2 if lado == "norte" else -2)) - E.NPT_MSNM) for x in range(-6, 29)]
-    v.poly(nat, color="#7a6040", ancho=0.35, dash="2 0.8")
-    x_l, z_l = nat[-1] if not espejo else nat[0]
-    v.txt(x_l, z_l + 0.25, "terreno natural", fs=1.3, color="#7a6040")
+    if not E.PLATAFORMA_NIVELADA:  # perfil del DEM sólo si la casa quedara en pendiente
+        y_t = 6.0 if lado == "norte" else 0.0
+        nat = [(x / 2, E.cota_terreno(x / 2, y_t + (2 if lado == "norte" else -2)) - E.NPT_MSNM) for x in range(-6, 29)]
+        v.poly(nat, color="#7a6040", ancho=0.35, dash="2 0.8")
+        x_l, z_l = nat[-1] if not espejo else nat[0]
+        v.txt(x_l, z_l + 0.25, "terreno natural", fs=1.3, color="#7a6040")
     # muros
     v.caja(0 if lado == "norte" else 2, -0.3, 12, D.H1 + D.LOSA, relleno="#f3f0ea", borde="#000", ancho=0.4)
     if lado == "sur":
@@ -788,6 +830,38 @@ def corte(L, ox, oy, x_corte=3.2):
     L.txt(x, y + 2, "N", fs=2.2, peso="bold", color=TINTA2)
 
 
+def detalle_entrepiso(L, x0, y0, k=1.0):
+    """Detalle esquemático del entrepiso acústico (capas de casa_datos.ENTREPISO). k = mm de papel por cm de espesor."""
+    L.txt(x0, y0 - 4, f"DETALLE ENTREPISO ACÚSTICO ({int(round(D.LOSA * 100))} cm, esquemático · el P2 no lleva piso radiante)",
+          fs=2.2, anchor="start", peso="bold")
+    colores = ["#c8b497", "#e9e4d8", "#5d6d7e", "#d9c49a", "#f2d24b", "#999", "#f3f0ea"]
+    ancho, y = 42, y0
+    for (nombre, e, _), col in zip(D.ENTREPISO, colores):
+        h = e * 100 * k
+        if "Vigas" in nombre:   # cavidad con lana entre vigas
+            L.rect(x0, y, ancho, h, relleno="#fbeeb0", borde="#000", ancho=0.15)
+            for xv in (x0 + 6, x0 + 30):   # vigas 2×10 @ 40 (esquemático)
+                L.rect(xv, y, 4.5 * k / 0.6, h, relleno="#d9c49a", borde="#000", ancho=0.15)
+        elif "Canal" in nombre:
+            for xc in range(int(x0 + 3), int(x0 + ancho - 2), 9):
+                L.rect(xc, y, 3, h, relleno="#999", borde="none")
+        else:
+            L.rect(x0, y, ancho, h, relleno=col, borde="#000", ancho=0.15)
+        i = colores.index(col)
+        ye = y0 + i * (D.LOSA * 100 * k + 3) / len(D.ENTREPISO)   # rótulos repartidos aunque la capa sea delgada
+        L.linea([(x0 + ancho, y + h / 2), (x0 + ancho + 3, ye), (x0 + ancho + 5, ye)], color="#888", ancho=0.12)
+        L.txt(x0 + ancho + 5.6, ye + 0.55, f"{nombre} · {num(e * 1000)[:-3]} mm", fs=1.45, anchor="start")
+        y += h
+    L.rect(x0 - 1.2, y0, 1.2, (D.ENTREPISO[0][1] + D.ENTREPISO[1][1] + D.ENTREPISO[2][1]) * 100 * k, relleno="#555")
+    L.txt(x0 - 2, y0 + 2, "banda", fs=1.2, anchor="end", color=TINTA2)
+    notas_ = ["Clave: el piso flotante y el cielo no tocan muros ni vigas rígidamente (banda elástica",
+              "perimetral 5 mm, zócalo separado, sello flexible). Escalera apoyada en bandas elastoméricas.",
+              f"Peso propio {num(sum(c[2] for c in D.ENTREPISO))} kN/m² (incluido en calculo/estructura.py). "
+              "Meta L'nT,w ≤ 55 dB (madera simple ≈ 75 dB)."]
+    for i, t in enumerate(notas_):
+        L.txt(x0, y + 4 + i * 3.0, t, fs=1.45, anchor="start", color=TINTA2)
+
+
 def lamina_elevaciones():
     L = Lamina()
     marco(L, "ELE-02", "ELEVACIONES Y CORTE — ENVOLVENTE TÉRMICA", 7)
@@ -802,4 +876,5 @@ def lamina_elevaciones():
     L.txt(218, 147, f"ENVOLVENTE TÉRMICA — {zt['zona']}", fs=2.2, anchor="start", peso="bold")
     for i, t in enumerate(zt["notas"]):
         L.txt(218, 150 + 4.6 * len(filas) + 4 + i * 3.4, t, fs=1.5, anchor="start", color=TINTA2 if i else TINTA)
+    detalle_entrepiso(L, 222, 210, k=0.6)
     return L

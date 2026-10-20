@@ -32,7 +32,7 @@ En esta casa (125 m², 4 personas, 3 gatos y 1 perro), el estilo se apoya en cua
 | LIN | Lino lavado o tela *performance* | Sofá (funda removible), cortinas, cojines | Se lava; la tela performance resiste uñas y babas |
 | PIE | Porcelanato símil caliza mate 60×120, R10 | Piso del 1er piso y de los baños | El mejor piso para piso radiante; uñas del perro; continuo sin cortes |
 | PIO | Porcelanato piedra oscura texturada | Genkan y terrazas | Marca la entrada y oculta el barro |
-| MAD | Porcelanato símil roble claro 20×120 | Dormitorios y pasillo del 2° piso | Aspecto de madera sin miedo al agua ni a las mascotas |
+| MAD | Porcelanato símil roble claro 20×120 | Dormitorios y pasillo del 2° piso | Aspecto de madera sin miedo al agua ni a las mascotas. Va sobre el **piso flotante acústico** (yeso-fibra sobre lámina antiimpacto) con adhesivo flexible |
 | MUR | Pintura mineral "blanco arroz" antihongos | Muros y cielos | Blanco cálido (no azulado); clima de Los Ríos |
 | NEG | Negro carbón mate | Grifería, rieles, manillas, telón | El acento gráfico del japandi |
 | SAL | Verde salvia | Azulejo vertical de las duchas, clóset del dorm. 2, textiles | Un solo color de acento, apagado |
@@ -192,6 +192,19 @@ Hay que pasarlos al arquitecto, al instalador eléctrico y al proyectista sanita
    - extracción VMC en E2, para el arenero.
 6. **Puerta del walk-in:** pasa de abatible a corredera embutida (marco tipo casete).
 7. **Fijación de todos los muebles altos al muro** (sismo y niños). Hay que dejar refuerzos de madera dentro de los tabiques **antes de cerrar el yeso-cartón**.
+8. **Cielo del 1er piso a 2,36 m** (antes 2,50) por el entrepiso acústico. Ya se ajustaron los muebles de piso a cielo:
+   - K2 (columnas de cocina), O2, V1 y el panel O3;
+   - el cajón del telón L2.
+
+   Hay que cotizarlos con esa altura.
+9. **Ventiloconvectores del 2° piso** (consola baja, ~0,9 × 0,2 m), ubicados donde no chocan con los muebles:
+   - dormitorio principal: bajo la ventana oeste;
+   - dormitorio 2: muro sur, entre el clóset A1 y la puerta;
+   - dormitorio 3: bajo la ventana norte, lejos de la cuna N3.
+
+   No taparlos con muebles ni cortinas largas.
+10. **Nicho G2:** ahora debe recibir también el **TDA-R** (subtablero de respaldo), así que pasa de 0,60 a ~0,90 m de ancho.
+11. **Zócalos del 2° piso separados del piso** (el piso flota): se pegan sólo al muro y el encuentro se sella con sello flexible.
 
 ## 7. Presupuesto y etapas (orden de magnitud, CLP 2026)
 

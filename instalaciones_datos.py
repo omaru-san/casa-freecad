@@ -5,24 +5,39 @@
 # ================= ELÉCTRICO (DS 8/2019 + pliegos RIC SEC) =================
 # Diferenciales ≤ 30 mA en todo circuito de alumbrado y enchufes (RIC 10 5.1.3.5), máx. 3 circuitos por diferencial (5.1.3.7)
 CIRCUITOS = [  # (código, destino, protección, conductor, fase · diferencial)
-    ("C1", "Alumbrado P1 y exterior (IP54)", "10 A curva B", "1,5 mm²", "R · ID1"),
-    ("C2", "Alumbrado P2 + detectores de humo", "10 A curva B", "1,5 mm²", "S · ID1"),
-    ("C3", "Enchufes living-comedor y exterior", "16 A curva C", "2,5 mm²", "S · ID2"),
-    ("C4", "Enchufes cocina (exclusivo)", "16 A curva C", "2,5 mm²", "R · ID3"),
-    ("C5", "Enchufes lavandería y baños", "16 A curva C", "2,5 mm²", "T · ID3"),
-    ("C6", "Enchufes dormitorios P2", "16 A curva C", "2,5 mm²", "T · ID2"),
-    ("C7", "Enchufes oficinas 1 y 2", "16 A curva C", "2,5 mm²", "T · ID2"),
-    ("C8", "Presurizadora + bomba pozo", "16 A curva C", "2,5 mm²", "T · ID3"),
-    ("C9", "Encimera inducción (conexión fija)", "32 A curva C", "6 mm²", "R · ID4"),
-    ("C10", "Horno eléctrico (exclusivo)", "16 A curva C", "2,5 mm²", "S · ID4"),
-    ("C11", "Bomba de calor aire-agua (exterior)", "20 A curva C", "4 mm²", "S · ID5 tipo A"),
-    ("C12", "Apoyo ACS + circuladores piso radiante", "16 A curva C", "2,5 mm²", "T · ID5 tipo A"),
-    ("C13", "Ventilación VMC + rack red/domótica", "10 A curva C", "1,5 mm²", "R · ID1"),
+    # --- TDA-R: subtablero de RESPALDO, alimentado por la salida "backup" del inversor híbrido (sigue con corte de luz) ---
+    ("C1", "Alumbrado P1 y terrazas (IP54)", "10 A curva B", "1,5 mm²", "R · IDR1"),
+    ("C2", "Alumbrado P2 + detectores de humo", "10 A curva B", "1,5 mm²", "S · IDR1"),
+    ("C13", "Ventilación VMC + rack red/domótica", "10 A curva C", "1,5 mm²", "R · IDR1"),
+    ("C4", "Enchufes cocina (exclusivo, refrigerador)", "16 A curva C", "2,5 mm²", "R · IDR2"),
+    ("C8", "Tablero caseta: presurizadora + bomba pozo", "16 A curva C", "2,5 mm²", "T · IDR2"),
+    # --- TDA: tablero general (sólo con red o con sol) ---
+    ("C3", "Enchufes living-comedor y exterior", "16 A curva C", "2,5 mm²", "S · ID1"),
+    ("C6", "Enchufes dormitorios P2", "16 A curva C", "2,5 mm²", "T · ID1"),
+    ("C7", "Enchufes oficinas 1 y 2", "16 A curva C", "2,5 mm²", "T · ID1"),
+    ("C5", "Enchufes lavandería y baños", "16 A curva C", "2,5 mm²", "T · ID2"),
+    ("C14", "Ventiloconvectores P2 + toallero baño P2", "10 A curva C", "1,5 mm²", "S · ID2"),
+    ("C15", "Exterior: alumbrado, bodega y portón", "16 A curva C", "4 mm² (caída de tensión)", "T · ID2"),
+    ("C9", "Encimera inducción (limitada a 4,6 kW)", "25 A curva C", "4 mm²", "R · ID3"),
+    ("C10", "Horno eléctrico (exclusivo)", "16 A curva C", "2,5 mm²", "S · ID3"),
+    ("C11", "Bomba de calor aire-agua (exterior)", "20 A curva C", "4 mm²", "S · ID4 tipo A"),
+    ("C12", "Apoyo ACS + circuladores calefacción", "16 A curva C", "2,5 mm²", "T · ID4 tipo A"),
     ("EV", "Cargador auto 11 kW (RIC 15, TE6)", "3×16 A curva C", "5×4 mm²", "RST · tipo B"),
     ("FV", "Inversor híbrido 6 kW + batería (AFCI)", "3×16 A + DPS", "5×4 mm²", "RST · 100 mA"),
 ]
+RESPALDO = ("C1", "C2", "C13", "C4", "C8")   # circuitos del TDA-R (respaldo con batería)
+# Potencia instalada (W) y factor de demanda, para el cuadro de cargas del tablero (TAB-01).
+POTENCIA = {
+    "C1": (400, 1.0), "C2": (300, 1.0), "C13": (300, 1.0), "C4": (3000, 0.4), "C8": (1500, 0.7),
+    "C3": (1500, 0.3), "C6": (1500, 0.3), "C7": (1500, 0.4), "C5": (2200, 0.5), "C14": (500, 1.0),
+    "C15": (1000, 0.5), "C9": (4600, 0.7), "C10": (3000, 0.5), "C11": (2500, 1.0), "C12": (3000, 0.5),
+    "EV": (11000, 1.0),
+}
+EMPALME_A = 25          # A por fase (empalme 3×25 A; se contrata 3×16 A)
+CONTRATADO_A = 16
 GENERAL = ("Empalme trifásico 3×25 A (contratar 3×16 A para mantener BT1 ≤ 10 kW) · general 4P 25 A · alimentador ≥ 6 mm² "
-           "(apto 3×32 A) · TN-S, tierra ≤ 20 Ω · DPS tipo 2 · respaldo desde inversor híbrido: C1, C2, C4, C8, C13")
+           "(apto 3×32 A) · TN-S, tierra ≤ 20 Ω · DPS tipo 1+2 (zona rural, línea aérea) · respaldo desde inversor híbrido: "
+           "TDA-R con C1, C2, C4, C8, C13")
 
 # luces: (x, y, circuito, tipo 'cielo' | 'muro')
 LUCES_1 = [
@@ -68,6 +83,7 @@ ENCHUFES_1 = [
     (11.88, 3.40, "C7", ""), (11.88, 5.60, "C7", ""), (9.62, 4.50, "C7", ""),
 ]
 TABLERO = (11.60, 2.88, "TDA")       # pasillo de acceso: no en dormitorio, baño, lavadero ni closet (RIC 10 5.1.3.2)
+TABLERO_R = (10.95, 2.88, "TDA-R")   # subtablero de respaldo, junto al TDA (lo alimenta la salida backup del inversor)
 MEDIDOR_ELEC = (10.62, 1.60, "MED")  # medidor bidireccional/empalme en terraza de entrada
 ACOMETIDA = [(10.62, 1.60), (10.62, 2.45), (11.60, 2.45), (11.60, 2.88)]
 
@@ -102,11 +118,16 @@ CONEXIONES_FIJAS = [
     (1, 5.80, 5.88, "C9", "IND"),    # encimera de inducción
     (1, 7.75, 0.70, "C12", "ACS"),   # resistencia de apoyo del acumulador ACS
     (1, 6.95, -0.15, "C11", "BC"),   # unidad exterior bomba de calor (muro sur, bajo alero)
-    (1, 8.45, 2.12, "C12", "COL"),   # colector piso radiante P1 + circulador
+    (1, 8.45, 2.12, "C12", "COL"),   # colector piso radiante P1 + circulador (el 2° piso no tiene piso radiante)
     (1, 11.88, 2.60, "C13", "RACK"), # rack red/domótica (Home Assistant) junto al tablero
     (2, 2.70, 0.45, "C13", "VMC"),   # recuperador de calor en walk-in closet
-    (2, 8.45, 2.12, "C12", "COL"),   # colector piso radiante P2 (actuadores)
+    (2, 2.30, 4.50, "C14", "FC"),    # ventiloconvector dorm. principal (ver especialidades_datos.FANCOILS)
+    (2, 7.00, 3.25, "C14", "FC"),    # ventiloconvector dormitorio 2
+    (2, 10.40, 5.75, "C14", "FC"),   # ventiloconvector dormitorio 3
+    (2, 4.85, 1.80, "C14", "TOA"),   # toallero eléctrico baño P2
 ]
+# Las canalizaciones del 2° piso suben desde el TDA por un ducto en el tabique del pasillo (mismo x, y)
+MONTANTE_ELEC = (11.60, 2.88)
 # detectores (piso, x, y, tipo): humo fotoeléctrico interconectado; térmico en cocina (evita falsas alarmas)
 DETECTORES = [
     (1, 2.60, 3.40, "humo"), (1, 6.80, 3.60, "temp"), (1, 9.80, 2.50, "humo"),
@@ -132,13 +153,23 @@ AF_1 = [  # agua fría (PPR/PEX), presión ≥ 14 m.c.a. en el artefacto más de
     [(11.00, -0.60), (7.65, -0.60), (7.65, 0.15), (4.55, 0.15)],    # matriz desde caseta de presurización
     [(7.20, 0.15), (7.20, 0.30)],                                    # alimentación acumulador ACS
     [(6.10, 0.15), (6.10, 1.50), (5.80, 1.50)],                      # ducha
-    [(7.70, 0.15), (7.70, 2.30), (7.88, 2.30), (7.88, 5.60), (7.30, 5.60)],  # lavadero + cocina
+    [(7.70, 0.15), (7.70, 1.90)],                                    # sube por el tabique lavandería|escalera
+    [(7.88, 3.10), (7.88, 5.60), (7.30, 5.60)],                      # baja por el tabique cocina|despensa → lavaplatos
 ]
 AC_1 = [  # agua caliente desde acumulador (con válvula mezcladora termostática a 45-48 °C)
     [(7.40, 0.30), (7.40, 0.25), (4.65, 0.25)],
     [(6.00, 0.25), (6.00, 1.40), (5.80, 1.40)],
-    [(7.60, 0.30), (7.60, 2.40), (7.78, 2.40), (7.78, 5.50), (7.30, 5.50)],
+    [(7.60, 0.30), (7.60, 1.90)],
+    [(7.78, 3.10), (7.78, 5.50), (7.30, 5.50)],
 ]
+# El agua fría y caliente NO va embutida en el radier (ahí está el piso radiante: una fuga obligaría a romperlo).
+# Corre por la cámara técnica de los muros y cruza el pasillo por el ENTREPISO (sobre el cielo del P1), en PEX sin
+# uniones dentro del entrepiso, con abrazaderas con goma (no transmite ruido) y registro en el cielo.
+AF_1_ENTREPISO = [[(7.70, 1.90), (7.70, 2.30), (7.88, 2.30), (7.88, 3.10)]]
+AC_1_ENTREPISO = [[(7.60, 1.90), (7.60, 2.40), (7.78, 2.40), (7.78, 3.10)]]
+# Pasadas por el sobrecimiento: camisa de PVC un diámetro mayor, dejada antes de hormigonar (no se pica después).
+PASADAS = [(7.65, 0.0, "Ø50"), (4.85, 0.0, "Ø160"), (4.55, 0.0, "Ø160"), (6.60, 0.0, "Ø75"), (7.00, 6.0, "Ø75"),
+           (6.95, 0.0, "Ø40")]
 AF_2 = [[(4.55, 0.15), (7.70, 0.15), (7.70, 0.70)]]
 AC_2 = [[(4.65, 0.25), (7.60, 0.25), (7.60, 0.60)]]
 SUBIDAS = [(4.55, 0.15, "AF"), (4.65, 0.25, "AC")]  # montantes a piso 2
@@ -159,7 +190,8 @@ ALC_1 = [  # alcantarillado (PVC sanitario), pendiente 3 % (RIDAA art. 88)
     [(6.60, -1.30), (-1.20, -1.30), (-1.20, -2.60)],                     # colector exterior Ø110 hacia el oeste
 ]
 # Sector rural sin colector: el terreno baja hacia el O-NO, la fosa séptica va aguas abajo (ver EMP-01)
-CAMARAS = [(4.85, -1.30, "C.I.1"), (7.00, 7.20, "C.I.2"), (-1.20, 7.20, "C.I.3"), (-1.20, -1.30, "C.I.4")]
+CAMARAS = [(4.85, -1.30, "C.I.1"), (7.00, 7.20, "C.D."), (-1.20, 7.20, "C.I.3"), (-1.20, -1.30, "C.I.4")]
+# C.D. = cámara desgrasadora (sólo recibe la cocina): retiene la grasa antes de la fosa; se limpia cada 2–3 meses.
 UNION_DOMICILIARIA = (-1.20, -2.60)
 SALIDA_TEXTO = "→ Fosa séptica + drenes (ver EMP-01)"
 ALC_2 = [

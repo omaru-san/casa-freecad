@@ -98,7 +98,7 @@ def simular(extras=()):
     return mensual, tot, anios
 
 
-# Calefacción por piso radiante con bomba de calor aire-agua (SCOP 3,5) + ACS con la misma bomba de calor.
+# Calefacción por piso radiante (P1) y ventiloconvectores (P2) con bomba de calor aire-agua (SCOP 3,5) + ACS con la misma bomba de calor.
 # Demanda de calefacción anual de la lámina VEN-01 (~4.800 kWh térmicos, con VMC) repartida por grados-día mensuales.
 with open(os.path.join(RAIZ, "sitio", "clima_sitio.json"), encoding="utf-8") as f:
     _CLIMA = json.load(f)
@@ -125,7 +125,7 @@ res = {
     "supuestos_consumo": {"kwh_dia_casa": CONSUMO_DIA, "kwh_dia_bomba_pozo": BOMBA_DIA,
                           "kwh_dia_bomba_calor_y_acs": [round(v, 1) for v in EXTRA_DIA],
                           "anual_kwh": round(sum((c + b + e) * 30.4 for c, b, e in zip(CONSUMO_DIA, BOMBA_DIA, EXTRA_DIA)), 0),
-                          "descripcion": "Casa todo eléctrica: piso radiante con bomba de calor SCOP 3,5 + ACS con bomba de calor, "
+                          "descripcion": "Casa todo eléctrica: piso radiante P1 + ventiloconvectores P2 con bomba de calor SCOP 3,5 + ACS con bomba de calor, "
                                          "inducción, VMC; sin gas ni pellet"},
     "mensual": mensual, "anual": tot,
     "escenario_ev": {"descripcion": "Igual + auto eléctrico 12.000 km/año (≈ 2.000 kWh) cargado de 10 a 16 h",

@@ -145,6 +145,32 @@ check("Eléctrico", "Enchufes de alvéolos protegidos; cargador EV con circuito 
 check("Solar", "Inversor con detección de arco (AFCI); diferencial 100 mA (5–10 kW)", f"inversor {num(FV['sistema']['inversor_kw'], 0)} kW",
       FV["sistema"]["inversor_kw"] <= 10, "Res. SEC 33.038 · RGR 02", "especificado")
 
+potf = {"R": 0.0, "S": 0.0, "T": 0.0}
+for c in I.CIRCUITOS:
+    if c[0] in I.POTENCIA and c[0] != "EV":
+        w, fd = I.POTENCIA[c[0]]
+        potf[c[4][0]] += w * fd
+desb = 100 * (max(potf.values()) - min(potf.values())) / (sum(potf.values()) / 3)
+check("Eléctrico", "Fases equilibradas: desbalance de demanda ≤ 10 %", f"R {num(potf['R'], 0)} · S {num(potf['S'], 0)} · "
+      f"T {num(potf['T'], 0)} W ({num(desb, 1)} %)", desb <= 10, "Buena práctica (RIC 10)", "criterio")
+i_max = max(potf.values()) / 230
+check("Eléctrico", f"Demanda por fase ≤ empalme {I.EMPALME_A} A (EV con gestión dinámica)", f"{num(i_max, 1)} A",
+      i_max <= I.EMPALME_A, "RIC 10 / cuadro de cargas TAB-01")
+check("Eléctrico", "Subtablero de respaldo (TDA-R) desde la salida backup del inversor; DPS tipo 1+2 por línea aérea rural",
+      f"TDA-R: {', '.join(I.RESPALDO)}", True, "RIC 10 · RGR 02 · IEC 61643", "especificado")
+
+# ---------------- estructura y acústica ----------------
+EST = json.load(open(os.path.join(AQUI, "estructura.json"), encoding="utf-8"))
+vg = next(e for e in EST["elementos"] if e["elemento"].startswith("Viga entrepiso (living"))
+check("Estructura", "Flecha viga de entrepiso ≤ L/360 (piso de porcelanato sobre madera)",
+      f"{num(vg['flecha_mm'], 1)} mm ≤ {num(vg['L_m'] * 1000 / 360, 1)} mm", vg["flecha_mm"] <= vg["L_m"] * 1000 / 360,
+      "Fabricantes de adhesivos (ANSI A108 / TCNA)", "criterio")
+capas = " ".join(c[0] for c in D.ENTREPISO).lower()
+check("Acústica", "Entrepiso con piso flotante sobre lámina antiimpacto y cielo desacoplado (meta L'nT,w ≤ 55 dB)",
+      f"{int(round(D.LOSA * 100))} cm · {num(sum(c[2] for c in D.ENTREPISO))} kN/m²",
+      "a verificar en obra" if ("antiimpacto" in capas and "resiliente" in capas) else False,
+      "Criterio (OGUC 4.1.6 rige sólo entre unidades distintas)", "criterio")
+
 # ---------------- sanitario ----------------
 check("Sanitario", "Pendiente de descargas 3 %–15 % (1 % sólo justificado)", "3 % (rótulo y notas)", True, "RIDAA art. 88", "especificado")
 d_pozo = min(math.dist(E.POZO, p) for dr in E.DRENES for p in dr)
@@ -159,13 +185,46 @@ check("Sanitario", "Presión ≥ 14 m.c.a. tras la llave de paso; bomba aspira d
 check("Sanitario", "Agua caliente sin gas: acumulación ≥ 60 °C semanal (Legionella) y salida ≤ 48 °C (niños)",
       "acumulador 300 L + VMT 45 °C", True, "Guías Legionella (Sanidad ES / Gob. Vasco)", "especificado")
 
+def cerca_muro(x, y, tol=0.5):
+    for x1, y1, x2, y2, _ in D.MUROS_1:
+        dx, dy = x2 - x1, y2 - y1
+        t = max(0, min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)))
+        if math.hypot(x - x1 - t * dx, y - y1 - t * dy) <= tol:
+            return True
+    return False
+
+
+def en_planta(x, y):
+    return any(r[1] < x < r[3] and r[2] < y < r[4] for r in D.RECINTOS_1 if r[0] not in D.EXTERIORES)
+
+
+malos_af = 0
+for pts in I.AF_1 + I.AC_1:
+    for (xa, ya), (xb, yb) in zip(pts, pts[1:]):
+        n_ = max(1, int(math.dist((xa, ya), (xb, yb)) / 0.1))
+        for k in range(n_ + 1):
+            x, y = xa + (xb - xa) * k / n_, ya + (yb - ya) * k / n_
+            if en_planta(x, y) and not cerca_muro(x, y):
+                malos_af += 1
+check("Sanitario", "Agua fría/caliente fuera del radier (piso radiante): por muros o entrepiso, nunca embutida en el piso",
+      f"{len(I.AF_1_ENTREPISO + I.AC_1_ENTREPISO)} tramos por entrepiso · {malos_af} puntos fuera de muro",
+      malos_af == 0, "Criterio de mantención (RIDAA art. 52: cañerías accesibles)", "criterio")
+check("Sanitario", "Cámara desgrasadora en la descarga de la cocina, antes de la fosa", 
+      "C.D." if any(n == "C.D." for *_, n in I.CAMARAS) else "no", any(n == "C.D." for *_, n in I.CAMARAS),
+      "DS 236 · Manual SUBDERE (soluciones particulares)")
+
 # ---------------- calefacción ----------------
 import generar_especialidades as G  # noqa: E402
 _, _, pot, demanda, area_rad = G.balance_termico()
-q_m2 = pot * 1000 / area_rad
+p1, p2 = G.reparto_pisos(pot)
+q_m2 = p1 * 1000 / area_rad
 t_sup = 20 + (q_m2 / 8.92) ** (1 / 1.1)
-check("Calefacción", "Temperatura superficial de piso radiante ≤ 29 °C en zonas de estar", f"{num(t_sup, 1)} °C ({num(q_m2, 0)} W/m²)",
+check("Calefacción", "Temperatura superficial de piso radiante (P1) ≤ 29 °C en zonas de estar", f"{num(t_sup, 1)} °C ({num(q_m2, 0)} W/m²)",
       t_sup <= 29, "UNE-EN 1264 (referencia)")
+fc = G.carga_fancoils(pot)
+check("Calefacción", "P2 sin piso radiante: cada dormitorio con ventiloconvector ≥ su carga (equipo mín. 800 W a 35 °C)",
+      " · ".join(f"{r} {num(w, 0)} W" for r, w in fc), all(w <= 800 for _, w in fc) and len(fc) == 3,
+      "Balance térmico VEN-01", "calculado")
 check("Calefacción", "Sin artefactos de combustión ni chimeneas (riesgo CO e incendio)", "bomba de calor + inducción", True,
       "Criterio de diseño (DS 66 no aplica: sin gas)", "especificado")
 
@@ -175,6 +234,29 @@ check("Fuego", "Faja de defensa 0–2–10–30 m, techo metálico, aleros cerra
 check("Fuego", "Detectores de humo interconectados en dormitorios y circulaciones",
       f"{sum(1 for d in I.DETECTORES if d[3] == 'humo')} DH + {sum(1 for d in I.DETECTORES if d[3] == 'temp')} DT", True,
       "Buena práctica (proyecto de ley en trámite)", "especificado")
+
+# ---------------- exterior ----------------
+bx0, by0, bx1, by1 = E.BODEGA["rect"]
+d_bod = math.hypot(max(0, bx0 - 12, 0 - bx1), max(0, by0 - 6, 0 - by1))   # rectángulo bodega ↔ planta 12 × 6 m
+check("Fuego", "Bodega exterior no combustible a ≥ 10 m de la casa", f"{num(d_bod, 1)} m", d_bod >= 10,
+      "CONAF Comunidades Preparadas", "calculado")
+
+
+def dentro_poligono(x, y, pts):
+    ins = False
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:] + pts[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            ins = not ins
+    return ins
+
+
+patio = E.CERCO_PATIO + [(12.0, 0.0)]   # se cierra por la casa
+fuera = {"fosa": (sum(E.FOSA["x"]) / 2, sum(E.FOSA["y"]) / 2),
+         "estacionamiento": ((E.ESTACIONAMIENTO[0] + E.ESTACIONAMIENTO[2]) / 2, (E.ESTACIONAMIENTO[1] + E.ESTACIONAMIENTO[3]) / 2),
+         "caseta": ((E.CASETA_AGUA[0] + E.CASETA_AGUA[2]) / 2, (E.CASETA_AGUA[1] + E.CASETA_AGUA[3]) / 2)}
+dentro_ = [k for k, p in fuera.items() if dentro_poligono(*p, patio)]
+check("Exterior", "Patio cercado del perro deja fuera fosa (camión), estacionamiento y caseta de agua",
+      "ok" if not dentro_ else "dentro: " + ", ".join(dentro_), not dentro_, "Criterio de diseño (EXT-01)", "criterio")
 
 with open(os.path.join(AQUI, "verificacion.json"), "w", encoding="utf-8") as f:
     json.dump(RES, f, ensure_ascii=False, indent=1)
@@ -204,7 +286,8 @@ md += ["",
        "",
        "### Casa todo eléctrica",
        "- Se eliminaron el gas, el calefont y la estufa a pellet.",
-       "- **Calefacción:** bomba de calor aire-agua (~6 kW) con piso radiante en los 2 pisos.",
+       "- **Calefacción:** bomba de calor aire-agua (~6 kW): piso radiante en el 1er piso y ventiloconvectores",
+       "  (fancoils) a la misma temperatura en los dormitorios del 2° piso; toallero eléctrico en el baño P2.",
        "- **Agua caliente:** acumulador de 300 L con válvula mezcladora termostática a 45 °C.",
        "- **Cocina:** encimera de inducción.",
        "- **Resultado:** sin CO ni chimeneas, sin trámite TC6.",
@@ -214,14 +297,17 @@ md += ["",
        "- Reemplaza los extractores, las rejillas de gas y la microventilación.",
        "",
        "### Electricidad",
-       "- **Circuitos:** de 9 a 15, con circuitos exclusivos para:",
+       "- **Circuitos:** de 9 a 17, con circuitos exclusivos para:",
        "  - cocina;",
        "  - inducción;",
        "  - horno;",
        "  - bomba de calor;",
-       "  - apoyo de agua caliente y piso radiante;",
+       "  - apoyo de agua caliente y circuladores de calefacción;",
        "  - ventilación con domótica;",
-       "  - cargador EV de 11 kW.",
+       "  - cargador EV de 11 kW;",
+       "  - ventiloconvectores del 2° piso (C14) y exterior: luces, bodega y portón (C15).",
+       "- **Tableros:** TDA general + TDA-R de respaldo (salida backup del inversor: luces, refrigerador,",
+       "  bombas de agua, VMC y red siguen con corte de luz). Unilineal y cuadro de cargas en TAB-01.",
        "- **Diferenciales:** 30 mA, con un máximo de 3 circuitos cada uno.",
        "- **Iluminación:**",
        "  - 2° centro de luz en el dormitorio principal (> 10 m²);",
@@ -230,12 +316,14 @@ md += ["",
        "  - en el P2 estaba dentro de la ducha;",
        "  - en el P1 estaba a 0,5 m.",
        "- **Detectores:** de humo interconectados, y térmico en la cocina.",
-       "- **Empalme:** trifásico.",
+       "- **Empalme:** trifásico, con DPS tipo 1+2 (línea aérea rural) y fases equilibradas.",
        "",
        "### Sanitario",
        "- **Pendiente de alcantarillado:** 3 % (antes 1 %).",
        "- **Agua del pozo:** pasa por un estanque de 3.000 L y una presurizadora de velocidad variable en una caseta (RIDAA: la bomba aspira de un estanque).",
        "- **Llaves de paso:** en cada recinto húmedo.",
+       "- **Agua fría/caliente fuera del radier:** por la cámara técnica de los muros y el entrepiso.",
+       "- **Cámara desgrasadora** en la salida de la cocina; tratamiento del pozo con filtro Fe/Mn si el análisis lo pide.",
        "",
        "### Seguridad",
        "- **Ventanas del P2:** antepecho de 1,00 m y limitador de apertura.",
@@ -246,6 +334,15 @@ md += ["",
        "### Estructura",
        "- Se quitó el diseño de fundaciones.",
        "- Ahora se entregan las cargas a la fundación (D, L, pilar, hold-down y corte basal) para quien las proyecte.",
+       "",
+       "### Acústica y entrepiso",
+       "- El 2° piso no lleva piso radiante: entrepiso seco con piso flotante sobre lámina antiimpacto y",
+       "  cielo con canal resiliente (34 cm). El cielo del 1er piso queda a 2,36 m; el nivel del 2° piso no cambia.",
+       "",
+       "### Terreno y exterior",
+       "- La casa va en un sector plano: sólo escarpe y base granular, sin corte ni relleno.",
+       "- Patio cercado para el perro, portón de acceso, senderos, bodega metálica a 10 m, luces exteriores,",
+       "  residuos y ductos enterrados (EXT-01).",
        "",
        "### Muros",
        "- Se agregó una cámara técnica de 40 mm, para que las instalaciones no perforen la barrera de vapor.",

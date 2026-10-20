@@ -4,9 +4,22 @@
 
 EXT = 0.20   # espesor muro exterior
 INT = 0.10   # espesor tabique interior
-H1 = 2.50    # altura libre piso 1
-LOSA = 0.20  # espesor losa entrepiso
-Z2 = H1 + LOSA  # nivel piso 2
+
+# Entrepiso de madera ACÚSTICO (el 2° piso no lleva piso radiante): piso flotante sobre lámina antiimpacto
+# + cielo desacoplado con canal resiliente. Meta: ruido de pasos L'nT,w ≤ 55 dB (un entrepiso de madera
+# simple da ~75 dB). De arriba hacia abajo: (capa, espesor m, peso kN/m²)
+ENTREPISO = [
+    ("Porcelanato símil madera 20×120 + adhesivo flexible C2S1", 0.012, 0.25),
+    ("Piso flotante: 2 placas de yeso-fibra 12,5 mm encoladas", 0.025, 0.30),
+    ("Lámina antiimpacto 10 mm (ΔLw ≥ 20 dB) + banda perimetral", 0.010, 0.02),
+    ("OSB 18 mm machihembrado (diafragma estructural)", 0.018, 0.11),
+    ("Vigas 2×10 @ 40 + lana mineral 100 mm en la cavidad", 0.235, 0.16),
+    ("Canal resiliente 13 mm (el cielo no toca las vigas)", 0.013, 0.02),
+    ("2 × yeso-cartón 12,5 mm (la primera RF)", 0.025, 0.20),
+]
+LOSA = round(sum(c[1] for c in ENTREPISO), 2)   # espesor total del entrepiso (0,34 m)
+Z2 = 2.70                                       # nivel piso 2: fijo para no cambiar la escalera (15 × 18 cm)
+H1 = round(Z2 - LOSA, 2)                        # altura libre piso 1 (2,36 m ≥ 2,30, OGUC 4.1.1)
 H2 = 2.50
 
 # ---------- PISO 1 ----------

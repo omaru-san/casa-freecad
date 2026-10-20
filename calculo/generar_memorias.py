@@ -5,10 +5,14 @@ Uso: python3 -I generar_memorias.py   (correr antes estructura.py, condensacion.
 import json
 import os
 import subprocess
+import sys
 from html import escape
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
+sys.path.insert(0, RAIZ)
+import casa_datos as D  # noqa: E402
+import especialidades_datos as E  # noqa: E402
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 
@@ -88,6 +92,8 @@ def cap_estructura():
 <p><b>Materiales:</b> {escape(EST["materiales"]["madera"]["nombre"])} (Ff = {n(EST["materiales"]["madera"]["Ff"])} MPa,
 Fv = {n(EST["materiales"]["madera"]["Fv"])} MPa, E = {n(EST["materiales"]["madera"]["E"], 0)} MPa) ·
 {escape(EST["materiales"]["osb"]["nombre"])} · {escape(EST["materiales"]["hormigon"])}.</p>
+<p><b>Entrepiso acústico</b> ({n(D.LOSA * 100, 0)} cm; el 2° piso no lleva piso radiante ni mortero):</p>
+{tabla(["Capa (de arriba hacia abajo)", "Espesor mm", "Peso kN/m²"], [[escape(c), n(e * 1000, 0), n(w, 2)] for c, e, w in D.ENTREPISO])}
 <h2>1.2 Bases de cálculo</h2>
 <ul><li><b>Sismo:</b> NCh433 Of.96 Mod.2009 + DS 61, zona {EST["sismo"]["zona"]} (A0 = {EST["sismo"]["A0_g"]} g),
 categoría {escape(EST["sismo"]["categoria"])}, I = {EST["sismo"]["I"]}, {escape(EST["sismo"]["sistema"])}: R = {EST["sismo"]["R"]}, R0 = {EST["sismo"]["R0"]}.</li>
@@ -204,8 +210,10 @@ def cap_topo():
 <p class="aviso">{escape(t["fuente"])}</p>
 <p>Cota del sitio {n(t["cota_sitio"], 2)} m s.n.m.; pendiente media {n(t["pendiente_media_pct"])} % con bajada hacia {t["rumbo_bajada_deg"]}° (ONO, hacia el estero).
 Desnivel natural bajo la casa: {n(t["desnivel_bajo_casa"], 2)} m.</p>
-<p><b>Plataforma:</b> cota {n(t["cota_plataforma"], 2)}, NPT ±0,00 = <b>{n(t["NPT"], 2)} m s.n.m.</b>; corte {n(mt["corte"])} m³, relleno {n(mt["relleno"])} m³
-sobre {int(mt["area_m2"])} m² (compensado).</p>
+<p><b>Plataforma:</b> la casa se emplaza en un <b>sector plano</b> del terreno (decisión del 20-10-2026); el DEM de 30 m no lo
+distingue y marca un desnivel de {n(t["desnivel_bajo_casa"], 2)} m que la topografía real debe descartar. NPT ±0,00 ≈ <b>{n(t["NPT"], 2)} m s.n.m.</b>
+(referencial). Movimiento de tierra: escarpe de capa vegetal {n(E.ESCARPE, 2)} m ({n(mt["area_m2"] * E.ESCARPE)} m³) y base granular
+compactada {n(E.BASE_GRANULAR, 2)} m ({n(mt["area_m2"] * E.BASE_GRANULAR)} m³) sobre {int(mt["area_m2"])} m²; sin corte ni relleno compensado.</p>
 {tabla(["Esquina (x, y)", "Cota natural", "Respecto a NPT"], esq)}
 """
 

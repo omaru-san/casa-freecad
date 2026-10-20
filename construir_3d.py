@@ -143,10 +143,65 @@ agregar("Cargador_EV", caja(E.WALLBOX[0] - 0.12, E.WALLBOX[1] - 0.12, -0.3, E.WA
 est = Part.makeCylinder(1.1 * M, 1.8 * M, V(E.ESTANQUE["x"] * M, E.ESTANQUE["y"] * M, -0.3 * M))
 agregar("Estanque_Lluvias", est, (0.30, 0.55, 0.75), g_ext)
 
+# --- Obras exteriores (lámina 13, especialidades_datos.py), sobre la plataforma a -0,30 ---
+ZP = -0.30
+
+
+def tramo(a, b, ancho, z0, h):
+    """Caja a lo largo del segmento a-b (ortogonal o no), centrada en su eje."""
+    (x1, y1), (x2, y2) = a, b
+    largo = math.hypot(x2 - x1, y2 - y1)
+    s = Part.makeBox(largo * M, ancho * M, h * M, V(0, -ancho / 2 * M, 0))
+    s.rotate(V(0, 0, 0), V(0, 0, 1), math.degrees(math.atan2(y2 - y1, x2 - x1)))
+    s.translate(V(x1 * M, y1 * M, z0 * M))
+    return s
+
+
+def cerco(puntos, h, vanos, cerrado=False):
+    """Malla como lámina delgada, con los vanos (puertas) restados."""
+    pts = puntos + puntos[:1] if cerrado else puntos
+    forma = tramo(pts[0], pts[1], 0.04, ZP, h)
+    for a, b in zip(pts[1:], pts[2:]):
+        forma = forma.fuse(tramo(a, b, 0.04, ZP, h))
+    for (x, y), o, ancho in vanos:
+        dx, dy = (0.1, ancho / 2) if o == "v" else (ancho / 2, 0.1)
+        forma = forma.cut(caja(x - dx, y - dy, ZP - 0.1, x + dx, y + dy, ZP + h + 0.1))
+    return forma
+
+
+g_obras = doc.addObject("App::DocumentObjectGroup", "Obras_Exteriores")
+dx0, dy0, dx1, dy1 = E.DESLINDE
+agregar("Cerco_Deslinde", cerco([(dx0, dy0), (dx1, dy0), (dx1, dy1), (dx0, dy1)], 1.2,
+                                [((E.PORTON["x"], E.PORTON["y"]), "v", E.PORTON["ancho"] + E.PORTON["peatonal"])],
+                                cerrado=True), (0.45, 0.42, 0.38), g_obras, 40)
+agregar("Porton_Acceso", caja(E.PORTON["x"] - 0.03, E.PORTON["y"] - E.PORTON["ancho"] / 2, ZP,
+                              E.PORTON["x"] + 0.03, E.PORTON["y"] + E.PORTON["ancho"] / 2, ZP + 1.6), (0.20, 0.20, 0.22), g_obras)
+ax, ay, _ = E.PILAR_ACCESO
+agregar("Pilar_Acceso", caja(ax - 0.2, ay - 0.2, ZP, ax + 0.2, ay + 0.2, ZP + 1.6), (0.55, 0.50, 0.45), g_obras)
+agregar("Cerco_Patio", cerco(E.CERCO_PATIO, 1.5, [(c, o, a) for c, o, a, _ in E.PUERTAS_CERCO]), (0.55, 0.58, 0.55), g_obras, 50)
+for i, (pol, ancho, _) in enumerate(E.SENDEROS):
+    forma = tramo(pol[0], pol[1], ancho, ZP, 0.06)
+    for a, b in zip(pol[1:], pol[2:]):
+        forma = forma.fuse(tramo(a, b, ancho, ZP, 0.06))
+    agregar(f"Sendero_{i + 1}", forma, (0.72, 0.68, 0.60), g_obras)
+bx0, by0, bx1, by1 = E.BODEGA["rect"]
+agregar("Bodega", caja(bx0, by0, ZP, bx1, by1, ZP + 2.3), (0.50, 0.55, 0.60), g_obras)
+for i, ((rx, ry), _) in enumerate(E.RESIDUOS):
+    agregar(f"Residuos_{i + 1}", caja(rx - 0.5, ry - 0.4, ZP, rx + 0.5, ry + 0.4, ZP + 1.1), (0.35, 0.40, 0.30), g_obras)
+for i, (lx, ly, tipo, _) in enumerate(E.LUCES_EXT):
+    if tipo == "baliza":
+        agregar(f"Luz_Ext_{i + 1}", Part.makeCylinder(0.05 * M, 0.6 * M, V(lx * M, ly * M, ZP * M)), (0.95, 0.80, 0.30), g_obras)
+# mástil adosado al frontón oriente, sobresale 1,0 m de la cumbrera del frontón en ese punto
+z_ant = D.Z2 + D.H2 + min(E.ANTENA[1], E.CUMBRERA_Y) * E.TAN
+agregar("Antena_Internet", Part.makeCylinder(0.02 * M, 1.5 * M, V(E.ANTENA[0] * M, E.ANTENA[1] * M, (z_ant - 0.5) * M)),
+        (0.3, 0.3, 0.3), g_obras)
+
 agregar("Inversor_Hibrido", caja(E.INVERSOR[0] - 0.25, 0.10, 0.9, E.INVERSOR[0] + 0.25, 0.30, 1.5), (0.85, 0.88, 0.95), g_ext)
 agregar("Bateria_11kWh", caja(E.BATERIA["x"] - 0.30, 0.10, 0.0, E.BATERIA["x"] + 0.30, 0.35, 1.0), (0.12, 0.30, 0.61), g_ext)
 
 # --- Terreno (DEM aproximado, sitio/topografia.json) con plataforma nivelada a -0,30 ---
+# Con E.PLATAFORMA_NIVELADA la casa va en un sector plano: el terreno se modela a la cota
+# de la plataforma (el DEM de 30 m no resuelve ese sector y mostraría una pendiente falsa).
 import Mesh
 g_topo = doc.addObject("App::DocumentObjectGroup", "Terreno")
 T = E.TOPO["lote"]
@@ -156,7 +211,7 @@ z_plat = E.TOPO["cota_plataforma"] - E.NPT_MSNM
 
 def zt(i, j):
     x, y = T["x"][0] + j * T["paso"], T["y"][0] + i * T["paso"]
-    if px0 <= x <= px1 and py0 <= y <= py1:
+    if E.PLATAFORMA_NIVELADA or (px0 <= x <= px1 and py0 <= y <= py1):
         return z_plat
     return T["z"][i][j] - E.NPT_MSNM
 
@@ -167,7 +222,7 @@ for i in range(len(T["z"]) - 1):
         p = [V((T["x"][0] + (j + dj) * T["paso"]) * M, (T["y"][0] + (i + di) * T["paso"]) * M, zt(i + di, j + dj) * M)
              for di, dj in ((0, 0), (0, 1), (1, 1), (1, 0))]
         tris += [p[0], p[1], p[2], p[0], p[2], p[3]]
-terreno = doc.addObject("Mesh::Feature", "Terreno_DEM")
+terreno = doc.addObject("Mesh::Feature", "Terreno_Plano" if E.PLATAFORMA_NIVELADA else "Terreno_DEM")
 terreno.Mesh = Mesh.Mesh(tris)
 g_topo.addObject(terreno)
 if App.GuiUp:

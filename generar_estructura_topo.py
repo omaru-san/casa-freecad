@@ -100,8 +100,8 @@ def lamina_estructura():
     L.txt(X, Y, "Hueco escalera · brochales 2×(2×10)", fs=1.3)
     for pts in (((10.5, 0), (12, 0)), ((12, 0), (12, 2))):
         p2.poly(pts, color="#c0392b", ancho=1.4)
-    X, Y = p2.P(11.25, -0.35)
-    L.txt(X, Y + 2, "Vigas 2×(45×240) sobre pilar", fs=1.3, color="#c0392b")
+    X, Y = p2.P(12, 0)
+    L.txt(X + 2, Y + 0.5, "Vigas 2×(45×240)\nsobre pilar", fs=1.3, anchor="start", color="#c0392b")
     dibujar_muros_corte(p2, D.MUROS_2, D.PUERTAS_2, D.VENTANAS_2, D.H2)
     # cercha W esquemática
     cx0, cy0, k = 200, 150, 9.0
@@ -214,7 +214,8 @@ def lamina_topografia():
     v.caja(px0, py0, px1, py1, relleno="none", borde="#c0392b", ancho=0.35, dash="1.5 0.8")
     contorno_p1(v)
     v.txt(6, 3.0, f"NPT {num(T['NPT'])}", fs=2.0, peso="bold")
-    v.txt(6, 1.8, f"plataforma {num(T['cota_plataforma'])}", fs=1.5, color="#c0392b")
+    v.txt(6, 1.8, "plataforma en sector plano" if E.PLATAFORMA_NIVELADA else f"plataforma {num(T['cota_plataforma'])}",
+          fs=1.5, color="#c0392b")
     for k, z in T["cotas_esquinas_casa"].items():
         x, y = (float(c) for c in k.strip("()").split(","))  # claves "(x,y)" de topografia.py
         X, Y = v.P(x, y)
@@ -255,25 +256,41 @@ def lamina_topografia():
     perfil(L, 298, 152, 104, 30, T["perfil_oeste_este"], "PERFIL OESTE → ESTE (por el sitio, ±200 m)", (0, 12))
     perfil(L, 298, 197, 104, 30, T["perfil_sur_norte"], "PERFIL SUR → NORTE (±200 m)", (0, 6))
     mt = T["movimiento_tierra_m3"]
-    tabla(L, 15, 182, [52, 22], [
-        ("MOVIMIENTO DE TIERRA (plataforma)", "Valor"),
-        ("Cota plataforma / NPT", f"{num(T['cota_plataforma'])} / {num(T['NPT'])}"),
-        ("Desnivel natural bajo la casa", f"{num(T['desnivel_bajo_casa'])} m"),
-        ("Área plataforma", f"{int(mt['area_m2'])} m²"),
-        ("Corte (lado este)", f"{num(mt['corte'])} m³"),
-        ("Relleno compactado (lado oeste)", f"{num(mt['relleno'])} m³"),
-        ("Balance", f"{num(mt['corte'] - mt['relleno'])} m³ (compensado)"),
-    ], fs=1.6, alto=4.6)
+    if E.PLATAFORMA_NIVELADA:
+        filas = [
+            ("PLATAFORMA (sector plano del terreno)", "Valor"),
+            ("NPT ±0,00 (referencial DEM)", f"{num(T['NPT'])} m s.n.m."),
+            ("Área plataforma", f"{int(mt['area_m2'])} m²"),
+            (f"Escarpe capa vegetal ({num(E.ESCARPE)} m)", f"{num(mt['area_m2'] * E.ESCARPE)} m³"),
+            (f"Base granular compactada ({num(E.BASE_GRANULAR)} m)", f"{num(mt['area_m2'] * E.BASE_GRANULAR)} m³"),
+            ("Corte / relleno compensado", "no se requiere"),
+        ]
+        nota3 = ["3. La casa va en un sector PLANO del terreno (decisión del 20-10-2026). El DEM de 30 m",
+                 f"   no lo distingue (marca {num(T['desnivel_bajo_casa'])} m de desnivel): la topografía real lo confirmará.",
+                 "   Sólo se retira la capa vegetal y se compacta una base granular al 95 % Proctor.",
+                 "4. Aun en plano: plataforma 15 cm sobre el terreno vecino y drenaje perimetral."]
+    else:
+        filas = [
+            ("MOVIMIENTO DE TIERRA (plataforma)", "Valor"),
+            ("Cota plataforma / NPT", f"{num(T['cota_plataforma'])} / {num(T['NPT'])}"),
+            ("Desnivel natural bajo la casa", f"{num(T['desnivel_bajo_casa'])} m"),
+            ("Área plataforma", f"{int(mt['area_m2'])} m²"),
+            ("Corte (lado este)", f"{num(mt['corte'])} m³"),
+            ("Relleno compactado (lado oeste)", f"{num(mt['relleno'])} m³"),
+            ("Balance", f"{num(mt['corte'] - mt['relleno'])} m³ (compensado)"),
+        ]
+        nota3 = ["3. Plataforma compensada: el corte del lado E rellena el lado O en capas de 20 cm",
+                 "   compactadas al 95 % Proctor modificado. Fundaciones del lado O se profundizan",
+                 "   hasta terreno natural (no apoyar sobre relleno).",
+                 "4. Talud de corte/relleno 1:2 con drenaje al pie; aguas superficiales desviadas al ONO."]
+    tabla(L, 15, 182, [52, 22], filas, fs=1.6, alto=4.6)
     notas(L, 105, 182, "NOTAS", [
         f"1. Fuente: {T['fuente']}",
         f"   Resolución {num(T['resolucion_px_m'])} m/px interpolada; precisión vertical ±2–5 m.",
         "2. NO reemplaza un levantamiento topográfico con estación total o GNSS-RTK,",
         "   exigido para el permiso (OGUC 5.1.6). Usar este plano sólo para anteproyecto.",
-        "3. Plataforma compensada: el corte del lado E rellena el lado O en capas de 20 cm",
-        "   compactadas al 95 % Proctor modificado. Fundaciones del lado O se profundizan",
-        "   hasta terreno natural (no apoyar sobre relleno).",
-        "4. Talud de corte/relleno 1:2 con drenaje al pie; aguas superficiales desviadas al ONO.",
-        "5. Pendiente 12,5 % hacia el estero: la fosa y drenes quedan aguas abajo de la casa",
-        "   y del pozo (correcto para gravedad y protección del pozo).",
+        *nota3,
+        f"5. Pendiente general {num(T['pendiente_media_pct'])[:-1]} % hacia el estero: la fosa y drenes quedan aguas abajo",
+        "   de la casa y del pozo (correcto para gravedad y protección del pozo).",
     ], fs=1.55)
     return L

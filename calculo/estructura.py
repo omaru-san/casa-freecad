@@ -37,7 +37,7 @@ CARGAS = {
     "estructura_techo": 0.15,                       # cerchas W @ 60 + costaneras (por m² inclinado)
     "paneles_fv": 0.15,                             # 625 Wp ≈ 34 kg/2,7 m² + rieles (sobre su área)
     "cielo_p2": 0.10 + 0.04 + 0.06,                 # yeso 12,5 + lana 200 mm + cadenetas 2×4
-    "entrepiso": 0.10 + 0.11 + 0.13 + 0.10 + 0.03,  # piso + OSB 18 + vigas 2×10 @ 40 + cielo yeso + aislac.
+    "entrepiso": round(sum(c[2] for c in D.ENTREPISO), 2),  # entrepiso acústico (casa_datos.ENTREPISO), sin mortero
     "muro_ext": 0.45, "muro_int": 0.35,            # por m² de muro
     "tabiques_movibles": 0.50,                      # NCh1537, equivalente repartido sobre entrepiso
     "SC_vivienda": 2.0, "SC_techo": 0.30, "nieve": 0.0,  # NCh1537; nieve 0 (31 años sin nieve en el sitio)
@@ -219,7 +219,7 @@ fund = [
 
 res = {
     "advertencia": "Ejercicio académico de anteproyecto. Suelo y maderas supuestos; requiere mecánica de suelos y calculista.",
-    "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso de vigas 2×10 @ 40; techumbre de cerchas "
+    "sistema": "Tabiquería de madera (plataforma) con muros de corte OSB; entrepiso acústico de vigas 2×10 @ 40 (piso flotante seco + cielo con canal resiliente); techumbre de cerchas "
                "tipo W @ 60 cm (luz 6 m muro a muro, sin apoyo intermedio). Fundaciones: proyecto aparte (fuera de alcance).",
     "materiales": {"madera": MADERA, "osb": OSB, "hormigon": "Fundaciones y sobrecimiento: proyecto por terceros"},
     "suelo": SUELO, "sismo": SISMO, "cargas_kN_m2": CARGAS,

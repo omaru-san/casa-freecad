@@ -25,6 +25,10 @@ C_PISO = "#f7f5ef"
 C_TERRAZA = "#d9bf8c"
 C_AF, C_AC, C_ALC, C_HID = "#1f6fd1", "#d62728", "#7b4b2a", "#8e44ad"
 C_CABLE = "#c0392b"
+# un color por circuito para las canalizaciones (alimentación desde el tablero)
+C_CIRC = {"C1": "#e6a100", "C2": "#b8860b", "C3": "#2e86c1", "C4": "#c0392b", "C5": "#17a589", "C6": "#7d3c98",
+          "C7": "#1abc9c", "C8": "#5d6d7e", "C9": "#d35400", "C10": "#a04000", "C11": "#8e44ad", "C12": "#6c3483",
+          "C13": "#2c3e50", "C14": "#ca6f1e", "C15": "#117a65"}
 FUENTE = "Helvetica, Arial, sans-serif"
 
 
@@ -234,10 +238,11 @@ def cota(pl, valores, fijo, eje, off):
 
 # ---------------- marco, rótulo y tablas ----------------
 
-TOTAL_LAMINAS = 11
+TOTAL_LAMINAS = 13
 
 
 def marco(L, codigo, titulo, n, escala="1:100 (imprimir en A3)"):
+    L.codigo, L.titulo = codigo, titulo
     L.rect(10, 10, W - 20, H - 20, borde="#000", ancho=0.5)
     x0, y0 = 290, 245
     L.rect(x0, y0, W - 10 - x0, H - 10 - y0, relleno="#fff", borde="#000", ancho=0.4)
@@ -333,11 +338,53 @@ def sim_conexion(L, x, y, sigla):
     L.txt(x + 2, y - 1.8, sigla, fs=1.2, anchor="start", color="#05a", peso="bold")
 
 
+def puntos_circuito(piso):
+    """{circuito: [(x, y), ...]} de todo lo que alimenta cada circuito en un piso."""
+    luces = I.LUCES_1 if piso == 1 else I.LUCES_2
+    ench = I.ENCHUFES_1 if piso == 1 else I.ENCHUFES_2
+    pts = {}
+    for x, y, c, _ in luces:
+        pts.setdefault(c, []).append((x, y))
+    for x, y, c, _ in ench:
+        pts.setdefault(c, []).append((x, y))
+    for p_, x, y, c, _ in I.CONEXIONES_FIJAS:
+        if p_ == piso:
+            pts.setdefault(c, []).append((x, y))
+    for p_, x, y, _ in I.DETECTORES:
+        if p_ == piso:
+            pts.setdefault("C2", []).append((x, y))
+    return pts
+
+
+def origen_circuito(c, piso):
+    if piso == 2:
+        return I.MONTANTE_ELEC
+    return (I.TABLERO_R if c in I.RESPALDO else I.TABLERO)[:2]
+
+
+def canalizaciones(piso):
+    """Árbol de canalización por circuito (Prim con distancia Manhattan) desde su tablero o la montante del P2.
+    Devuelve [(circuito, [(x, y), (x, y), (x, y)])]: cada tramo es una L (primero horizontal, luego vertical)."""
+    tramos = []
+    for c, pts in puntos_circuito(piso).items():
+        hechos = [origen_circuito(c, piso)]
+        resto = list(dict.fromkeys(pts))
+        while resto:
+            a, b = min(((a, b) for a in hechos for b in resto),
+                       key=lambda ab: abs(ab[0][0] - ab[1][0]) + abs(ab[0][1] - ab[1][1]))
+            tramos.append((c, [a, (b[0], a[1]), b]))
+            hechos.append(b)
+            resto.remove(b)
+    return tramos
+
+
 def dibujar_electrico(pl, piso):
     L = pl.L
     luces = I.LUCES_1 if piso == 1 else I.LUCES_2
     inter = I.INTERRUPTORES_1 if piso == 1 else I.INTERRUPTORES_2
     ench = I.ENCHUFES_1 if piso == 1 else I.ENCHUFES_2
+    for c, pts in canalizaciones(piso):  # alimentación desde el tablero (bajo los símbolos)
+        pl.poly(pts, color=C_CIRC.get(c, "#555"), ancho=0.22)
     for x, y, tipo, idx in inter:  # cableado interruptor -> luminaria
         sx, sy = pl.P(x, y)
         for i in idx:
@@ -369,6 +416,11 @@ def dibujar_electrico(pl, piso):
         mx, my = pl.P(*I.MEDIDOR_ELEC[:2])
         pl.poly(I.ACOMETIDA, color="#000", ancho=0.4)
         sim_tablero(L, tx, ty, I.TABLERO[2])
+        rx, ry = pl.P(*I.TABLERO_R[:2])
+        sim_tablero(L, rx, ry, I.TABLERO_R[2])
+        pl.poly([(10.25, 1.70), (I.TABLERO_R[0], 1.70), I.TABLERO_R[:2]], color="#1f4e9c", ancho=0.35, dash="1.5 0.6")
+        sube = sorted({c for c in puntos_circuito(2)}, key=lambda c: int(c[1:]))
+        L.txt(tx - 1, ty + 5.2, "↑ P2: " + ", ".join(sube), fs=1.2, anchor="end", color="#05a")
         sim_medidor(L, mx, my, "kWh")
         L.txt(mx + 2.8, my + 4.2, "EMPALME", fs=1.3, anchor="start")
         import especialidades_datos as E
@@ -386,6 +438,10 @@ def dibujar_electrico(pl, piso):
         ex, ey = pl.P(*I.SALIDA_EV)
         L.linea([(ex, ey), (ex + 9, ey)], color="#05a", ancho=0.35, dash="1.5 0.6")
         L.txt(ex + 9.5, ey + 0.5, "EV → cargador 11 kW (estac.)", fs=1.2, anchor="start", color="#05a")
+    else:
+        mx, my = pl.P(*I.MONTANTE_ELEC)
+        L.rect(mx - 1.2, my - 1.2, 2.4, 2.4, relleno="#05a", borde="#05a", ancho=0.2)
+        L.txt(mx - 1.8, my + 4.2, "Montante desde TDA / TDA-R", fs=1.2, anchor="end", color="#05a")
 
 
 # ---------------- símbolos de gasfitería ----------------
@@ -438,6 +494,10 @@ def dibujar_gasfiteria(pl, piso):
         arts = I.ARTEFACTOS_2
     for a in arts:
         dibujar_artefacto(pl, *a)
+    if piso == 1:  # tramos de agua que cruzan por el entrepiso (banda gris debajo) — nunca por el radier
+        for pts in I.AF_1_ENTREPISO + I.AC_1_ENTREPISO:
+            pl.poly(pts, color="#d5d5d5", ancho=1.6)
+        redes += [(I.AF_1_ENTREPISO, C_AF, 0.45, None), (I.AC_1_ENTREPISO, C_AC, 0.45, "1.6 0.8")]
     for lineas, color, ancho, dash in redes:
         for pts in lineas:
             pl.poly(pts, color=color, ancho=ancho, dash=dash)
@@ -454,11 +514,19 @@ def dibujar_gasfiteria(pl, piso):
         for x, y, n in I.CAMARAS:
             px, py = pl.P(x, y)
             L.rect(px - 1.6, py - 1.6, 3.2, 3.2, relleno="#fff", borde=C_ALC, ancho=0.4)
+            if n == "C.D.":  # cámara desgrasadora: doble cuadro
+                L.rect(px - 0.9, py - 0.9, 1.8, 1.8, relleno=C_ALC, borde="none")
             L.txt(px, py + 4.2 if y < 0 else py - 2.4, n, fs=1.4, color=C_ALC, peso="bold")
         ux, uy = pl.P(*I.UNION_DOMICILIARIA)
         L.circ(ux, uy, 1.3, relleno=C_ALC, borde="#000", ancho=0.2)
         L.txt(ux + (-2.5 if ux > 100 else 2.5), uy + 0.6, I.SALIDA_TEXTO, fs=1.4, anchor="end" if ux > 100 else "start",
               color=C_ALC, peso="bold")
+        for x, y, d in I.PASADAS:
+            px, py = pl.P(x, y)
+            L.circ(px, py, 0.75, relleno="#fff", borde="#000", ancho=0.25)
+            L.linea([(px - 0.75, py), (px + 0.75, py)], ancho=0.2)
+        lx, ly = pl.P(7.95, 2.70)
+        L.txt(lx + 1.2, ly + 0.5, "por entrepiso", fs=1.2, anchor="start", color="#777")
         mx, my = pl.P(*I.MEDIDOR_AGUA)
         sim_medidor(L, mx, my, I.SIGLA_AGUA)
         L.txt(mx, my + 4, I.TEXTO_AGUA, fs=1.2, color=C_AF)
@@ -525,8 +593,9 @@ def lamina_arquitectura(img_iso=None):
     ])
     notas(L, 18, 200, "NOTAS", [
         "1. Medidas en metros, a eje de muro. Escala 1:100 en A3.",
-        "2. Muros exteriores 20 cm, tabiques 10 cm. Piso-cielo 2,50 m (≥ 2,30, OGUC 4.1.1).",
-        "3. Entrepiso: losa 20 cm. Nivel piso 2 = +2,70 m.",
+        f"2. Muros exteriores 20 cm, tabiques 10 cm. Piso-cielo P1 {num(D.H1)} m, P2 {num(D.H2)} m (≥ 2,30, OGUC 4.1.1).",
+        f"3. Entrepiso acústico de madera {int(round(D.LOSA * 100))} cm (piso flotante + cielo desacoplado,",
+        f"   detalle en ELE-02). Nivel piso 2 = +{num(D.Z2)} m. El P2 no lleva piso radiante.",
         "4. Escalera en U: 15 contrahuellas de 18 cm, huellas 25 cm,",
         "   tramos de 0,90 m. Cabe justo en la franja de 2 m de fondo.",
         "   Llega al piso 2 por el hall sobre la terraza de entrada.",
@@ -582,7 +651,11 @@ def lamina_electrica():
         "8. Detectores de humo interconectados 220 V + batería (DH) y",
         "   térmico en cocina (DT). Sin gas: no se requiere detector de CO.",
         "9. Inversor híbrido con AFCI (Res. SEC 33.038, desde 01-01-2026);",
-        "   respaldo de C1, C2, C4, C8 y C13 con la batería de 11 kWh.",
+        "   su salida de respaldo alimenta el TDA-R (C1, C2, C4, C8, C13).",
+        "10. Canalización dibujada como árbol por circuito (color) desde su",
+        "   tablero; al P2 sube por una montante en el tabique del pasillo.",
+        "   Diagrama unilineal, cuadro de cargas y frente del tablero: TAB-01.",
+        "11. Exterior (C15, EV, C8 caseta, pozo): ductos enterrados en EXT-01.",
     ], fs=1.6)
     leyenda(L, 345, 40, [
         (lambda L, x, y: sim_luz(L, x, y, "cielo"), "Luminaria de cielo"),
@@ -603,7 +676,13 @@ def lamina_electrica():
         (lambda L, x, y: L.linea([(x - 3.5, y), (x + 3.5, y)], color=C_CABLE, ancho=0.2, dash="1 0.6"),
          "Retorno interruptor→luz"),
         (lambda L, x, y: L.txt(x, y + 0.6, "C3", fs=1.8, color="#05a"), "N° de circuito"),
+        (lambda L, x, y: L.rect(x - 1.2, y - 1.2, 2.4, 2.4, relleno="#05a", borde="#05a", ancho=0.2), "Montante a P2"),
     ])
+    L.txt(345, 146, "CANALIZACIÓN POR CIRCUITO", fs=2.2, anchor="start", peso="bold")
+    for k, c in enumerate(C_CIRC):
+        x, y = 345 + (k % 4) * 16, 151 + (k // 4) * 4.4
+        L.linea([(x, y), (x + 6, y)], color=C_CIRC[c], ancho=0.6)
+        L.txt(x + 7, y + 0.6, c, fs=1.6, anchor="start")
     return L
 
 
@@ -622,7 +701,8 @@ def lamina_gasfiteria():
         ("Lavamanos", "PVC sanitario", "Ø40 mm"),
         ("Ventilación", "PVC sanitario", "Ø75 mm a techo"),
         ("Calefacción (BC ↔ colectores)", "PE-RT/PEX aislado", "Ø25 mm"),
-        ("Piso radiante", "PE-Xa c/ barrera O₂", "Ø16 mm, paso 15 cm"),
+        ("Piso radiante (sólo P1)", "PE-Xa c/ barrera O₂", "Ø16 mm, paso 15 cm"),
+        ("Ventiloconvectores P2", "PE-RT aislado", "Ø20 mm por entrepiso"),
     ], fs=1.9)
     notas(L, 150, 160, "NOTAS (RIDAA DS 50/2002 · DS 236/1926 · DS 735)", [
         "1. Anteproyecto. Proyecto sanitario firmado por profesional y aprobado",
@@ -636,8 +716,18 @@ def lamina_gasfiteria():
         "   cada cambio de dirección y cada 30 m máx. Sifón con sello ≥ 50 mm.",
         "5. Llave de paso AF y AC en cada baño, cocina y lavandería (art. 52 e).",
         "6. Montantes AF/AC y bajada B.A.S. alineados: baño P2 sobre baño P1.",
-        "7. Fosa séptica 2.400 L + drenes (DS 236), a ≥ 20 m del pozo.",
-        "   Agua de pozo (art. 56 Código de Aguas): análisis NCh 409 + UV.",
+        "7. Fosa séptica 2.400 L + drenes (DS 236), a ≥ 20 m del pozo. Cocina pasa",
+        "   antes por cámara desgrasadora (C.D.), que se limpia cada 2–3 meses.",
+        "8. Pozo: análisis NCh 409 con Fe, Mn y As; filtros 20/5 µm, catalítico",
+        "   Fe/Mn si sale alto, y UV (caseta, ver EMP-01 / EXT-01).",
+        "9. AF/AC NO van embutidas en el radier (piso radiante): suben por la",
+        "   cámara técnica de los muros y cruzan por el ENTREPISO (banda gris),",
+        "   en PEX sin uniones ocultas y con registro en el cielo.",
+        "10. Descargas bajo el radier sólo en tramos cortos hasta la cámara",
+        "   exterior. Pasadas del sobrecimiento con camisa dejada al hormigonar.",
+        "11. Baños: membrana impermeable bajo la cerámica (15 cm en muros, 2 m",
+        "   en ducha). Baño P2 sobre madera: placa cementicia + membrana +",
+        "   desagüe lineal; B.A.S. insonorizada con abrazaderas con goma.",
     ], fs=1.6)
     leyenda(L, 345, 40, [
         (leyenda_linea(C_AF, 0.45), "Agua fría (AF)"),
@@ -648,13 +738,19 @@ def lamina_gasfiteria():
         (lambda L, x, y: L.circ(x, y, 0.8, relleno=C_AC, borde="#000", ancho=0.15), "Montante AC"),
         (lambda L, x, y: L.circ(x, y, 1.1, relleno=C_ALC, borde="#000", ancho=0.15), "Bajada aguas servidas"),
         (lambda L, x, y: L.rect(x - 1.6, y - 1.6, 3.2, 3.2, relleno="#fff", borde=C_ALC, ancho=0.4), "Cámara de inspección"),
+        (lambda L, x, y: (L.rect(x - 1.6, y - 1.6, 3.2, 3.2, relleno="#fff", borde=C_ALC, ancho=0.4),
+                          L.rect(x - 0.9, y - 0.9, 1.8, 1.8, relleno=C_ALC)), "Cámara desgrasadora"),
+        (lambda L, x, y: (L.linea([(x - 3.5, y), (x + 3.5, y)], color="#d5d5d5", ancho=1.6),
+                          L.linea([(x - 3.5, y), (x + 3.5, y)], color=C_AF, ancho=0.45)), "Tramo por entrepiso"),
+        (lambda L, x, y: (L.circ(x, y, 0.75, relleno="#fff", borde="#000", ancho=0.25),
+                          L.linea([(x - 0.75, y), (x + 0.75, y)], ancho=0.2)), "Pasada con camisa"),
         (lambda L, x, y: sim_medidor(L, x, y, "LLP"), "Llave de paso general"),
         (lambda L, x, y: L.circ(x, y, 2, relleno="#fde2e2", borde="#333", ancho=0.25), "Acumulador ACS 300 L"),
         (lambda L, x, y: L.rect(x - 3, y - 1.5, 6, 3, relleno="#efe3f6", borde=C_HID, ancho=0.4), "Bomba de calor / colector"),
     ])
-    L.txt(345, 120, "WC inodoro · LV lavamanos · DU ducha", fs=1.7, anchor="start", color="#444")
-    L.txt(345, 124, "LP lavaplatos · LD lavadero · LAV lavadora", fs=1.7, anchor="start", color="#444")
-    L.txt(345, 128, "IND inducción · ACS acumulador", fs=1.7, anchor="start", color="#444")
+    L.txt(345, 139, "WC inodoro · LV lavamanos · DU ducha", fs=1.7, anchor="start", color="#444")
+    L.txt(345, 143, "LP lavaplatos · LD lavadero · LAV lavadora", fs=1.7, anchor="start", color="#444")
+    L.txt(345, 147, "IND inducción · ACS acumulador", fs=1.7, anchor="start", color="#444")
     return L
 
 
@@ -665,7 +761,9 @@ def main():
     import generar_especialidades as GE
     import generar_estructura_topo as GT
     import generar_interiorismo as GI
-    svgs = []
+    import generar_a4
+    import generar_tablero_exterior as GX
+    svgs, laminas = [], []
     for nombre, lam in (("01_arquitectura", lamina_arquitectura(iso)),
                         ("02_electrico", lamina_electrica()),
                         ("03_gasfiteria", lamina_gasfiteria()),
@@ -676,7 +774,9 @@ def main():
                         ("08_estructura", GT.lamina_estructura()),
                         ("09_topografia", GT.lamina_topografia()),
                         ("10_interiorismo", GI.lamina_interiorismo()),
-                        ("11_iluminacion_domotica", GI.lamina_domotica())):
+                        ("11_iluminacion_domotica", GI.lamina_domotica()),
+                        ("12_tablero_electrico", GX.lamina_tablero()),
+                        ("13_obras_exteriores", GX.lamina_exteriores())):
         svg = os.path.join(SALIDA, nombre + ".svg")
         pdf = os.path.join(SALIDA, nombre + ".pdf")
         with open(svg, "w", encoding="utf-8") as f:
@@ -685,10 +785,12 @@ def main():
         subprocess.run(["rsvg-convert", "-w", "2400", "-o", os.path.join(SALIDA, nombre + ".png"), svg], check=True)
         pdfs.append(pdf)
         svgs.append(svg)
+        laminas.append((nombre, lam))
         print("OK", pdf)
     juego = os.path.join(SALIDA, "PLANOS_COMPLETOS.pdf")
     subprocess.run(["rsvg-convert", "-f", "pdf", "-o", juego, *svgs], check=True)
     print("OK", juego)
+    print("OK", generar_a4.generar(laminas, SALIDA))
 
 
 if __name__ == "__main__":

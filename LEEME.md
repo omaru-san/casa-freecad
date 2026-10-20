@@ -4,21 +4,24 @@
 | Archivo | Qué es |
 |---|---|
 | `Casa.FCStd` | Modelo FreeCAD: muros 3D, losas, escalera, ventanas + capas eléctricas y de gasfitería |
-| `laminas/PLANOS_COMPLETOS.pdf` | Las 11 láminas en un solo PDF |
+| `laminas/PLANOS_COMPLETOS.pdf` | Las 13 láminas en un solo PDF |
+| `laminas/PLANOS_A4.pdf` | Juego para imprimir en casa en A4: una vista por hoja, ampliada, con escala gráfica |
 | `laminas/01_arquitectura.pdf` | Plantas con cotas, superficies y vista 3D |
-| `laminas/02_electrico.pdf` | Luces, enchufes, detectores, 15 circuitos (RIC SEC), cargador EV, cuadro de cargas |
-| `laminas/03_gasfiteria.pdf` | Agua fría/caliente (bomba de calor, sin gas), alcantarillado 3 %, fosa séptica |
+| `laminas/02_electrico.pdf` | Luces, enchufes, detectores, 17 circuitos (RIC SEC) con su canalización desde el tablero, cargador EV |
+| `laminas/03_gasfiteria.pdf` | Agua fría/caliente por muros y entrepiso (no por el radier), alcantarillado 3 %, desgrasadora, fosa séptica |
 | `laminas/04_emplazamiento.pdf` | Orientación solar, carta solar, rosa de vientos, terreno, clima |
 | `laminas/05_techumbre_fv_lluvias.pdf` | Techo 35°, paneles FV, canaletas, cosecha de lluvia |
-| `laminas/06_ventilacion_calefaccion.pdf` | Piso radiante, ventilación con recuperador (VMC), balance térmico |
-| `laminas/07_elevaciones_corte.pdf` | Elevaciones N y S, corte, envolvente térmica zona G |
+| `laminas/06_ventilacion_calefaccion.pdf` | Piso radiante (P1), ventiloconvectores (P2), ventilación con recuperador (VMC), balance térmico |
+| `laminas/07_elevaciones_corte.pdf` | Elevaciones N y S, corte, envolvente térmica zona G, detalle del entrepiso acústico |
 | `CUMPLIMIENTO_NORMATIVO.md` | **Verificación norma por norma** (generada por `calculo/verificar_normas.py`) |
 | `MANUAL_CONSTRUCCION.md` | **Manual por etapas: qué hacer primero, costos, financiamiento, decisiones de diseño** |
 | `normas/` | Biblioteca normativa 2026 (152 PDF oficiales), con `README.md` e `INDICE.md` por tema |
 | `laminas/08_estructura.pdf` | Muros de corte, entrepiso, cerchas y **cargas a fundación** (fundaciones por terceros) |
-| `laminas/09_topografia.pdf` | Curvas de nivel (DEM), contexto, perfiles y movimiento de tierra |
+| `laminas/09_topografia.pdf` | Curvas de nivel (DEM), contexto, perfiles y plataforma (sector plano) |
 | `laminas/10_interiorismo.pdf` | Plantas amobladas japandi: muebles a medida, qué esconde cada uno, materialidad |
 | `laminas/11_iluminacion_domotica.pdf` | Luz indirecta, sensores y actuadores, escenas de Home Assistant, equipos por etapa |
+| `laminas/12_tablero_electrico.pdf` | Diagrama unilineal TDA + TDA-R (respaldo con batería), frente de tableros, cuadro de cargas por fase |
+| `laminas/13_obras_exteriores.pdf` | Patio cercado del perro, portón, senderos, bodega, luces exteriores, residuos y ductos enterrados |
 | `INTERIORISMO.md` | **Diseño interior: concepto, materiales, recinto por recinto, domótica, cambios a coordinar y presupuesto** |
 | `interiorismo_datos.py` | **Muebles, materiales, luces y domótica** (editar aquí) |
 | `calculo/MEMORIAS.pdf` | Memorias: estructural, condensación (Glaser), FV + batería, topografía |
@@ -29,7 +32,7 @@
 | `sitio/clima_sitio.json` | Datos procesados que leen los planos |
 | `casa_datos.py` | **Medidas de la casa** (muros, puertas, ventanas, recintos) |
 | `instalaciones_datos.py` | **Posición** de luces, enchufes, cañerías, artefactos |
-| `especialidades_datos.py` | Techo, paneles, aguas lluvias, ventilación, emplazamiento, envolvente |
+| `especialidades_datos.py` | Techo, paneles, aguas lluvias, calefacción, emplazamiento, envolvente y obras exteriores |
 
 ## Uso básico de FreeCAD
 - Abrir: doble clic en `Casa.FCStd`.
@@ -55,7 +58,8 @@
 ## Para aprender FreeCAD con este proyecto
 - **Part**: muros, losas y techo son sólidos `Part::Feature` (cajas + cortes booleanos). Mira `construir_3d.py`.
 - **Draft**: las instalaciones son capas Draft (líneas, círculos, textos). Mira `construir_instalaciones.py`.
-- **Mesh**: el terreno `Terreno_DEM` es una malla triangular generada desde la topografía.
+- **Obras exteriores**: el grupo `Obras_Exteriores` (cercos con vanos restados, senderos, bodega, portón, antena) usa la función `tramo` para cajas orientadas sobre segmentos.
+- **Mesh**: el terreno es una malla triangular (`Terreno_Plano` con `PLATAFORMA_NIVELADA`; si no, `Terreno_DEM` desde la topografía con la plataforma recortada).
 - **FEM**: abre `calculo/FEM_Viga.FCStd`, cambia al banco de trabajo *FEM*, doble clic en `CCX_Results` para ver tensiones.
 
 ## Importante

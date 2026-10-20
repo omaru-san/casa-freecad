@@ -72,7 +72,7 @@
 - **Fuente:** DEM (AWS Terrain Tiles, base SRTM de ~30 m).
 - **Cota del sitio:** 25,7 m s.n.m. Open-Meteo daba 18 m porque usa un DEM de 90 m.
 - **Pendiente:** 12,5 % hacia el ONO (296°). El estudio anterior estimaba ~5 %.
-- **Bajo la casa:** desnivel natural de 1,9 m. La plataforma se nivela a 25,75 y el NPT queda en 26,05; corte de 39 m³ y relleno de 42 m³, compensados.
+- **Bajo la casa:** el DEM marca 1,9 m de desnivel, pero la casa irá en un sector plano (ver 3c). NPT referencial 26,05.
 - **Advertencia:** precisión vertical ±2–5 m. Hace falta un levantamiento real para el permiso.
 
 ## 3c. Decisiones del usuario (20-10-2026)
@@ -80,6 +80,8 @@
 - **Agua:** no hay APR → **pozo propio** con bomba sumergible, hidropack, filtro y UV. El pozo va aguas arriba (SE), a más de 30 m de los drenes.
 - **Paneles:** 12 × 625 Wp = 7,5 kWp, apaisados en 3 filas × 4. Inversor híbrido de 6 kW y **batería de 11 kWh**.
 - **Simulación horaria (con 3.831 kWh/año de consumo supuesto):** 95 % de autosuficiencia y 312 días/año sin usar la red.
+- **Plataforma:** la casa va en un **sector plano** del terreno. El DEM de 30 m no lo distingue (marca 1,9 m de desnivel bajo la casa), así que no se hace corte ni relleno compensado: sólo escarpe de la capa vegetal (0,25 m) y base granular compactada. La topografía real debe confirmarlo.
+- **Calefacción del 2° piso:** sin piso radiante. Entrepiso seco y acústico (piso flotante + cielo desacoplado) y ventiloconvectores en los dormitorios.
 
 ## 4. Normativa aplicable (verificada al 19-10-2026)
 
