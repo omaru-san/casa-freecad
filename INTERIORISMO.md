@@ -71,11 +71,16 @@ Regla 70/20/10: 70 % blancos y cálidos, 20 % madera y 10 % carbón o salvia.
   - Toma un nicho de 0,30 m de la oficina 2 y se abre desde el pasillo.
   - Contiene el tablero TDA, el rack, Home Assistant, la ONT y el switch PoE, tras una puerta enrasada con rejilla.
   - Puerta sin llave, para cumplir el acceso libre al tablero.
-- **E1 · Kaidan-dansu:** 7 cajones en las contrahuellas del primer tramo, como la escalera-mueble japonesa tradicional. Llevan traba de niños.
-- **E2 · Bodega bajo la escalera,** con acceso desde la lavandería:
-  - arenero de los gatos con extracción VMC;
-  - base de la aspiradora robot;
-  - carro largo para maletas y la cuna de viaje.
+- **Escalera helicoidal Ø 1,80 m** (lámina ESC-01): se entra de frente desde el pasillo. Lleva peldaños de lenga, pilar y barrotes negro carbón, y LED bajo el borde de cada peldaño. Usa poco espacio y libera una franja de 0,80 m en cada piso.
+- **Guardado oculto bajo la helicoidal (~1,8 m³):**
+  - Un tambor de listones verticales de lenga cierra el espacio bajo los peldaños 3 a 11, siguiendo el borde de cada uno.
+  - Las puertas se cortan en el mismo listonado, con bisagra oculta y cierre push, sin tiradores: no se distingue dónde están.
+  - Además, la bebé no puede meterse bajo la escalera.
+  - **E4 · Clóset cuña** (bajo los peldaños 10–11, hasta 1,9 m de alto). Se abre hacia la entrada: abrigos de temporada, el coche plegable de la bebé, paraguas y bolsos.
+  - **E5 · Bodega** (bajo los peldaños 7–9). Se abre desde la sala técnica por una puerta de 0,50 × 1,20 m: maletas, cuna de viaje y cajas de temporada.
+  - **E6 · Baúles** (bajo los peldaños 3–6). Las huellas se levantan con pistón y traba de niños: pilas, linternas, herramientas y juguetes que rotan.
+- **Sala técnica** (P1, en esa franja, con puerta desde la lavandería): batería e inversor, y además:
+  - **E2 · Mueble bajo** con el arenero de los gatos (extracción VMC) y la base de la aspiradora robot, junto a la batería; deja libre la puerta de E5.
 - **Puertas de seguridad** arriba y abajo, con sensor: la domótica avisa si quedan abiertas.
 
 ### Oficinas
@@ -91,7 +96,7 @@ Regla 70/20/10: 70 % blancos y cálidos, 20 % madera y 10 % carbón o salvia.
 ### Lavandería, bodega y baño del 1er piso
 - **V1 · Columna** con lavadora y secadora **con bomba de calor** (no necesita ducto), apiladas tras puertas.
 - **V2 · Lavadero bajo tapa:** cerrado es mesón para doblar ropa. Encima va un **tendedero de techo con poleas**.
-- **V3 · Escotilla con gatera de microchip** hacia E2: el perro no llega al arenero.
+- **Puerta de la sala técnica con gatera de microchip:** solo los gatos entran al arenero; el perro no.
 - **V4 · Canasto** donde cae el **ducto de ropa sucia** (B6) que baja desde el baño del 2° piso.
 - **B1, B2:** vanitorio flotante, WC suspendido con **estanque dentro del tabique** y espejo-botiquín embutido.
   - Ducha a ras de piso con desagüe lineal y teléfono a 0,50 m para bañar al perro.
@@ -125,6 +130,7 @@ Regla 70/20/10: 70 % blancos y cálidos, 20 % madera y 10 % carbón o salvia.
 - **B4 · Zona húmeda japonesa:** ducha y **ofuro** de 110×70×60 en un mismo recinto con piso continuo y mampara fija.
   - El ofuro sirve para bañar a los niños y para el ritual de la tarde.
 - **B6 · Ducto de ropa sucia** a la lavandería: sección de 30×30, tapa con traba y una sola pasada por la losa.
+- **E3 · Ropería** (P2, en la franja que libera la helicoidal, con puerta desde el pasillo): repisas de 35 cm de piso a cielo para ropa de cama, toallas y pañales. Al lado quedan maletas, la cuna de viaje y la aspiradora del 2° piso.
 - **H1 · Banco-biblioteca en el hall**, un rincón de lectura junto a la ventana sur que no estorba la llegada de la escalera.
 
 ## 4. Iluminación
@@ -178,18 +184,18 @@ Estos cambios **no** se hicieron todavía en `casa_datos.py` ni en `instalacione
 Hay que pasarlos al arquitecto, al instalador eléctrico y al proyectista sanitario:
 
 1. **Nicho G2** de 0,60 × 0,30 m en el tabique pasillo/oficina 2. El **TDA y el rack se trasladan** de la cara del pasillo al nicho, a ~0,3 m de su posición actual.
-2. **Escotilla V3** de 0,50 × 0,90 m en el tabique lavandería/escalera.
-   - `calculo/estructura.py` cuenta este tabique como muro de corte.
-   - Lo probé con el vano incluido: la utilización del 1er piso en dirección Y sube de 0,44 a 0,45 (límite 1,0).
-   - Igual hay que informarlo al calculista y agregar el vano en `casa_datos.py` cuando se apruebe.
+2. **Escalera helicoidal** (ya en `casa_datos.py`): la puerta de 0,60 m de la sala técnica reemplaza la antigua escotilla. Hay que pasarle al calculista:
+   - el pilar de acero anclado al radier (carga puntual: dado de fundación bajo el pilar);
+   - el hueco del entrepiso, que ahora es de 1,80 × 1,90 m, con el descanso de llegada en voladizo;
+   - el tabique nuevo en x 8,60.
 3. **Ducto B6** de 0,30 × 0,30 m por la losa, entre el baño del 2° piso y la lavandería.
 4. **Ofuro en el baño del 2° piso:** desagüe de Ø50 a la bajada existente. El agua caliente viene del acumulador de 300 L: un ofuro de 400 L con 45 % de agua caliente gasta ~180 L, así que hay que programarlo fuera de las duchas.
 5. **Puntos eléctricos nuevos:**
    - proyector en el banco L1, y telón y cortinas en el cajón del cielo;
    - fosas LED con su fuente;
    - enchufe en el cabecero;
-   - base del robot en E2 y gatera;
-   - extracción VMC en E2, para el arenero.
+   - base del robot en E2 (sala técnica) y gatera;
+   - extracción VMC de la sala técnica, para el arenero (ya en ELE/VEN).
 6. **Puerta del walk-in:** pasa de abatible a corredera embutida (marco tipo casete).
 7. **Fijación de todos los muebles altos al muro** (sismo y niños). Hay que dejar refuerzos de madera dentro de los tabiques **antes de cerrar el yeso-cartón**.
 8. **Cielo del 1er piso a 2,36 m** (antes 2,50) por el entrepiso acústico. Ya se ajustaron los muebles de piso a cielo:
@@ -225,4 +231,4 @@ Hay que pasarlos al arquitecto, al instalador eléctrico y al proyectista sanita
 - **HPL:** paño húmedo. No usar cloro.
 - **Porcelanato:** sin productos con cera, que se ponen resbalosos con el piso radiante.
 - **Filtros VMC:** se cambian cada 6 meses (aviso automático en Home Assistant).
-- **Arenero E2:** la extracción VMC corre continua en bajo y sube por presencia.
+- **Arenero (sala técnica):** la extracción VMC corre continua en bajo y sube por presencia.

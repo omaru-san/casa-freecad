@@ -75,18 +75,45 @@ agregar("Radier_P1", losa1.removeSplitter(), (0.75, 0.72, 0.68), g1)
 for i, r in enumerate(D.TERRAZAS):
     agregar(f"Terraza_{i+1}", caja(r[0], r[1], -0.12, r[2], r[3], -0.02), (0.60, 0.45, 0.20), g1)
 
-# Escalera en U (geometría en casa_datos.ESCALONES)
+# Escalera helicoidal (geometría en casa_datos.ESCALONES): peldaños de lenga 5 cm, pilar de acero y barrotes
 g_esc = doc.addObject("App::DocumentObjectGroup", "Escalera")
+
+
+def prisma_z(pts, z0, z1):
+    vs = [V(x * M, y * M, z0 * M) for x, y in pts]
+    return Part.Face(Part.makePolygon(vs + [vs[0]])).extrude(V(0, 0, (z1 - z0) * M))
+
+
 pasos = None
-for x0, y0, x1, y1, z in D.ESCALONES:
-    s = caja(x0, y0, 0, x1, y1, z)
+for pts, z in D.ESCALONES:
+    s = prisma_z(pts, z - 0.05, z)
     pasos = s if pasos is None else pasos.fuse(s)
-agregar("Escalera_U", pasos.removeSplitter(), (0.55, 0.40, 0.28), g_esc)
+agregar("Escalera_Helicoidal", pasos, (0.55, 0.40, 0.28), g_esc)
+cx, cy = D.ESC_CENTRO
+agregar("Escalera_Pilar", Part.makeCylinder(D.ESC_NUCLEO * M, (D.Z2 + 0.95) * M, V(cx * M, cy * M, 0)), (0.2, 0.2, 0.2), g_esc)
+barrotes = None
+for k, (pts, z) in enumerate(D.ESCALONES):
+    for f in (0.25, 0.75):   # dos barrotes por peldaño en el borde: hueco < 10 cm con el pasamanos
+        a = -(k + f) * D.ESC_PASO
+        bx, by = cx + (D.ESC_R - 0.03) * math.cos(math.radians(a)), cy + (D.ESC_R - 0.03) * math.sin(math.radians(a))
+        b = Part.makeCylinder(0.008 * M, 0.95 * M, V(bx * M, by * M, z * M))
+        barrotes = b if barrotes is None else barrotes.fuse(b)
+agregar("Escalera_Baranda", barrotes, (0.2, 0.2, 0.2), g_esc)
+# tambor de guardado oculto bajo los peldaños 3–11 (interiorismo_datos.GUARDADO_ESCALERA): llega a 5 cm bajo cada huella
+import interiorismo_datos as N
+importlib.reload(N)
+tambor = None
+for _, (k0, k1), *_ in N.GUARDADO_ESCALERA:
+    for k in range(k0, k1 + 1):
+        s = prisma_z(D.sector_peldanos(k, k), 0, k * D.CONTRAHUELLA - 0.05)
+        tambor = s if tambor is None else tambor.fuse(s)
+agregar("Escalera_Guardado_Oculto", tambor.removeSplitter(), (0.80, 0.66, 0.50), g_esc)
 
 # --- Piso 2 ---
 g2 = piso(2, D.MUROS_2, D.PUERTAS_2, D.VENTANAS_2, D.Z2, D.H2)
 x0, y0, x1, y1 = D.LOSA_2
 losa2 = caja(x0, y0, D.H1, x1, y1, D.Z2).cut(caja(*D.HUECO_ESCALERA[:2], D.H1 - 0.1, *D.HUECO_ESCALERA[2:], D.Z2 + 0.1))
+losa2 = losa2.fuse(prisma_z(D.DESCANSO_P2, D.H1, D.Z2)).removeSplitter()   # descanso de llegada de la helicoidal
 agregar("Losa_P2", losa2, (0.75, 0.72, 0.68), g2)
 agregar("Techo_Living", caja(*D.TECHO_1[:2], D.H1, *D.TECHO_1[2:], D.Z2), (0.75, 0.72, 0.68), g1)
 
@@ -196,8 +223,10 @@ z_ant = D.Z2 + D.H2 + min(E.ANTENA[1], E.CUMBRERA_Y) * E.TAN
 agregar("Antena_Internet", Part.makeCylinder(0.02 * M, 1.5 * M, V(E.ANTENA[0] * M, E.ANTENA[1] * M, (z_ant - 0.5) * M)),
         (0.3, 0.3, 0.3), g_obras)
 
-agregar("Inversor_Hibrido", caja(E.INVERSOR[0] - 0.25, 0.10, 0.9, E.INVERSOR[0] + 0.25, 0.30, 1.5), (0.85, 0.88, 0.95), g_ext)
-agregar("Bateria_11kWh", caja(E.BATERIA["x"] - 0.30, 0.10, 0.0, E.BATERIA["x"] + 0.30, 0.35, 1.0), (0.12, 0.30, 0.61), g_ext)
+ix, iy = E.INVERSOR[:2]
+agregar("Inversor_Hibrido", caja(ix - 0.25, iy - 0.10, 0.9, ix + 0.25, iy + 0.10, 1.5), (0.85, 0.88, 0.95), g_ext)
+bx, by = E.BATERIA["x"], E.BATERIA["y"]
+agregar("Bateria_11kWh", caja(bx - 0.30, by - 0.125, 0.0, bx + 0.30, by + 0.125, 1.0), (0.12, 0.30, 0.61), g_ext)
 
 # --- Terreno (DEM aproximado, sitio/topografia.json) con plataforma nivelada a -0,30 ---
 # Con E.PLATAFORMA_NIVELADA la casa va en un sector plano: el terreno se modela a la cota

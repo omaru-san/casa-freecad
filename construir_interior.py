@@ -18,7 +18,7 @@ for nombre in ("Interior_P1", "Interior_P2"):
         doc.getObject(nombre).removeObjectsFromDocument()
         doc.removeObject(nombre)
 grupos = {p: doc.addObject("App::DocumentObjectGroup", f"Interior_P{p}") for p in (1, 2)}
-BAJO_ESCALERA = ("E1", "E2")  # quedan dentro del sólido de la escalera: sólo se dibujan en planta
+BAJO_ESCALERA = ()  # muebles dentro del sólido de la escalera (la helicoidal no tiene): sólo se dibujarían en planta
 
 cod_actual, n = "", {}
 for cod, piso, (x0, y0, x1, y1), (z0, z1), mat, nombre, _ in N.MUEBLES:

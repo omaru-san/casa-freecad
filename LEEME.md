@@ -4,7 +4,7 @@
 | Archivo | Qué es |
 |---|---|
 | `Casa.FCStd` | Modelo FreeCAD: muros 3D, losas, escalera, ventanas + capas eléctricas y de gasfitería |
-| `laminas/PLANOS_COMPLETOS.pdf` | Las 13 láminas en un solo PDF |
+| `laminas/PLANOS_COMPLETOS.pdf` | Las 14 láminas en un solo PDF |
 | `laminas/PLANOS_A4.pdf` | Juego para imprimir en casa en A4: una vista por hoja, ampliada, con escala gráfica |
 | `laminas/01_arquitectura.pdf` | Plantas con cotas, superficies y vista 3D |
 | `laminas/02_electrico.pdf` | Luces, enchufes, detectores, 17 circuitos (RIC SEC) con su canalización desde el tablero, cargador EV |
@@ -22,6 +22,8 @@
 | `laminas/11_iluminacion_domotica.pdf` | Luz indirecta, sensores y actuadores, escenas de Home Assistant, equipos por etapa |
 | `laminas/12_tablero_electrico.pdf` | Diagrama unilineal TDA + TDA-R (respaldo con batería), frente de tableros, cuadro de cargas por fase |
 | `laminas/13_obras_exteriores.pdf` | Patio cercado del perro, portón, senderos, bodega, luces exteriores, residuos y ductos enterrados |
+| `laminas/14_escaleras.pdf` | Escalera helicoidal elegida + 4 alternativas: vista 3D, planta 1:50, estructura y comparación |
+| `Escaleras.FCStd` | Modelo FreeCAD de las 5 alternativas lado a lado (`construir_escaleras.py`, datos en `escaleras_datos.py`) |
 | `INTERIORISMO.md` | **Diseño interior: concepto, materiales, recinto por recinto, domótica, cambios a coordinar y presupuesto** |
 | `interiorismo_datos.py` | **Muebles, materiales, luces y domótica** (editar aquí) |
 | `calculo/MEMORIAS.pdf` | Memorias: estructural, condensación (Glaser), FV + batería, topografía |

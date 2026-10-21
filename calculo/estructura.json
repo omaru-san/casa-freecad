@@ -50,14 +50,14 @@
   "techo": 33.3,
   "cielo_p2": 12.0,
   "frontones": 5.7,
-  "muros_p2": 61.5,
-  "muros_p1": 58.5,
-  "entrepiso": 85.9,
+  "muros_p2": 63.2,
+  "muros_p1": 60.1,
+  "entrepiso": 88.3,
   "techo_bajo": 6.2,
-  "P1_nivel1": 179.6,
-  "P2_nivel2": 81.7,
-  "P_total": 261.4,
-  "peso_por_m2_kPa": 2.09
+  "P1_nivel1": 184.5,
+  "P2_nivel2": 82.6,
+  "P_total": 267.1,
+  "peso_por_m2_kPa": 2.14
  },
  "coef_sismico": {
   "T_estimado_s": 0.172,
@@ -65,9 +65,9 @@
   "C_max": 0.192,
   "C_min": 0.08,
   "C": 0.192,
-  "Q0_kN": 50.2,
-  "F1_kN": 24.7,
-  "F2_kN": 25.5,
+  "Q0_kN": 51.3,
+  "F1_kN": 25.5,
+  "F2_kN": 25.8,
   "Ak": [
    0.307,
    0.693
@@ -87,34 +87,34 @@
   "P1_x": {
    "largo_util_m": 17.3,
    "capacidad_kN": 88.6,
-   "demanda_sismo_kN": 57.7,
+   "demanda_sismo_kN": 59.0,
    "demanda_viento_kN": 26.5,
-   "FU": 0.65,
-   "v_kN_m": 3.34
+   "FU": 0.67,
+   "v_kN_m": 3.41
   },
   "P1_y": {
-   "largo_util_m": 21.3,
-   "capacidad_kN": 116.0,
-   "demanda_sismo_kN": 57.7,
+   "largo_util_m": 22.6,
+   "capacidad_kN": 123.4,
+   "demanda_sismo_kN": 59.0,
    "demanda_viento_kN": 48.5,
-   "FU": 0.5,
-   "v_kN_m": 2.71
+   "FU": 0.48,
+   "v_kN_m": 2.6
   },
   "P2_x": {
-   "largo_util_m": 25.7,
-   "capacidad_kN": 134.3,
-   "demanda_sismo_kN": 29.3,
+   "largo_util_m": 25.1,
+   "capacidad_kN": 131.0,
+   "demanda_sismo_kN": 29.7,
    "demanda_viento_kN": 13.2,
-   "FU": 0.22,
-   "v_kN_m": 1.14
+   "FU": 0.23,
+   "v_kN_m": 1.18
   },
   "P2_y": {
-   "largo_util_m": 20.1,
-   "capacidad_kN": 105.1,
-   "demanda_sismo_kN": 29.3,
+   "largo_util_m": 22.1,
+   "capacidad_kN": 116.1,
+   "demanda_sismo_kN": 29.7,
    "demanda_viento_kN": 24.2,
-   "FU": 0.28,
-   "v_kN_m": 1.45
+   "FU": 0.26,
+   "v_kN_m": 1.34
   }
  },
  "segmentos_m": {
@@ -151,6 +151,8 @@
     2,
     2,
     2,
+    1.35,
+    0.05,
     2,
     3,
     3
@@ -171,7 +173,8 @@
     2.35,
     0.2,
     0.85,
-    4.55
+    1.95,
+    2.0
    ],
    "y": [
     3.9,
@@ -184,12 +187,13 @@
     1.15,
     1.15,
     2,
+    2,
     0.13,
     1.02
    ]
   }
  },
- "holddown_tipico_kN": 6.4,
+ "holddown_tipico_kN": 6.6,
  "elementos": [
   {
    "elemento": "Viga entrepiso (living, luz mayor)",
@@ -306,8 +310,8 @@
  ],
  "reacciones_puntuales_kN": {
   "pilar_esquina_terraza": 12.8,
-  "holddown_traccion": 6.4,
-  "corte_basal_Q0": 50.2
+  "holddown_traccion": 6.6,
+  "corte_basal_Q0": 51.3
  },
  "fem_verificacion": {
   "modelo": "calculo/FEM_Viga.FCStd — viga 90×240 mm, L = 2,0 m, empotrada en extremos, q = 6,71 kN/m (presión 74,6 kPa)",

@@ -68,6 +68,13 @@ check("Seguridad niños", "Antepecho ventanas P2 ≥ 0,95 m (art. 4.2.7 no rige 
 regla = 2 * D.CONTRAHUELLA + D.HUELLA
 check("Arquitectura", "Escalera cómoda: 0,60 ≤ 2·ch + h ≤ 0,65 m, ch ≤ 0,18 m", f"ch {num(D.CONTRAHUELLA, 3)} · 2ch+h {num(regla, 3)}",
       0.60 <= regla <= 0.65 and D.CONTRAHUELLA <= 0.18 + 1e-6, "Buena práctica (OGUC 4.2.11 sólo rige en evacuación)", "criterio")
+check("Arquitectura", "Escalera helicoidal: altura libre de paso ≥ 2,00 m (bajo el descanso P2 y al entrar)",
+      f"{num(D.ALTURA_LIBRE)} m", D.ALTURA_LIBRE >= 2.0 - 1e-6, "Buena práctica (2,00 m habitual)", "criterio")
+import escaleras_datos as X  # noqa: E402
+lineas = {c: X.huella_en_linea(a["peldanos"], a["pivote"])[0] for c, a in X.ALTERNATIVAS.items()}
+check("Arquitectura", "Alternativas de escalera (ESC-01): 0,60 ≤ 2·ch + h ≤ 0,65 m en la línea de huella",
+      " · ".join(f"{c} {num(2 * X.CH + h, 3)}" for c, h in lineas.items()),
+      all(0.60 <= 2 * X.CH + h <= 0.65 for h in lineas.values()), "Buena práctica", "criterio")
 
 # ---------------- envolvente (DS 15) ----------------
 umax = {"Techumbre": 0.28, "Muros": 0.40, "Piso ventilado": 0.39, "Puerta acceso": 1.70}
@@ -97,7 +104,8 @@ for piso in (1, 2):
     inter = I.INTERRUPTORES_1 if piso == 1 else I.INTERRUPTORES_2
     ench = I.ENCHUFES_1 if piso == 1 else I.ENCHUFES_2
     for r in recintos(piso):
-        if not r[0] or r[0] in D.EXTERIORES or r[0] in ("ESCALERA", "PASILLO", "DESPENSA", "LAVANDERÍA", "WALK-IN CLOSET"):
+        if not r[0] or r[0] in D.EXTERIORES or r[0] in ("ESCALERA", "PASILLO", "DESPENSA", "LAVANDERÍA", "WALK-IN CLOSET",
+                                                              "SALA TÉCNICA", "ROPERÍA"):
             continue
         n_luz = sum(1 for x, y, *_ in luces if dentro(x, y, r))
         req = 2 if area(r) > 10 else 1
@@ -145,11 +153,7 @@ check("Eléctrico", "Enchufes de alvéolos protegidos; cargador EV con circuito 
 check("Solar", "Inversor con detección de arco (AFCI); diferencial 100 mA (5–10 kW)", f"inversor {num(FV['sistema']['inversor_kw'], 0)} kW",
       FV["sistema"]["inversor_kw"] <= 10, "Res. SEC 33.038 · RGR 02", "especificado")
 
-potf = {"R": 0.0, "S": 0.0, "T": 0.0}
-for c in I.CIRCUITOS:
-    if c[0] in I.POTENCIA and c[0] != "EV":
-        w, fd = I.POTENCIA[c[0]]
-        potf[c[4][0]] += w * fd
+potf = I.demanda_fases()
 desb = 100 * (max(potf.values()) - min(potf.values())) / (sum(potf.values()) / 3)
 check("Eléctrico", "Fases equilibradas: desbalance de demanda ≤ 10 %", f"R {num(potf['R'], 0)} · S {num(potf['S'], 0)} · "
       f"T {num(potf['T'], 0)} W ({num(desb, 1)} %)", desb <= 10, "Buena práctica (RIC 10)", "criterio")
@@ -258,6 +262,7 @@ dentro_ = [k for k, p in fuera.items() if dentro_poligono(*p, patio)]
 check("Exterior", "Patio cercado del perro deja fuera fosa (camión), estacionamiento y caseta de agua",
       "ok" if not dentro_ else "dentro: " + ", ".join(dentro_), not dentro_, "Criterio de diseño (EXT-01)", "criterio")
 
+
 with open(os.path.join(AQUI, "verificacion.json"), "w", encoding="utf-8") as f:
     json.dump(RES, f, ensure_ascii=False, indent=1)
 
@@ -327,7 +332,7 @@ md += ["",
        "",
        "### Seguridad",
        "- **Ventanas del P2:** antepecho de 1,00 m y limitador de apertura.",
-       "- **Escalera:** baranda de 0,95 / 0,85 m y puertas de seguridad.",
+       "- **Escalera:** helicoidal Ø 1,80 m, barrotes < 10 cm, baranda 0,95 m y puertas de seguridad.",
        "- **Faja CONAF:** de 2/10/30 m alrededor de la casa.",
        "- **Cargador EV:** estacionamiento para 2 autos con el cargador.",
        "",

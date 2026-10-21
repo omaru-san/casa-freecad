@@ -1,4 +1,7 @@
 """Láminas 10 (plantas amobladas + materialidad) y 11 (iluminación y domótica). Leen interiorismo_datos.py."""
+import math
+
+import casa_datos as D
 import instalaciones_datos as I
 import interiorismo_datos as N
 from generar_laminas import (OX1, OX2, S, Lamina, Planta, dibujar_arquitectura, dibujar_artefacto,
@@ -55,6 +58,17 @@ def dibujar_muebles(pl, piso, rotular=True, tenue=False):
             fs = min(1.5, 0.75 * min(x1 - x0, y1 - y0) * S + 0.6)
             L.rect(cx - 2.1, cy - 1.2, 4.2, 2.1, relleno="#fff", borde="#333", ancho=0.12)
             L.txt(cx, cy + 0.45, cod, fs=max(fs, 1.25), peso="bold")
+    if piso == 1:   # guardado oculto bajo la helicoidal (tambor de listones)
+        for cod, (k0, k1), *_ in N.GUARDADO_ESCALERA:
+            pl.poly(D.sector_peldanos(k0, k1), cerrar=True, color="#555", ancho=0.15,
+                    relleno=aclarar(N.MATERIALES["LEN"][2], 0.6 if tenue else 0.35))
+        for pts, _ in D.ESCALONES:   # los peldaños se siguen viendo encima del tambor
+            pl.poly(pts, color="#666", ancho=0.12, cerrar=True)
+        for cod, (k0, k1), *_ in N.GUARDADO_ESCALERA if rotular else ():
+            am = math.radians(-((k0 + k1) / 2 - 0.5) * D.ESC_PASO)
+            cx, cy = pl.P(D.ESC_CENTRO[0] + 0.55 * math.cos(am), D.ESC_CENTRO[1] + 0.55 * math.sin(am))
+            L.rect(cx - 2.1, cy - 1.2, 4.2, 2.1, relleno="#fff", borde="#333", ancho=0.12)
+            L.txt(cx, cy + 0.45, cod, fs=1.25, peso="bold")
     for p, x0, y0, x1, y1 in N.PUERTAS_SEGURIDAD:
         if p == piso:
             pl.poly([(x0, y0), (x1, y1)], color=C_SEG, ancho=0.6)
@@ -63,6 +77,9 @@ def dibujar_muebles(pl, piso, rotular=True, tenue=False):
 def tabla_muebles(L, x, y, piso, titulo, fs=1.4, alto=3.75):
     L.txt(x, y - 2, titulo, fs=2.2, anchor="start", peso="bold")
     filas = [m for m in N.MUEBLES if m[1] == piso and m[0]]
+    if piso == 1:
+        filas += [(c, 1, None, None, "LEN", f"{nombre} (oculto)", f"{guarda}. {acceso}.")
+                  for c, _, acceso, nombre, guarda in N.GUARDADO_ESCALERA]
     anchos = (8, 50, 80)
     L.rect(x, y, sum(anchos), alto, relleno="#eee")
     for i, (c, t) in enumerate(zip(anchos, ("Cód.", "Mueble", "Qué esconde / resuelve"))):

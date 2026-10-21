@@ -82,9 +82,25 @@
  {
   "tema": "Arquitectura",
   "exigencia": "Escalera cómoda: 0,60 ≤ 2·ch + h ≤ 0,65 m, ch ≤ 0,18 m",
-  "valor": "ch 0,180 · 2ch+h 0,610",
+  "valor": "ch 0,180 · 2ch+h 0,611",
   "estado": "CUMPLE",
   "fuente": "Buena práctica (OGUC 4.2.11 sólo rige en evacuación)",
+  "tipo": "criterio"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Escalera helicoidal: altura libre de paso ≥ 2,00 m (bajo el descanso P2 y al entrar)",
+  "valor": "2,00 m",
+  "estado": "CUMPLE",
+  "fuente": "Buena práctica (2,00 m habitual)",
+  "tipo": "criterio"
+ },
+ {
+  "tema": "Arquitectura",
+  "exigencia": "Alternativas de escalera (ESC-01): 0,60 ≤ 2·ch + h ≤ 0,65 m en la línea de huella",
+  "valor": "A 0,611 · B 0,611 · C 0,611 · D 0,611 · E 0,611",
+  "estado": "CUMPLE",
+  "fuente": "Buena práctica",
   "tipo": "criterio"
  },
  {
@@ -242,7 +258,7 @@
  {
   "tema": "Eléctrico",
   "exigencia": "Cada centro con interruptor independiente (P1)",
-  "valor": "13 centros, 11 mandos",
+  "valor": "14 centros, 12 mandos",
   "estado": "CUMPLE",
   "fuente": "RIC 10 5.2 a)",
   "tipo": "calculado"
@@ -306,7 +322,7 @@
  {
   "tema": "Eléctrico",
   "exigencia": "Cada centro con interruptor independiente (P2)",
-  "valor": "9 centros, 7 mandos",
+  "valor": "10 centros, 8 mandos",
   "estado": "CUMPLE",
   "fuente": "RIC 10 5.2 a)",
   "tipo": "calculado"

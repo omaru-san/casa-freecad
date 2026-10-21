@@ -71,9 +71,9 @@ TOTAL_KWP = len(PANELES) * PANEL["wp"] / 1000
 _PV = CLIMA["fotovoltaico_pvgis"]["por_inclinacion"][str(int(PENDIENTE))]
 PRODUCCION_KWH_KWP_MES = _PV["kwh_mensual_por_kwp"]
 PRODUCCION_KWH_KWP_ANUAL = _PV["kwh_anual_por_kwp"]
-# Sala técnica bajo el tramo alto de la escalera (interior, protegida de heladas: LiFePO4 no carga bajo 0 °C)
-INVERSOR = (10.25, 0.22, "INV")   # inversor HÍBRIDO 6 kW
-BATERIA = {"kwh": 11.0, "x": 9.65, "y": 0.22, "tipo": "LiFePO4 11 kWh, 51,2 V"}
+# Sala técnica junto a la escalera, x 7,80–8,60 (interior, protegida de heladas: LiFePO4 no carga bajo 0 °C)
+INVERSOR = (8.20, 1.80, "INV")   # inversor HÍBRIDO 6 kW, en el muro norte
+BATERIA = {"kwh": 11.0, "x": 8.20, "y": 0.25, "tipo": "LiFePO4 11 kWh, 51,2 V"}
 CONSUMO_ESTIMADO_KWH_MES = 640    # casa todo eléctrica + bomba de calor + pozo (ver calculo/fv_bateria.py)
 
 
@@ -106,7 +106,8 @@ VMC = {"piso": 2, "x": 2.70, "y": 0.45, "w": 0.80, "h": 0.60, "caudal_ls": 35,
 REJILLAS = [
     (1, "IM", 2.00, 3.60, 10, "Living"), (1, "IM", 3.20, 1.40, 4, "Oficina 1"), (1, "IM", 10.75, 4.00, 4, "Oficina 2"),
     (2, "IM", 3.75, 5.10, 7, "Dorm. principal"), (2, "IM", 7.10, 5.10, 5, "Dormitorio 2"), (2, "IM", 10.40, 5.10, 5, "Dormitorio 3"),
-    (1, "EX", 7.20, 4.20, 10, "Cocina"), (1, "EX", 5.00, 1.65, 10, "Baño P1"), (1, "EX", 6.55, 1.55, 5, "Lavandería"),
+    (1, "EX", 7.20, 4.20, 10, "Cocina"), (1, "EX", 5.00, 1.65, 10, "Baño P1"), (1, "EX", 6.55, 1.55, 3, "Lavandería"),
+    (1, "EX", 8.20, 1.10, 2, "Sala técnica (arenero)"),
     (2, "EX", 6.60, 1.60, 10, "Baño P2"),
 ]
 # elementos: (piso, código, x, y, texto)

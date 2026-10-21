@@ -33,6 +33,16 @@ POTENCIA = {
     "C15": (1000, 0.5), "C9": (4600, 0.7), "C10": (3000, 0.5), "C11": (2500, 1.0), "C12": (3000, 0.5),
     "EV": (11000, 1.0),
 }
+def demanda_fases():
+    """Demanda por fase (W) sin el EV, para el cuadro de cargas (TAB-01) y la verificación normativa."""
+    f = {"R": 0.0, "S": 0.0, "T": 0.0}
+    for c in CIRCUITOS:
+        if c[0] in POTENCIA and c[0] != "EV":
+            w, fd = POTENCIA[c[0]]
+            f[c[4].split(" ·")[0]] += w * fd
+    return f
+
+
 EMPALME_A = 25          # A por fase (empalme 3×25 A; se contrata 3×16 A)
 CONTRATADO_A = 16
 GENERAL = ("Empalme trifásico 3×25 A (contratar 3×16 A para mantener BT1 ≤ 10 kW) · general 4P 25 A · alimentador ≥ 6 mm² "
@@ -47,13 +57,14 @@ LUCES_1 = [
     (3.20, 1.00, "C1", "cielo"),   # 3 oficina 1
     (5.30, 1.00, "C1", "cielo"),   # 4 baño
     (7.00, 1.00, "C1", "cielo"),   # 5 lavandería
-    (9.15, 1.00, "C1", "cielo"),   # 6 escalera
+    (10.05, 1.55, "C1", "cielo"),  # 6 escalera
     (8.75, 4.50, "C1", "cielo"),   # 7 despensa
     (10.75, 4.50, "C1", "cielo"),  # 8 oficina 2
     (9.00, 2.50, "C1", "cielo"),   # 9 pasillo
     (11.25, 2.50, "C1", "cielo"),  # 10 acceso
     (11.25, 1.00, "C1", "cielo"),  # 11 terraza entrada (bajo losa piso 2)
     (1.88, 1.00, "C1", "muro"),    # 12 aplique terraza
+    (8.20, 1.00, "C1", "cielo"),   # 13 sala técnica
 ]
 # interruptores: (x, y, tipo 'simple' | 'doble' | 'conmutador', [índices de luces que controla])
 # RIC 10 5.2: cada centro con interruptor independiente (un efecto por luminaria). Altura 1,05 m (estatura 1,64 m).
@@ -69,6 +80,7 @@ INTERRUPTORES_1 = [
     (9.40, 2.17, "conmutador", [6]),
     (9.30, 3.15, "simple", [7]),
     (10.90, 3.15, "simple", [8]),
+    (7.73, 1.20, "simple", [13]),
 ]
 # enchufes: (x, y, circuito, 'IP' si es impermeable). Todos de alvéolos protegidos (RIC 10 5.1.2.8).
 # Living/dormitorios: ≥ 1 doble por cada 8 m de perímetro; cocina ≥ 3; lavadero ≥ 1 (RIC 10 5.2).
@@ -93,10 +105,11 @@ LUCES_2 = [
     (10.40, 4.50, "C2", "cielo"),  # 2 dormitorio 3
     (3.20, 1.50, "C2", "cielo"),   # 3 walk-in closet
     (6.10, 1.00, "C2", "cielo"),   # 4 baño
-    (9.15, 1.00, "C2", "cielo"),   # 5 escalera (conmutada con piso 1)
+    (10.05, 1.55, "C2", "cielo"),  # 5 escalera (conmutada con piso 1)
     (6.80, 2.50, "C2", "cielo"),   # 6 pasillo
     (11.25, 1.50, "C2", "cielo"),  # 7 hall
     (4.60, 4.50, "C2", "cielo"),   # 8 dormitorio principal (B): recinto > 10 m² exige 2 centros
+    (8.20, 1.00, "C2", "cielo"),   # 9 ropería
 ]
 INTERRUPTORES_2 = [
     (4.40, 3.17, "doble", [0, 8]),
@@ -106,6 +119,7 @@ INTERRUPTORES_2 = [
     (5.05, 2.17, "simple", [4]),
     (10.62, 1.20, "conmutador", [5]),
     (10.62, 1.65, "doble", [6, 7]),
+    (8.62, 2.17, "simple", [9]),
 ]
 ENCHUFES_2 = [
     (2.12, 3.60, "C6", ""), (2.12, 5.50, "C6", ""), (5.38, 4.50, "C6", ""),

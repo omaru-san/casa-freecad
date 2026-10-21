@@ -177,7 +177,6 @@ def frentes(L, x0, y0):
 
 def cuadro_cargas(L, x0, y0):
     filas = [("Circ.", "Tablero", "Fase", "P inst. W", "FD", "P dem. W")]
-    fases = {"R": 0.0, "S": 0.0, "T": 0.0}
     for c in I.CIRCUITOS:
         if c[0] not in I.POTENCIA:
             continue
@@ -185,15 +184,14 @@ def cuadro_cargas(L, x0, y0):
         fase = c[4].split(" ·")[0]
         tab = "TDA-R" if c[0] in I.RESPALDO else "TDA"
         filas.append((c[0], tab, fase, miles(w), num(fd)[:-1] if fd < 1 else "1", miles(w * fd)))
-        if c[0] != "EV":
-            fases[fase] += w * fd
+    fases = I.demanda_fases()
     L.txt(x0, y0 - 3, "CUADRO DE CARGAS (potencia instalada × factor de demanda)", fs=2.2, anchor="start", peso="bold")
     tabla(L, x0, y0, [12, 16, 11, 20, 10, 20], filas, fs=1.5, alto=3.9)
     y = y0 + 3.9 * len(filas) + 4
     tot = sum(fases.values())
     v = 230
     for k, (f, w) in enumerate(fases.items()):
-        L.txt(x0, y + k * 3.3, f"Fase {f}: {miles(w)} W = {num(w / v)[:-1]} A  (empalme {I.EMPALME_A} A ✓)", fs=1.5,
+        L.txt(x0, y + k * 3.3, f"Fase {f}: {miles(w)} W = {num(w / v)[:-1]} A  (empalme {I.EMPALME_A} A {'✓' if w / v <= I.EMPALME_A else '✗'})", fs=1.5,
               anchor="start", peso="bold")
     y += 3 * 3.3 + 1.5
     for k, t in enumerate([

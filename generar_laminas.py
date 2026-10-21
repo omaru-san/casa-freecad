@@ -169,16 +169,21 @@ def dibujar_puerta(pl, a, b, ab, horiz, fijo, e, color):
 
 
 def dibujar_escalera(pl, piso):
+    """Helicoidal: peldaños, pilar, línea de huella con flecha y, en el P2, el descanso de llegada."""
     col = "#666"
-    for x0, y0, x1, y1, _ in D.ESCALONES:
-        pl.caja(x0, y0, x1, y1, relleno="none", borde=col, ancho=0.15)
+    for pts, _ in D.ESCALONES:
+        pl.poly(pts, color=col, ancho=0.15, cerrar=True)
+    if piso == 2:
+        pl.poly(D.DESCANSO_P2, color=col, ancho=0.15, cerrar=True, relleno="#eee")
+    cx, cy = pl.P(*D.ESC_CENTRO)
+    pl.L.circ(cx, cy, D.ESC_NUCLEO * S, relleno="#444", borde="#444")
     pl.poly(D.FLECHA_ESCALERA, color=col, ancho=0.2)
-    (xa, ya), (xb, yb) = D.FLECHA_ESCALERA[-2:]
-    ax, ay = pl.P(xb, yb)
-    d = 1 if xb > xa else -1
-    pl.L.linea([(ax - d * 1.6, ay - 0.9), (ax, ay), (ax - d * 1.6, ay + 0.9)], color=col, ancho=0.2)
+    (xa, ya), (xb, yb) = (pl.P(*p) for p in D.FLECHA_ESCALERA[-2:])
+    ang = math.atan2(yb - ya, xb - xa)
+    ala = [(xb - 1.6 * math.cos(ang + s), yb - 1.6 * math.sin(ang + s)) for s in (0.5, -0.5)]
+    pl.L.linea([ala[0], (xb, yb), ala[1]], color=col, ancho=0.2)
     tx, ty = pl.P(*D.FLECHA_ESCALERA[0])
-    pl.L.txt(tx - 4, ty - 1, "SUBE" if piso == 1 else "BAJA", fs=1.5, color=col)
+    pl.L.txt(tx + 2.2, ty + 0.5, "SUBE" if piso == 1 else "BAJA", fs=1.5, color=col, anchor="start")
 
 
 def etiquetas_recintos(pl, piso, con_area=True):
@@ -238,7 +243,7 @@ def cota(pl, valores, fijo, eje, off):
 
 # ---------------- marco, rótulo y tablas ----------------
 
-TOTAL_LAMINAS = 13
+TOTAL_LAMINAS = 14
 
 
 def marco(L, codigo, titulo, n, escala="1:100 (imprimir en A3)"):
@@ -418,7 +423,7 @@ def dibujar_electrico(pl, piso):
         sim_tablero(L, tx, ty, I.TABLERO[2])
         rx, ry = pl.P(*I.TABLERO_R[:2])
         sim_tablero(L, rx, ry, I.TABLERO_R[2])
-        pl.poly([(10.25, 1.70), (I.TABLERO_R[0], 1.70), I.TABLERO_R[:2]], color="#1f4e9c", ancho=0.35, dash="1.5 0.6")
+        pl.poly([(8.40, 2.45), (I.TABLERO_R[0], 2.45), I.TABLERO_R[:2]], color="#1f4e9c", ancho=0.35, dash="1.5 0.6")
         sube = sorted({c for c in puntos_circuito(2)}, key=lambda c: int(c[1:]))
         L.txt(tx - 1, ty + 5.2, "↑ P2: " + ", ".join(sube), fs=1.2, anchor="end", color="#05a")
         sim_medidor(L, mx, my, "kWh")
@@ -430,8 +435,8 @@ def dibujar_electrico(pl, piso):
         L.txt(ix, iy + 0.6, "INV", fs=1.3, peso="bold", color="#1f4e9c")
         L.rect(bx - 2.6, by - 1.6, 5.2, 3.2, relleno="#1f4e9c", borde="#1f4e9c", ancho=0.35)
         L.txt(bx, by + 0.6, "BAT", fs=1.3, peso="bold", color="#fff")
-        pl.poly([E.INVERSOR[:2], (10.25, 1.70), (11.60, 1.70), I.TABLERO[:2]], color="#1f4e9c", ancho=0.35, dash="1.5 0.6")
-        L.txt(bx - 3.4, by + 4.3, "Sala técnica bajo escalera", fs=1.2, anchor="start", color="#1f4e9c")
+        pl.poly([E.INVERSOR[:2], (8.40, 1.80), (8.40, 2.55), (I.TABLERO[0], 2.55), I.TABLERO[:2]], color="#1f4e9c",
+                ancho=0.35, dash="1.5 0.6")
         tx2, ty2 = pl.P(*I.TABLERO[:2])
         flecha_e = (tx2 + 2.5, ty2 - 3.5)
         L.txt(flecha_e[0] + 1, flecha_e[1], "C8 → caseta presurizadora / pozo", fs=1.3, anchor="start", color="#05a")
@@ -596,11 +601,10 @@ def lamina_arquitectura(img_iso=None):
         f"2. Muros exteriores 20 cm, tabiques 10 cm. Piso-cielo P1 {num(D.H1)} m, P2 {num(D.H2)} m (≥ 2,30, OGUC 4.1.1).",
         f"3. Entrepiso acústico de madera {int(round(D.LOSA * 100))} cm (piso flotante + cielo desacoplado,",
         f"   detalle en ELE-02). Nivel piso 2 = +{num(D.Z2)} m. El P2 no lleva piso radiante.",
-        "4. Escalera en U: 15 contrahuellas de 18 cm, huellas 25 cm,",
-        "   tramos de 0,90 m. Cabe justo en la franja de 2 m de fondo.",
-        "   Llega al piso 2 por el hall sobre la terraza de entrada.",
-        "   Baranda 0,95 m (0,85 en tramo), sin huecos > 12,5 cm, y puertas",
-        "   de seguridad arriba y abajo (bebé, gatos).",
+        "4. Escalera helicoidal Ø 1,80 m (ESC-01): 15 contrahuellas de",
+        "   18 cm, huella 25 cm en la línea de huella. Se entra de frente",
+        "   desde el pasillo; llega al hall del P2. Barrotes < 10 cm y puertas",
+        "   de seguridad arriba y abajo (bebé, gatos). Libera la sala técnica.",
         "6. Ventanas P2 con antepecho 1,00 m y limitador de apertura 10 cm.",
         "7. Superficie ≤ 140 m² y 2 pisos → F-15 (OGUC 4.3.5 n°14), DS1 ok.",
         "8. Mesones 0,85 m y muebles altos a 1,40 m (estatura 1,64 m).",
@@ -763,6 +767,7 @@ def main():
     import generar_interiorismo as GI
     import generar_a4
     import generar_tablero_exterior as GX
+    import generar_escaleras as GS
     svgs, laminas = [], []
     for nombre, lam in (("01_arquitectura", lamina_arquitectura(iso)),
                         ("02_electrico", lamina_electrica()),
@@ -776,7 +781,8 @@ def main():
                         ("10_interiorismo", GI.lamina_interiorismo()),
                         ("11_iluminacion_domotica", GI.lamina_domotica()),
                         ("12_tablero_electrico", GX.lamina_tablero()),
-                        ("13_obras_exteriores", GX.lamina_exteriores())):
+                        ("13_obras_exteriores", GX.lamina_exteriores()),
+                        ("14_escaleras", GS.lamina_escaleras())):
         svg = os.path.join(SALIDA, nombre + ".svg")
         pdf = os.path.join(SALIDA, nombre + ".pdf")
         with open(svg, "w", encoding="utf-8") as f:

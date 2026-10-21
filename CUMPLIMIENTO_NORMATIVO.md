@@ -3,7 +3,7 @@
 > Generado por `python3 -I calculo/verificar_normas.py` a partir de los archivos de datos. Se vuelve a generar después de cada cambio de diseño.
 > **Fundaciones fuera de alcance** (las proyecta un tercero; la lámina 08 entrega las cargas).
 
-**Resultado:** 65 de 65 verificaciones cumplen.
+**Resultado:** 67 de 67 verificaciones cumplen.
 
 Estados:
 - **CUMPLE:** calculado por el script o especificado en los planos.
@@ -22,7 +22,9 @@ Estados:
 | Arquitectura | Ventana al exterior en local habitable: Dormitorio 2 | sí | CUMPLE | OGUC 4.1.2 |
 | Arquitectura | Ventana al exterior en local habitable: Dormitorio 3 | sí | CUMPLE | OGUC 4.1.2 |
 | Seguridad niños | Antepecho ventanas P2 ≥ 0,95 m (art. 4.2.7 no rige en vivienda unifamiliar; se aplica igual) | 1,00 m | CUMPLE | OGUC 4.2.7 (recomendación) |
-| Arquitectura | Escalera cómoda: 0,60 ≤ 2·ch + h ≤ 0,65 m, ch ≤ 0,18 m | ch 0,180 · 2ch+h 0,610 | CUMPLE | Buena práctica (OGUC 4.2.11 sólo rige en evacuación) |
+| Arquitectura | Escalera cómoda: 0,60 ≤ 2·ch + h ≤ 0,65 m, ch ≤ 0,18 m | ch 0,180 · 2ch+h 0,611 | CUMPLE | Buena práctica (OGUC 4.2.11 sólo rige en evacuación) |
+| Arquitectura | Escalera helicoidal: altura libre de paso ≥ 2,00 m (bajo el descanso P2 y al entrar) | 2,00 m | CUMPLE | Buena práctica (2,00 m habitual) |
+| Arquitectura | Alternativas de escalera (ESC-01): 0,60 ≤ 2·ch + h ≤ 0,65 m en la línea de huella | A 0,611 · B 0,611 · C 0,611 · D 0,611 · E 0,611 | CUMPLE | Buena práctica |
 | Térmica zona G | U techumbre ≤ 0,28 W/m²K | 0,19 | CUMPLE | OGUC 4.1.10 (DS 15) |
 | Térmica zona G | U muros ≤ 0,40 W/m²K | 0,32 | CUMPLE | OGUC 4.1.10 (DS 15) |
 | Térmica zona G | U piso ventilado ≤ 0,39 W/m²K | 0,35 | CUMPLE | OGUC 4.1.10 (DS 15) |
@@ -42,7 +44,7 @@ Estados:
 | Eléctrico | Centros de luz Baño P1 (3,6 m²) ≥ 1 | 1 | CUMPLE | RIC 10 5.2 a) |
 | Eléctrico | Centros de luz Oficina 2 P1 (7,5 m²) ≥ 1 | 1 | CUMPLE | RIC 10 5.2 a) |
 | Eléctrico | Enchufes Oficina 2 P1: 1 por cada 8 m de perímetro → ≥ 2 | 3 | CUMPLE | RIC 10 5.2 b) |
-| Eléctrico | Cada centro con interruptor independiente (P1) | 13 centros, 11 mandos | CUMPLE | RIC 10 5.2 a) |
+| Eléctrico | Cada centro con interruptor independiente (P1) | 14 centros, 12 mandos | CUMPLE | RIC 10 5.2 a) |
 | Eléctrico | Centros de luz Dormitorio Principal P2 (10,5 m²) ≥ 2 | 2 | CUMPLE | RIC 10 5.2 a) |
 | Eléctrico | Enchufes Dormitorio Principal P2: 1 por cada 8 m de perímetro → ≥ 2 | 4 | CUMPLE | RIC 10 5.2 b) |
 | Eléctrico | Centros de luz Dormitorio 2 P2 (9,8 m²) ≥ 1 | 1 | CUMPLE | RIC 10 5.2 a) |
@@ -50,7 +52,7 @@ Estados:
 | Eléctrico | Centros de luz Dormitorio 3 P2 (9,8 m²) ≥ 1 | 1 | CUMPLE | RIC 10 5.2 a) |
 | Eléctrico | Enchufes Dormitorio 3 P2: 1 por cada 8 m de perímetro → ≥ 2 | 6 | CUMPLE | RIC 10 5.2 b) |
 | Eléctrico | Centros de luz Baño P2 (6,8 m²) ≥ 1 | 1 | CUMPLE | RIC 10 5.2 a) |
-| Eléctrico | Cada centro con interruptor independiente (P2) | 9 centros, 7 mandos | CUMPLE | RIC 10 5.2 a) |
+| Eléctrico | Cada centro con interruptor independiente (P2) | 10 centros, 8 mandos | CUMPLE | RIC 10 5.2 a) |
 | Eléctrico | Cocina ≥ 3 enchufes dobles + circuito exclusivo 16 A + circuitos de inducción y horno | 3 en C4 + C9 + C10 | CUMPLE | RIC 10 5.2 d), e) |
 | Eléctrico | Diferencial ≤ 30 mA en todo circuito de alumbrado/enchufes y ≤ 3 circuitos por diferencial | 6 diferenciales, máx. 3 circuitos | CUMPLE | RIC 10 5.1.3.5 y 5.1.3.7 |
 | Eléctrico | Enchufes del baño P1 fuera de volúmenes 0-1-2 (≥ 0,60 m de la ducha) | 0,85 m | CUMPLE | RIC 11 sección 6 |
@@ -123,7 +125,7 @@ Estados:
 
 ### Seguridad
 - **Ventanas del P2:** antepecho de 1,00 m y limitador de apertura.
-- **Escalera:** baranda de 0,95 / 0,85 m y puertas de seguridad.
+- **Escalera:** helicoidal Ø 1,80 m, barrotes < 10 cm, baranda 0,95 m y puertas de seguridad.
 - **Faja CONAF:** de 2/10/30 m alrededor de la casa.
 - **Cargador EV:** estacionamiento para 2 autos con el cargador.
 

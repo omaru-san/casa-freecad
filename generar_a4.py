@@ -107,6 +107,11 @@ VISTAS = {
         ("Simbología y criterios", [(295, 25, 409, 160)], None),
         ("Cuadro de obras exteriores", [(11, 204, 190, 268)], None),
     ],
+    "14_escaleras": [
+        ("Alternativas A, B y C", [(11, 13, 251, 214)], None),
+        ("Alternativas D y E (elegida)", [(250, 13, 409, 214)], None),
+        ("Lo común y comparación", [(11, 214, 290, 286)], None),
+    ],
 }
 
 

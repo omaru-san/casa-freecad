@@ -64,7 +64,7 @@
    - cocina de inducción y ventilación mecánica con recuperador de calor;
    - **sin gas**, y por lo tanto sin riesgo de monóxido de carbono ni trámite TC6.
 
-   El detalle norma por norma está en [CUMPLIMIENTO_NORMATIVO.md](CUMPLIMIENTO_NORMATIVO.md) (65 verificaciones automáticas).
+   El detalle norma por norma está en [CUMPLIMIENTO_NORMATIVO.md](CUMPLIMIENTO_NORMATIVO.md) (73 verificaciones automáticas).
    **Las fundaciones quedan fuera de este proyecto:** la lámina 08 entrega las cargas para quien las diseñe.
 
 ---
@@ -98,6 +98,13 @@
   - Puertas de seguridad arriba y abajo.
   - Pasamanos continuo y baranda de ≥ 0,95 m con barrotes separados < 10 cm.
   - Dejar un dormitorio en el 1er piso convertible es buena idea a largo plazo.
+- **Escalera: helicoidal Ø 1,80 m** (elegida; lámina ESC-01, con las otras 4 alternativas comparadas).
+  - Se entra de frente desde el pasillo.
+  - Ocupa 1,80 × 1,90 m y libera una franja de 0,80 m: sala técnica en el 1er piso (batería, inversor y arenero) y ropería en el 2°.
+  - Pilar de acero sobre un dado en el radier (**Etapa 3**); la escalera prefabricada se instala en terminaciones.
+  - **Guardado oculto** bajo los peldaños 3–11 (~1,8 m³), en tres compartimentos con puertas invisibles en el listonado de lenga (ver [INTERIORISMO.md](INTERIORISMO.md)). Es carpintería a medida: se cotiza con el mueblista, no con el fabricante de la escalera.
+  - **Muebles grandes:** no suben por una helicoidal. Las camas y los clósets del 2° piso deben ser desarmables o entrar por una ventana.
+  - **Bebé:** contrahuella cerrada, barrotes < 10 cm, pasamanos continuo y puertas de seguridad. El peldaño es angosto junto al pilar: se sube por el lado exterior.
 
 ### 2.2 Ergonomía para estatura de 1,64 m
 Son alturas recomendadas, no obligatorias. **Altura de piso a cielo ≥ 2,30 m** (OGUC 4.1.1); 2,40 m es suficiente y ahorra calefacción.
@@ -392,6 +399,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
   - **tubo de puesta a tierra en las fundaciones** (electrodo de fundación).
 - [ ] **Fundaciones y sobrecimiento: las proyecta y ejecuta un tercero.** Entregarle por escrito:
   - las cargas de la lámina 08 y de las [memorias](calculo/MEMORIAS.pdf), cap. 1.8;
+  - el **dado bajo el pilar de la escalera helicoidal** (x 9,55 · y 1,00), con los pernos de anclaje que indique el fabricante;
   - los ejes de muros;
   - los pernos de solera Ø12 @ ≤ 0,50 m y los hold-down;
   - las pasadas de alcantarillado, agua y ductos, **con camisa** dejada antes de hormigonar (posiciones en la lámina 03);
@@ -400,7 +408,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 - [ ] Recibir el sobrecimiento **a nivel y escuadra** antes de partir la estructura de madera (tolerancia ±5 mm).
 
 ### Etapa 4 — Obra gruesa y casa cerrada al agua (ene–abr) · ≈ $45–65 MM
-- [ ] Entramados de muros (madera preservada), anclajes y escalera estructural apoyada en bandas elastoméricas.
+- [ ] Entramados de muros (madera preservada), anclajes y tabique de la sala técnica (x 8,60); la helicoidal se monta en terminaciones, con su pilar aislado del entrepiso por una banda elastomérica.
 - [ ] **Entrepiso:** vigas 2×10 y OSB de 18 mm. Las capas acústicas van después (etapas 6 y 8).
 - [ ] **Techumbre completa:**
   - estructura calculada para los paneles solares;
@@ -522,6 +530,7 @@ Cada etapa trae sus entregables, quién la hace y el costo estimado. **Regla:** 
 - Que el sector elegido para la casa sea efectivamente plano (topografía real).
 - Hierro, manganeso y arsénico del pozo (análisis NCh 409): definen si va el filtro catalítico.
 - Las exigencias específicas del Plan Regulador o de la DOM de Mariquina (las dice el CIP).
+- Cotizar la helicoidal Ø 1,80 m prefabricada (acero + lenga) y confirmar con el fabricante la altura libre (2,00 m bajo el descanso).
 - Si se mantiene el diseño de 2 pisos (más económico por m²) o se pasa a 1 piso (más cómodo con niños pequeños y mascotas, pero más techo y fundación).
 
 ## 6. Glosario rápido

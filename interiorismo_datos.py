@@ -3,6 +3,9 @@
 # guardado de piso a cielo sin tiradores (push / uñero); domótica local con Home Assistant (Zigbee / Matter).
 # Ergonomía 1,64 m: mesón 0,85 m, barras de clóset 1,00 / 1,65 m, muebles altos de cocina desde 1,40 m.
 # Interiores a cara de muro: muro exterior 0,10 m y tabique 0,05 m desde el eje.
+import math
+
+import casa_datos as D
 
 # ---------- MATERIALIDAD: código -> (nombre, uso, color de muestra) ----------
 MATERIALES = {
@@ -67,18 +70,15 @@ MUEBLES = [
      "12–15 pares; luz LED bajo el mueble con la escena Llegada"),
     ("G4", 1, (11.88, 2.10, 11.95, 2.60), (1.40, 1.70), "LEN", "Listón con ganchos abatibles",
      "Ganchos que se pliegan al ras: abrigos, correa del perro, llaves"),
-    ("E1", 1, (8.70, 1.00, 10.45, 1.95), (0, 1.26), "LEN", "Cajones kaidan-dansu en las contrahuellas",
-     "7 cajones bajo los peldaños del tramo 1, con traba de niños: herramientas, pilas, linternas"),
-    ("E2", 1, (7.85, 0.10, 10.45, 0.95), (0, 1.26), "FRE", "Bodega bajo la escalera (acceso desde la lavandería)",
-     "Arenero de gatos con extracción VMC, base de la aspiradora robot, carro largo con maletas y cuna de viaje"),
-    ("", 1, (7.85, 0.95, 8.70, 1.95), (0, 1.26), "FRE", "", ""),
+    ("E2", 1, (7.85, 0.42, 8.55, 1.00), (0, 0.60), "FRE", "Mueble del arenero + base de la aspiradora robot",
+     "Sala técnica (entra desde la lavandería): arenero ventilado con extracción VMC y robot; batería e inversor aparte"),
+    ("E3", 2, (7.85, 0.10, 8.20, 1.90), (0, 2.30), "FRE", "Ropería: repisas de 35 cm de piso a cielo",
+     "Ropa de cama, toallas y pañales; al lado, espacio para maletas, cuna de viaje y la aspiradora del P2"),
     # --- lavandería y baño P1 ---
     ("V1", 1, (6.25, 0.10, 6.95, 0.75), (0, 2.36), "FRE", "Columna lavadora + secadora bomba de calor",
      "Apiladas tras puertas; libera el mesón para doblar ropa"),
     ("V2", 1, (7.20, 0.75, 7.75, 1.35), (0, 0.85), "FRE", "Lavadero bajo tapa + tendedero de techo con poleas",
      "Tapa abatible convierte el lavadero en mesón; tendedero sube al cielo"),
-    ("V3", 1, (7.72, 1.40, 7.88, 1.90), (0, 0.90), "NEG", "Escotilla 50×90 con gatera microchip",
-     "Acceso a la bodega E2: sólo los gatos entran al arenero"),
     ("V4", 1, (6.25, 1.50, 6.60, 1.95), (0, 0.60), "FRE", "Canasto bajo el ducto de ropa sucia", ""),
     ("B1", 1, (5.35, 0.10, 6.15, 0.55), (0.45, 0.85), "LEN", "Vanitorio flotante con cajones",
      "Espejo-botiquín embutido en el tabique; estanque del WC dentro del tabique técnico"),
@@ -127,6 +127,26 @@ MUEBLES = [
      "Cajones con libros infantiles y mantas; repisas sobre el banco"),
 ]
 
+# Guardado oculto bajo la helicoidal: un tambor de listones verticales de lenga (20×40 @ 25 mm) cierra el espacio
+# bajo los peldaños 3–11; las puertas se cortan en el mismo listonado (bisagra oculta, cierre push, sin tirador),
+# así que no se ven. Peldaños 1–2 macizos (base del pilar) y 12–14 libres (por debajo se entra).
+# (código, (peldaño desde, hasta), acceso, nombre, qué guarda)
+GUARDADO_ESCALERA = [
+    ("E4", (10, 11), "Puerta en la cara radial, hacia la entrada", "Clóset cuña bajo la escalera",
+     "Abrigos de temporada, coche plegable de la bebé, paraguas y bolsos"),
+    ("E5", (7, 9), "Puerta 0,50 × 1,20 m en el tabique de la sala técnica (y 1,00–1,50)", "Bodega bajo la escalera",
+     "Maletas, cuna de viaje y cajas de temporada"),
+    ("E6", (3, 6), "Huellas 3 a 6 abatibles (pistón y traba de niños)", "Baúles bajo los peldaños",
+     "Pilas, linternas, herramientas y juguetes que rotan"),
+]
+
+
+def volumen_guardado(k0, k1):
+    """m³ bajo los peldaños k0..k1 (hasta 5 cm bajo cada huella)."""
+    area = 0.5 * (D.ESC_R ** 2 - D.ESC_NUCLEO ** 2) * math.radians(D.ESC_PASO)
+    return sum(area * (k * D.CONTRAHUELLA - 0.05) for k in range(k0, k1 + 1))
+
+
 # Puertas de seguridad de la escalera (bebé, gatos): (piso, x0, y0, x1, y1) con sensor de contacto
 PUERTAS_SEGURIDAD = [(1, 9.55, 2.00, 10.45, 2.00), (2, 10.50, 0.125, 10.50, 0.975)]
 
@@ -135,8 +155,8 @@ ILUMINACION = [
     (1, [(0.25, 2.30), (0.25, 5.75), (4.50, 5.75)], "LED indirecto en fosa de cielo del living"),
     (1, [(4.75, 3.45), (6.35, 3.45)], "Zócalo de la isla (luz de noche 5 %)"),
     (1, [(8.10, 2.25), (9.50, 2.25)], "Bajo el zapatero (escena Llegada)"),
-    (1, [(10.45, 1.00), (8.70, 1.00)], "Luz en peldaños, tramo 1"),
-    (1, [(8.70, 0.95), (10.45, 0.95)], "Luz en peldaños, tramo 2"),
+    (1, [(9.55 + 0.85 * math.cos(math.radians(-a)), 1.00 + 0.85 * math.sin(math.radians(-a))) for a in range(0, 337, 12)],
+     "Luz bajo el borde de cada peldaño de la helicoidal"),
     (2, [(2.75, 5.70), (4.75, 5.70)], "Cabecero (lectura y despertar gradual)"),
     (2, [(4.50, 2.90), (11.80, 2.90)], "Guía nocturna ámbar en zócalo del pasillo"),
     (2, [(6.70, 0.15), (7.70, 0.15)], "Nicho de la ducha"),
@@ -164,7 +184,7 @@ DOMOTICA = [
     (1, 2.60, 5.50, "AM"), (1, 3.00, 1.65, "AM"), (1, 11.00, 4.00, "AM"),
     (1, 7.40, 5.10, "FU"), (1, 6.60, 0.90, "FU"), (1, 7.45, 0.90, "FU"), (1, 5.60, 0.80, "FU"),
     (1, 11.00, -0.60, "VA"), (1, 10.00, 1.75, "PS"), (1, 0.40, 4.25, "TE"), (1, 7.55, 1.65, "GA"),
-    (1, 8.20, 0.45, "RO"),
+    (1, 8.20, 0.80, "RO"),
     (2, 6.50, 2.50, "PR"), (2, 11.10, 1.20, "PR"), (2, 5.20, 1.20, "PR"), (2, 3.20, 1.60, "PR"),
     (2, 2.50, 3.45, "AM"), (2, 6.60, 3.45, "AM"), (2, 9.40, 3.95, "AM"),
     (2, 7.20, 0.50, "FU"), (2, 10.75, 0.55, "PS"), (2, 9.70, 5.75, "MB"), (2, 5.20, 3.30, "BO"),
